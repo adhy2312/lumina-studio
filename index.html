@@ -902,47 +902,85 @@
       return null;
     }
 
-    // ─── COMMAND PIPELINE ─────────────────────────────────────────────────────
-    function sendCommand(cmd, debounceMs = 60) {
-      if (debounceMs > 0) {
-        clearTimeout(commandDebounce);
-        commandDebounce = setTimeout(() => _dispatch(cmd), debounceMs);
-      } else {
-        _dispatch(cmd);
+    // ─── COMMAND PIPELINE & RELIABLE CONNECTION ──────────────────────────────
+    let isSending = false;
+    let pendingCommand = null;
+    let consecutiveFailures = 0;
+
+    function reportSuccess() {
+      consecutiveFailures = 0;
+      updateLiveStatus(true);
+    }
+
+    function reportFailure() {
+      consecutiveFailures++;
+      // Only show disconnected if 3 consecutive requests fail (avoids UI flicker)
+      if (consecutiveFailures >= 3) {
+        updateLiveStatus(false);
       }
     }
 
+    function sendCommand(cmd, debounceMs = 60) {
+      if (debounceMs > 0) {
+        clearTimeout(commandDebounce);
+        commandDebounce = setTimeout(() => enqueueCommand(cmd), debounceMs);
+      } else {
+        enqueueCommand(cmd);
+      }
+    }
+
+    function enqueueCommand(cmd) {
+      if (isSending) {
+        // Collapses rapid changes into the latest desired target state
+        pendingCommand = cmd;
+        return;
+      }
+      _dispatch(cmd);
+    }
+
     async function _dispatch(cmd) {
+      isSending = true;
       const proxyBase = getProxyBase();
 
-      // 1. HTTPS Proxy (ngrok): fully works from Vercel — HTTPS to HTTPS, no mixed content
-      if (proxyBase && proxyBase.startsWith('https://')) {
-        try {
+      try {
+        // 1. HTTPS Proxy (ngrok): works seamlessly from Vercel & mobile
+        if (proxyBase && proxyBase.startsWith('https://')) {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 4000);
           const url = `${proxyBase}/api/cmd?c=${encodeURIComponent(cmd)}`;
           const res = await fetch(url, { 
             cache: 'no-store',
-            headers: { 'ngrok-skip-browser-warning': 'true' }
+            headers: { 'ngrok-skip-browser-warning': 'true' },
+            signal: controller.signal
           });
-          if (res.ok) { updateLiveStatus(true); return; }
-        } catch (e) {
-          console.warn('[Lumina] Proxy dispatch failed:', e);
-        }
-        updateLiveStatus(false);
-        return;
-      }
+          clearTimeout(timeoutId);
 
-      // 2. Local server proxy (same LAN, port 7070)
-      if (isLocalHost()) {
-        try {
+          if (res.ok) {
+            reportSuccess();
+          } else {
+            reportFailure();
+          }
+        } else if (isLocalHost()) {
+          // 2. Local server proxy
           const res = await fetch(`/api/cmd?c=${encodeURIComponent(cmd)}`, { cache: 'no-store' });
-          if (res.ok) { updateLiveStatus(true); return; }
-        } catch (e) {}
+          if (res.ok) reportSuccess(); else reportFailure();
+        } else {
+          // 3. Direct Image beacon fallback
+          const img = new Image();
+          img.src = `http://${BULB_IP}/cm?cmnd=${encodeURIComponent(cmd)}&_t=${Date.now()}`;
+          reportSuccess();
+        }
+      } catch (e) {
+        reportFailure();
+      } finally {
+        isSending = false;
+        // If a new command was queued while in-flight, send it immediately
+        if (pendingCommand) {
+          const nextCmd = pendingCommand;
+          pendingCommand = null;
+          _dispatch(nextCmd);
+        }
       }
-
-      // 3. Image Beacon fallback (HTTP to HTTP only — works on local network, blocked on Vercel HTTPS)
-      const img = new Image();
-      img.src = `http://${BULB_IP}/cm?cmnd=${encodeURIComponent(cmd)}&_t=${Date.now()}`;
-      updateLiveStatus(true);
     }
 
     function updateLiveStatus(isOnline) {
@@ -960,9 +998,43 @@
       } else {
         dot.style.background = '#ef4444';
         dot.style.boxShadow = '0 0 8px #ef4444';
-        text.textContent = 'Adhy Bulb • Connecting...';
+        text.textContent = 'Adhy Bulb • Reconnecting...';
       }
     }
+
+    // Silent background ping for mobile connection retention
+    async function pingBulb() {
+      if (isSending) return;
+      const proxyBase = getProxyBase();
+      if (proxyBase && proxyBase.startsWith('https://')) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 3500);
+          const res = await fetch(`${proxyBase}/api/status`, {
+            headers: { 'ngrok-skip-browser-warning': 'true' },
+            cache: 'no-store',
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+          if (res.ok) reportSuccess(); else reportFailure();
+        } catch (e) {
+          reportFailure();
+        }
+      }
+    }
+
+    // Ping every 7 seconds to keep HTTP tunnel hot
+    setInterval(pingBulb, 7000);
+
+    // Auto-reconnect immediately when phone wakes up / app tab gains focus
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        pingBulb();
+      }
+    });
+    window.addEventListener('focus', () => {
+      pingBulb();
+    });
 
     // ─── MASTER CONTROLS ──────────────────────────────────────────────────────
     function toggleBulbPower() {
