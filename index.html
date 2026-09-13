@@ -3,29 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Lumina Studio • Luxury Smart Lighting</title>
+  <title>Lumina Studio • Liquid Ambient Suite</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#07080d">
+  <meta name="theme-color" content="#06070c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- GSAP CDN for silky physics and fluid transitions -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
     :root {
-      --bg-dark: #07080d;
-      --bg-card: rgba(18, 20, 29, 0.72);
-      --bg-card-elevated: rgba(28, 32, 48, 0.85);
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-accent: rgba(255, 255, 255, 0.18);
+      --bg-deep: #06070c;
+      --glass-surface: rgba(255, 255, 255, 0.04);
+      --glass-surface-hover: rgba(255, 255, 255, 0.08);
+      --glass-surface-active: rgba(255, 255, 255, 0.12);
+      --glass-specular: rgba(255, 255, 255, 0.22);
+      --glass-border: rgba(255, 255, 255, 0.09);
+      --glass-border-subtle: rgba(255, 255, 255, 0.05);
       --text-pure: #ffffff;
-      --text-muted: #8e95a5;
-      --accent-glow: rgba(139, 92, 246, 0.5);
+      --text-soft: #94a3b8;
+      --text-dim: #64748b;
       --active-hue: 260;
-      --active-sat: 100%;
-      --active-lum: 55%;
       --active-rgb: rgb(139, 92, 246);
+      --active-glow: rgba(139, 92, 246, 0.45);
       --spotify-green: #1db954;
+      --liquid-radius: 28px;
     }
 
     * {
@@ -38,7 +42,7 @@
 
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--bg-dark);
+      background-color: var(--bg-deep);
       color: var(--text-pure);
       min-height: 100vh;
       overflow-x: hidden;
@@ -48,41 +52,43 @@
       position: relative;
     }
 
-    .ambient-atmosphere {
+    /* Ambient Liquid Dynamic Mesh Canvas */
+    #ambientMeshCanvas {
       position: fixed;
-      top: -25vw;
-      left: -25vw;
-      width: 150vw;
-      height: 150vh;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       pointer-events: none;
       z-index: 0;
-      background: radial-gradient(circle at 50% 25%, var(--accent-glow) 0%, rgba(7, 8, 13, 0.8) 50%, var(--bg-dark) 85%);
-      filter: blur(100px);
-      transition: background 0.4s ease-out;
-      opacity: 0.9;
+      opacity: 0.85;
+      filter: blur(80px);
+      transition: opacity 0.5s ease;
     }
 
-    .noise-grain {
+    .noise-veil {
       position: fixed;
       inset: 0;
       pointer-events: none;
       z-index: 1;
-      opacity: 0.025;
-      background: radial-gradient(circle at 50% 50%, #fff 1px, transparent 1px);
-      background-size: 8px 8px;
+      opacity: 0.035;
+      background: radial-gradient(circle at 50% 50%, #ffffff 1px, transparent 1px);
+      background-size: 6px 6px;
     }
 
+    /* Container Shell */
     .studio-shell {
       position: relative;
       z-index: 2;
       width: 100%;
-      max-width: 500px;
-      padding: 20px 18px 90px 18px;
+      max-width: 490px;
+      padding: 24px 20px 100px 20px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 20px;
     }
 
+    /* SVG Icon base */
     .svg-icon {
       width: 18px;
       height: 18px;
@@ -99,50 +105,55 @@
     .svg-icon-sm { width: 14px; height: 14px; stroke-width: 2; }
     .svg-icon-lg { width: 22px; height: 22px; stroke-width: 1.8; }
 
+    /* Header with Liquid Specular Badge */
     .studio-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 4px 6px;
+      padding: 2px 4px;
     }
 
     .brand-group {
       display: flex;
       flex-direction: column;
+      gap: 2px;
     }
 
     .brand-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 26px;
+      font-size: 27px;
       font-weight: 700;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #ffffff 40%, #c4b5fd 100%);
+      letter-spacing: -0.6px;
+      background: linear-gradient(135deg, #ffffff 40%, rgba(255, 255, 255, 0.7) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 9px;
     }
 
     .connection-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       font-size: 11px;
-      font-weight: 500;
-      color: var(--text-muted);
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
+      font-weight: 600;
+      color: var(--text-soft);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-specular);
       border-radius: 20px;
-      padding: 4px 10px;
-      margin-top: 5px;
+      padding: 4px 11px;
+      margin-top: 4px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      backdrop-filter: blur(16px);
+      transition: all 0.25s ease;
+      width: fit-content;
     }
 
     .connection-pill:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.22);
     }
 
     .live-dot {
@@ -150,112 +161,128 @@
       height: 7px;
       border-radius: 50%;
       background: #10b981;
-      box-shadow: 0 0 8px #10b981;
-      animation: pulseLive 2s infinite ease-in-out;
+      box-shadow: 0 0 10px #10b981;
+      animation: livePulse 2.4s infinite ease-in-out;
     }
 
-    @keyframes pulseLive {
+    @keyframes livePulse {
       0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.3); opacity: 0.6; }
+      50% { transform: scale(1.35); opacity: 0.6; }
     }
 
+    /* Master Power Button (Liquid Glass Sphere) */
     .master-power-btn {
-      width: 52px;
-      height: 52px;
+      width: 54px;
+      height: 54px;
       border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      background: rgba(255, 255, 255, 0.06);
-      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-specular);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(24px) saturate(180%);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #94a3b8;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .master-power-btn:hover {
       transform: scale(1.08);
-      border-color: rgba(255, 255, 255, 0.35);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.3);
     }
 
     .master-power-btn.active {
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(99, 102, 241, 0.4));
-      border-color: #8b5cf6;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.35), rgba(99, 102, 241, 0.45));
+      border-color: rgba(167, 139, 250, 0.6);
+      border-top: 1px solid rgba(255, 255, 255, 0.5);
       color: #ffffff;
-      box-shadow: 0 0 25px rgba(139, 92, 246, 0.5), inset 0 0 15px rgba(139, 92, 246, 0.3);
+      box-shadow: 0 0 35px var(--active-glow), inset 0 1px 2px rgba(255, 255, 255, 0.4);
     }
 
     .master-power-btn svg { width: 22px; height: 22px; }
 
+    /* Centerpiece Aura Orb Stage */
     .orb-stage {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 10px 0 16px 0;
+      padding: 12px 0 16px 0;
       position: relative;
     }
 
     .aura-orb-container {
       position: relative;
-      width: 170px;
-      height: 170px;
+      width: 180px;
+      height: 180px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
     }
 
-    .aura-orb-ring {
+    .aura-orb-halo {
       position: absolute;
-      inset: -12px;
+      inset: -14px;
       border-radius: 50%;
-      border: 1px dashed rgba(255, 255, 255, 0.15);
-      animation: rotateRing 30s linear infinite;
+      border: 1px dashed rgba(255, 255, 255, 0.14);
+      animation: orbitSpin 36s linear infinite;
     }
 
-    @keyframes rotateRing { to { transform: rotate(360deg); } }
+    @keyframes orbitSpin { to { transform: rotate(360deg); } }
 
     .aura-orb-core {
-      width: 130px;
-      height: 130px;
+      width: 136px;
+      height: 136px;
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #ffffff 0%, var(--active-rgb) 45%, rgba(139, 92, 246, 0.8) 75%, rgba(15, 23, 42, 0.9) 100%);
-      box-shadow: 0 0 50px var(--accent-glow), 0 0 90px var(--accent-glow), inset 0 0 20px rgba(255, 255, 255, 0.6);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      background: radial-gradient(circle at 35% 32%, #ffffff 0%, var(--active-rgb) 46%, rgba(15, 23, 42, 0.95) 100%);
+      box-shadow: 0 0 60px var(--active-glow), 0 0 110px var(--active-glow), inset 0 0 25px rgba(255, 255, 255, 0.65);
       position: relative;
+      transition: box-shadow 0.4s ease;
     }
 
-    .aura-orb-container:hover .aura-orb-core { transform: scale(1.05); }
-    .aura-orb-container:active .aura-orb-core { transform: scale(0.96); }
+    .aura-glass-specular {
+      position: absolute;
+      top: 12px;
+      left: 20px;
+      width: 44px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.65), transparent);
+      transform: rotate(-30deg);
+      pointer-events: none;
+    }
 
     .aura-status-label {
-      margin-top: 14px;
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: -0.2px;
+      margin-top: 15px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
       color: var(--text-pure);
     }
 
     .aura-sublabel {
       font-size: 12px;
-      color: var(--text-muted);
+      color: var(--text-soft);
       margin-top: 3px;
       display: flex;
       align-items: center;
       gap: 5px;
     }
 
+    /* Mode Navigation Tabs (Liquid Glass Capsule) */
     .mode-tab-bar {
       display: flex;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      padding: 4px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-specular);
+      border-radius: 20px;
+      padding: 5px;
       gap: 4px;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(24px) saturate(180%);
       overflow-x: auto;
       scrollbar-width: none;
     }
@@ -267,12 +294,12 @@
       min-width: 80px;
       background: transparent;
       border: none;
-      color: var(--text-muted);
+      color: var(--text-soft);
       font-family: inherit;
       font-size: 12px;
       font-weight: 600;
       padding: 10px 8px;
-      border-radius: 12px;
+      border-radius: 15px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
@@ -288,21 +315,25 @@
     }
 
     .mode-tab.active {
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.11);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
       color: var(--text-pure);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.25);
     }
 
+    /* Studio Card Panel (Liquid Glass Card) */
     .studio-panel {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 24px;
-      padding: 20px;
-      backdrop-filter: blur(20px);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.015) 100%);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-specular);
+      border-radius: var(--liquid-radius);
+      padding: 22px 20px;
+      backdrop-filter: blur(32px) saturate(190%);
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      gap: 19px;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.12);
     }
 
     .panel-header {
@@ -323,14 +354,16 @@
 
     .panel-badge {
       font-size: 11px;
-      font-weight: 600;
-      padding: 4px 10px;
+      font-weight: 700;
+      padding: 4px 11px;
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.07);
-      color: var(--text-muted);
-      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.06);
+      color: #e2e8f0;
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-specular);
     }
 
+    /* Sliders */
     .slider-container {
       display: flex;
       flex-direction: column;
@@ -342,7 +375,7 @@
       justify-content: space-between;
       font-size: 12px;
       font-weight: 600;
-      color: var(--text-muted);
+      color: var(--text-soft);
     }
 
     .slider-val {
@@ -369,14 +402,14 @@
       height: 28px;
       border-radius: 50%;
       background: #ffffff;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6), 0 0 12px var(--accent-glow);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 14px var(--active-glow);
       cursor: pointer;
-      border: 2px solid rgba(255, 255, 255, 0.8);
+      border: 2px solid rgba(255, 255, 255, 0.9);
       transition: transform 0.15s ease;
     }
 
-    .touch-slider::-webkit-slider-thumb:hover { transform: scale(1.12); }
-    .touch-slider::-webkit-slider-thumb:active { transform: scale(1.22); }
+    .touch-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    .touch-slider::-webkit-slider-thumb:active { transform: scale(1.25); }
 
     .hue-spectrum-slider {
       background: linear-gradient(to right,
@@ -395,6 +428,7 @@
       border-radius: 8px;
     }
 
+    /* Grid & Cards */
     .mood-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -402,29 +436,31 @@
     }
 
     .mood-btn {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      padding: 10px 6px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-specular);
+      border-radius: 18px;
+      padding: 11px 6px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 7px;
-      transition: all 0.2s ease;
+      transition: all 0.22s ease;
       color: var(--text-pure);
     }
 
     .mood-btn:hover {
       background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.22);
       transform: translateY(-2px);
     }
 
     .mood-btn.active {
       border-color: #8b5cf6;
+      border-top: 1px solid rgba(255, 255, 255, 0.6);
       background: rgba(139, 92, 246, 0.25);
-      box-shadow: 0 0 16px rgba(139, 92, 246, 0.4);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.45);
       transform: translateY(-2px);
     }
 
@@ -432,24 +468,27 @@
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      border: 1.5px solid rgba(255, 255, 255, 0.4);
     }
 
     .mood-label {
       font-size: 11px;
       font-weight: 600;
-      color: #cbd5e1;
+      color: #e2e8f0;
     }
 
+    /* Circadian Pilot Banner */
     .circadian-card {
-      background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(245, 158, 11, 0.03));
-      border: 1px solid rgba(251, 191, 36, 0.2);
-      border-radius: 18px;
-      padding: 14px 16px;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.09), rgba(245, 158, 11, 0.03));
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      border-top: 1px solid rgba(251, 191, 36, 0.45);
+      border-radius: 20px;
+      padding: 15px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      backdrop-filter: blur(20px);
     }
 
     .circadian-info {
@@ -472,6 +511,7 @@
       color: #cbd5e1;
     }
 
+    /* Switch */
     .switch {
       position: relative;
       display: inline-block;
@@ -489,6 +529,7 @@
       background-color: rgba(255, 255, 255, 0.15);
       transition: .3s;
       border-radius: 24px;
+      border: 1px solid var(--glass-border);
     }
 
     .switch-slider:before {
@@ -496,26 +537,29 @@
       content: "";
       height: 18px;
       width: 18px;
-      left: 3px;
-      bottom: 3px;
+      left: 2px;
+      bottom: 2px;
       background-color: white;
       transition: .3s cubic-bezier(0.34, 1.56, 0.64, 1);
       border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
     }
 
     input:checked + .switch-slider { background-color: #f59e0b; }
     input:checked + .switch-slider.green { background-color: var(--spotify-green); }
     input:checked + .switch-slider:before { transform: translateX(20px); }
 
-    /* Spotify Live Sync Box */
+    /* Spotify Box */
     .spotify-box {
-      background: rgba(29, 185, 84, 0.06);
-      border: 1px solid rgba(29, 185, 84, 0.25);
-      border-radius: 20px;
-      padding: 16px;
+      background: linear-gradient(135deg, rgba(29, 185, 84, 0.08) 0%, rgba(29, 185, 84, 0.02) 100%);
+      border: 1px solid rgba(29, 185, 84, 0.3);
+      border-top: 1px solid rgba(29, 185, 84, 0.5);
+      border-radius: 22px;
+      padding: 17px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 13px;
+      backdrop-filter: blur(24px);
     }
 
     .spotify-header {
@@ -529,7 +573,7 @@
     .spotify-logo-tag {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       color: var(--spotify-green);
       font-weight: 700;
       font-size: 13px;
@@ -548,48 +592,50 @@
       font-family: inherit;
       font-weight: 700;
       font-size: 11px;
-      padding: 6px 12px;
+      padding: 7px 13px;
       border-radius: 20px;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 5px;
       transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
     }
 
     .spotify-btn:hover {
       background: #1ed760;
-      transform: scale(1.03);
+      transform: scale(1.04);
     }
 
     .spotify-btn.secondary {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.07);
       color: #ffffff;
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--glass-border);
+      box-shadow: none;
     }
 
     .spotify-btn.secondary:hover {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.14);
     }
 
     .spotify-player-track {
       display: flex;
       align-items: center;
       gap: 12px;
-      background: rgba(0, 0, 0, 0.35);
-      padding: 10px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(0, 0, 0, 0.4);
+      padding: 11px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
     }
 
     .album-art-wrap {
       position: relative;
-      width: 46px;
-      height: 46px;
-      border-radius: 8px;
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
       overflow: hidden;
       flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
     }
 
     .album-art-img {
@@ -630,22 +676,23 @@
       font-size: 10px;
       font-weight: 700;
       color: var(--spotify-green);
-      background: rgba(29, 185, 84, 0.15);
-      padding: 3px 8px;
-      border-radius: 10px;
-      transition: transform 0.15s ease;
+      background: rgba(29, 185, 84, 0.16);
+      padding: 4px 9px;
+      border-radius: 12px;
+      border: 1px solid rgba(29, 185, 84, 0.3);
     }
 
     .spotify-info-pill {
       font-size: 11px;
-      color: var(--text-muted);
+      color: var(--text-soft);
       line-height: 1.4;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 6px 10px;
-      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 7px 12px;
+      border-radius: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
     /* Living FX Cards */
@@ -656,27 +703,29 @@
     }
 
     .fx-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-subtle);
-      border-radius: 18px;
-      padding: 14px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-specular);
+      border-radius: 20px;
+      padding: 15px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      transition: all 0.25s ease;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .fx-card:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.2);
       transform: translateY(-2px);
     }
 
     .fx-card.active {
       border-color: #8b5cf6;
-      background: rgba(139, 92, 246, 0.2);
-      box-shadow: 0 0 20px rgba(139, 92, 246, 0.35);
+      border-top: 1px solid rgba(255, 255, 255, 0.6);
+      background: rgba(139, 92, 246, 0.22);
+      box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
       transform: translateY(-2px);
     }
 
@@ -687,9 +736,9 @@
     }
 
     .fx-icon-pill {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -699,18 +748,15 @@
     .fx-active-tag {
       font-size: 10px;
       font-weight: 700;
-      color: #a78bfa;
+      color: #c4b5fd;
       display: none;
     }
 
-    .fx-card.active .fx-active-tag {
-      display: inline-block;
-    }
-
+    .fx-card.active .fx-active-tag { display: inline-block; }
     .fx-title { font-size: 13px; font-weight: 700; }
-    .fx-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+    .fx-desc { font-size: 11px; color: var(--text-soft); line-height: 1.4; }
 
-    /* Flow & Timers */
+    /* Flow Timers */
     .timer-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -718,25 +764,27 @@
     }
 
     .timer-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      padding: 12px 10px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-specular);
+      border-radius: 18px;
+      padding: 13px 10px;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s ease;
     }
 
-    .timer-card:hover { background: rgba(255, 255, 255, 0.07); }
+    .timer-card:hover { background: rgba(255, 255, 255, 0.08); }
 
     .timer-card.active {
       border-color: #38bdf8;
-      background: rgba(56, 189, 248, 0.2);
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
+      border-top: 1px solid rgba(255, 255, 255, 0.6);
+      background: rgba(56, 189, 248, 0.22);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
     }
 
     .timer-number {
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 800;
       color: #fff;
       font-family: 'Outfit', sans-serif;
@@ -744,11 +792,12 @@
 
     .timer-label {
       font-size: 10px;
-      color: var(--text-muted);
-      margin-top: 2px;
+      color: var(--text-soft);
+      margin-top: 3px;
       font-weight: 600;
     }
 
+    /* Custom Scene Bar */
     .custom-scene-scroll {
       display: flex;
       gap: 8px;
@@ -761,37 +810,40 @@
 
     .custom-scene-chip {
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      border-radius: 14px;
-      padding: 6px 12px;
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-specular);
+      border-radius: 15px;
+      padding: 7px 13px;
       font-size: 12px;
       font-weight: 600;
       color: #fff;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       white-space: nowrap;
+      backdrop-filter: blur(16px);
       transition: all 0.2s ease;
     }
 
     .custom-scene-chip:hover {
       background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.25);
     }
 
     .action-btn-row {
       display: flex;
-      gap: 8px;
+      gap: 9px;
     }
 
     .secondary-btn {
       flex: 1;
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-specular);
       color: #fff;
-      padding: 10px 14px;
-      border-radius: 14px;
+      padding: 11px 14px;
+      border-radius: 16px;
       font-family: inherit;
       font-size: 12px;
       font-weight: 600;
@@ -799,8 +851,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      transition: all 0.2s ease;
+      gap: 7px;
+      backdrop-filter: blur(16px);
+      transition: all 0.22s ease;
     }
 
     .secondary-btn:hover {
@@ -810,7 +863,8 @@
 
     .secondary-btn.active {
       border-color: #8b5cf6;
-      background: rgba(139, 92, 246, 0.2);
+      border-top: 1px solid rgba(255, 255, 255, 0.5);
+      background: rgba(139, 92, 246, 0.25);
       color: #d8b4fe;
     }
 
@@ -819,8 +873,9 @@
 </head>
 <body>
 
-  <div class="ambient-atmosphere" id="ambientBg"></div>
-  <div class="noise-grain"></div>
+  <!-- Dynamic Fluid Ambient Canvas -->
+  <canvas id="ambientMeshCanvas"></canvas>
+  <div class="noise-veil"></div>
 
   <main class="studio-shell">
 
@@ -857,11 +912,13 @@
       </button>
     </header>
 
-    <!-- Centerpiece Aura Orb Stage -->
+    <!-- Centerpiece Liquid Glass Aura Orb -->
     <div class="orb-stage">
       <div class="aura-orb-container" onclick="cycleNextColor()">
-        <div class="aura-orb-ring"></div>
-        <div class="aura-orb-core" id="auraCore"></div>
+        <div class="aura-orb-halo"></div>
+        <div class="aura-orb-core" id="auraCore">
+          <div class="aura-glass-specular"></div>
+        </div>
       </div>
       <div class="aura-status-label" id="auraLabel">Neon Violet • 100%</div>
       <div class="aura-sublabel" id="auraSub">
@@ -870,7 +927,7 @@
       </div>
     </div>
 
-    <!-- Quick Custom Scenes Bar -->
+    <!-- Quick Custom Scenes -->
     <div class="custom-scene-scroll" id="customSceneContainer"></div>
 
     <!-- Mode Navigation Tabs -->
@@ -919,7 +976,7 @@
       <!-- Master Dimmer Slider -->
       <div class="slider-container">
         <div class="slider-title-row">
-          <span>Max Lumen Intensity</span>
+          <span>Max Lumen Output</span>
           <span class="slider-val" id="brightnessReadout">100%</span>
         </div>
         <input type="range" min="1" max="100" value="100" class="touch-slider" id="dimmerSlider" oninput="onDimmerSlide(this.value)">
@@ -964,7 +1021,7 @@
         </button>
       </div>
 
-      <!-- Action Row: Save Scene & Turbo -->
+      <!-- Action Row: Save Look & Turbo Boost -->
       <div class="action-btn-row">
         <button class="secondary-btn" onclick="saveCurrentScene()">
           <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -982,7 +1039,7 @@
       <div class="panel-header">
         <span class="panel-heading">
           <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          Tunable Daylight White
+          Tunable Natural White
         </span>
         <span class="panel-badge" id="kelvinReadout">3000K</span>
       </div>
@@ -1080,7 +1137,7 @@
         <!-- Connection Helper / Error Banner -->
         <div class="spotify-info-pill" id="spotifyRedirectHelper">
           <span>Redirect URI: <code id="spotifyRedirectUriText" style="color: #6ee7b7; user-select: all;"></code></span>
-          <button class="secondary-btn" style="flex: unset; padding: 2px 8px; font-size: 10px;" onclick="copyRedirectUri()">Copy</button>
+          <button class="secondary-btn" style="flex: unset; padding: 3px 9px; font-size: 10px;" onclick="copyRedirectUri()">Copy</button>
         </div>
 
         <!-- Currently Playing Card -->
@@ -1099,7 +1156,7 @@
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-          <span style="font-size: 11px; color: var(--text-muted);">Sync lighting to live Spotify playback & album colors</span>
+          <span style="font-size: 11px; color: var(--text-soft);">Sync lighting to live Spotify playback & album colors</span>
           <label class="switch">
             <input type="checkbox" id="spotifySyncToggle" class="green" onchange="toggleSpotifySync(this.checked)">
             <span class="switch-slider green"></span>
@@ -1113,12 +1170,12 @@
           <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
           Real-time Mic Beat Reactor
         </span>
-        <button class="secondary-btn" id="micToggleBtn" style="flex: unset; padding: 6px 12px;" onclick="toggleMicSync()">
+        <button class="secondary-btn" id="micToggleBtn" style="flex: unset; padding: 7px 14px;" onclick="toggleMicSync()">
           Start Mic Sync
         </button>
       </div>
 
-      <canvas id="musicCanvas" style="width: 100%; height: 60px; background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);"></canvas>
+      <canvas id="musicCanvas" style="width: 100%; height: 64px; background: rgba(0,0,0,0.45); border-radius: 14px; border: 1px solid var(--glass-border);"></canvas>
     </section>
 
     <!-- Living FX Panel -->
@@ -1134,7 +1191,7 @@
       <div class="fx-grid">
         <div class="fx-card" id="fxFireplace" onclick="activateLivingScene('fireplace')">
           <div class="fx-top-row">
-            <div class="fx-icon-pill" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">
+            <div class="fx-icon-pill" style="background: rgba(239, 68, 68, 0.22); color: #f87171;">
               <svg class="svg-icon" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
             </div>
             <span class="fx-active-tag">ACTIVE</span>
@@ -1145,7 +1202,7 @@
 
         <div class="fx-card" id="fxAurora" onclick="activateLivingScene('aurora')">
           <div class="fx-top-row">
-            <div class="fx-icon-pill" style="background: rgba(45, 212, 191, 0.2); color: #2dd4bf;">
+            <div class="fx-icon-pill" style="background: rgba(45, 212, 191, 0.22); color: #2dd4bf;">
               <svg class="svg-icon" viewBox="0 0 24 24"><path d="M2 12c5-4 9 4 14 0s4-4 6-2"/><path d="M2 17c5-4 9 4 14 0s4-4 6-2"/></svg>
             </div>
             <span class="fx-active-tag">ACTIVE</span>
@@ -1156,7 +1213,7 @@
 
         <div class="fx-card" id="fxBreathing" onclick="activateLivingScene('breathing')">
           <div class="fx-top-row">
-            <div class="fx-icon-pill" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">
+            <div class="fx-icon-pill" style="background: rgba(56, 189, 248, 0.22); color: #38bdf8;">
               <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
             </div>
             <span class="fx-active-tag">ACTIVE</span>
@@ -1167,7 +1224,7 @@
 
         <div class="fx-card" id="fxOcean" onclick="activateLivingScene('ocean')">
           <div class="fx-top-row">
-            <div class="fx-icon-pill" style="background: rgba(99, 102, 241, 0.2); color: #818cf8;">
+            <div class="fx-icon-pill" style="background: rgba(99, 102, 241, 0.22); color: #818cf8;">
               <svg class="svg-icon" viewBox="0 0 24 24"><path d="M2 18c3-2 6-2 9 0s6 2 9 0"/><path d="M2 12c3-2 6-2 9 0s6 2 9 0"/></svg>
             </div>
             <span class="fx-active-tag">ACTIVE</span>
@@ -1283,10 +1340,88 @@
       if ('vibrate' in navigator) {
         try {
           if (type === 'light') navigator.vibrate(8);
-          else if (type === 'medium') navigator.vibrate(20);
+          else if (type === 'medium') navigator.vibrate(22);
           else if (type === 'success') navigator.vibrate([10, 30, 15]);
         } catch (e) {}
       }
+    }
+
+    // ─── GSAP SPRING ANIMATION HELPERS ────────────────────────────────────────
+    function animateSpring(elem, scaleFrom = 0.92, scaleTo = 1) {
+      if (window.gsap && elem) {
+        gsap.fromTo(elem, 
+          { scale: scaleFrom }, 
+          { scale: scaleTo, duration: 0.45, ease: "elastic.out(1.1, 0.45)", overwrite: "auto" }
+        );
+      }
+    }
+
+    function animatePanelSwitch(panelElem) {
+      if (window.gsap && panelElem) {
+        gsap.fromTo(panelElem, 
+          { opacity: 0, y: 12, filter: "blur(10px)" }, 
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.35, ease: "power2.out", overwrite: "auto" }
+        );
+      }
+    }
+
+    // ─── FLUID AMBIENT MESH CANVAS (GSAP INTERPOLATED) ────────────────────────
+    const meshCanvas = document.getElementById('ambientMeshCanvas');
+    const meshCtx = meshCanvas ? meshCanvas.getContext('2d') : null;
+    let ambientColors = {
+      r: 139, g: 92, b: 246,
+      targetR: 139, targetG: 92, targetB: 246
+    };
+
+    function resizeMeshCanvas() {
+      if (!meshCanvas) return;
+      meshCanvas.width = window.innerWidth;
+      meshCanvas.height = window.innerHeight;
+      renderMeshFrame();
+    }
+    window.addEventListener('resize', resizeMeshCanvas);
+
+    function tweenAmbientToRgb(r, g, b) {
+      if (window.gsap) {
+        gsap.to(ambientColors, {
+          r: r, g: g, b: b,
+          duration: 0.6,
+          ease: "power2.out",
+          onUpdate: renderMeshFrame
+        });
+      } else {
+        ambientColors.r = r; ambientColors.g = g; ambientColors.b = b;
+        renderMeshFrame();
+      }
+    }
+
+    function renderMeshFrame() {
+      if (!meshCtx || !meshCanvas) return;
+      const w = meshCanvas.width;
+      const h = meshCanvas.height;
+      meshCtx.clearRect(0, 0, w, h);
+
+      if (!isBulbOn) {
+        const grad = meshCtx.createRadialGradient(w * 0.5, h * 0.3, 0, w * 0.5, h * 0.3, Math.max(w, h) * 0.7);
+        grad.addColorStop(0, 'rgba(15, 23, 42, 0.35)');
+        grad.addColorStop(1, '#06070c');
+        meshCtx.fillStyle = grad;
+        meshCtx.fillRect(0, 0, w, h);
+        return;
+      }
+
+      const r = Math.round(ambientColors.r);
+      const g = Math.round(ambientColors.g);
+      const b = Math.round(ambientColors.b);
+
+      const grad = meshCtx.createRadialGradient(w * 0.5, h * 0.28, 0, w * 0.5, h * 0.28, Math.max(w, h) * 0.75);
+      grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.55)`);
+      grad.addColorStop(0.45, `rgba(${r}, ${g}, ${b}, 0.18)`);
+      grad.addColorStop(0.75, 'rgba(6, 7, 12, 0.85)');
+      grad.addColorStop(1, '#06070c');
+
+      meshCtx.fillStyle = grad;
+      meshCtx.fillRect(0, 0, w, h);
     }
 
     // ─── CONCURRENCY & CONNECTION PIPELINE (WITH DEADLOCK WATCHDOG) ───────────
@@ -1379,7 +1514,7 @@
       const proxy = getProxyBase();
       if (isOnline) {
         dot.style.background = '#10b981';
-        dot.style.boxShadow = '0 0 8px #10b981';
+        dot.style.boxShadow = '0 0 10px #10b981';
         if (proxy && proxy.startsWith('https://')) {
           text.textContent = 'Adhy Bulb • Cloud Tunnel';
         } else {
@@ -1387,7 +1522,7 @@
         }
       } else {
         dot.style.background = '#ef4444';
-        dot.style.boxShadow = '0 0 8px #ef4444';
+        dot.style.boxShadow = '0 0 10px #ef4444';
         text.textContent = 'Adhy Bulb • Reconnecting...';
       }
     }
@@ -1396,11 +1531,7 @@
       triggerHaptic('medium');
       const current = getProxyBase() || BULB_IP;
       const input = prompt(
-        'Lumina Connection Settings:
-• Cloud: Enter ngrok HTTPS URL
-• Local: Enter Bulb IP (192.168.1.11)
-
-Current Endpoint:',
+        'Lumina Connection Settings:\n• Cloud: Enter ngrok HTTPS URL\n• Local: Enter Bulb IP (192.168.1.11)\n\nCurrent Endpoint:',
         current
       );
       if (input && input.trim()) {
@@ -1424,19 +1555,21 @@ Current Endpoint:',
       const btn = document.getElementById('masterPowerBtn');
       const core = document.getElementById('auraCore');
 
+      animateSpring(btn, 0.88, 1);
+
       if (isBulbOn) {
         btn.classList.add('active');
-        core.style.opacity = '1';
         sendCommand('Power On', 0);
         document.getElementById('auraLabel').textContent = `${document.getElementById('hueColorName').textContent} • ${currentDimmer}%`;
         document.getElementById('auraSub').textContent = 'RGBCCT Master Engine • Online';
+        if (window.gsap) gsap.to(core, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" });
       } else {
         btn.classList.remove('active');
-        core.style.opacity = '0.2';
         sendCommand('Power Off', 0);
         document.getElementById('auraLabel').textContent = 'Bulb Powered Off';
         document.getElementById('auraSub').textContent = 'Tap to Power On';
         stopLivingScene();
+        if (window.gsap) gsap.to(core, { opacity: 0.25, scale: 0.95, duration: 0.4, ease: "power2.out" });
       }
       refreshVisualAura();
     }
@@ -1444,6 +1577,7 @@ Current Endpoint:',
     function toggleTurboLumen() {
       triggerHaptic('success');
       const btn = document.getElementById('turboBtn');
+      animateSpring(btn, 0.92, 1);
       isTurboActive = !isTurboActive;
 
       if (isTurboActive) {
@@ -1477,7 +1611,7 @@ Current Endpoint:',
       if (!isBulbOn) {
         isBulbOn = true;
         document.getElementById('masterPowerBtn').classList.add('active');
-        document.getElementById('auraCore').style.opacity = '1';
+        if (window.gsap) gsap.to(document.getElementById('auraCore'), { opacity: 1, duration: 0.3 });
       }
 
       if (activeTab === 'white') {
@@ -1498,7 +1632,7 @@ Current Endpoint:',
       if (!isBulbOn) {
         isBulbOn = true;
         document.getElementById('masterPowerBtn').classList.add('active');
-        document.getElementById('auraCore').style.opacity = '1';
+        if (window.gsap) gsap.to(document.getElementById('auraCore'), { opacity: 1, duration: 0.3 });
       }
 
       sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 50);
@@ -1518,7 +1652,10 @@ Current Endpoint:',
 
       activeMoodName = name;
       clearActiveMoods();
-      if (btnElement) btnElement.classList.add('active');
+      if (btnElement) {
+        btnElement.classList.add('active');
+        animateSpring(btnElement, 0.9, 1);
+      }
 
       currentHue = hue;
       currentDimmer = bri;
@@ -1531,7 +1668,7 @@ Current Endpoint:',
       if (!isBulbOn) {
         isBulbOn = true;
         document.getElementById('masterPowerBtn').classList.add('active');
-        document.getElementById('auraCore').style.opacity = '1';
+        if (window.gsap) gsap.to(document.getElementById('auraCore'), { opacity: 1, duration: 0.3 });
       }
 
       sendCommand(`HsbColor ${hue},100,${bri}`, 0);
@@ -1554,7 +1691,7 @@ Current Endpoint:',
       if (!isBulbOn) {
         isBulbOn = true;
         document.getElementById('masterPowerBtn').classList.add('active');
-        document.getElementById('auraCore').style.opacity = '1';
+        if (window.gsap) gsap.to(document.getElementById('auraCore'), { opacity: 1, duration: 0.3 });
       }
 
       sendCommand(`CT ${currentCt}`, 60);
@@ -1574,7 +1711,10 @@ Current Endpoint:',
 
       activeCtValue = ct;
       clearActiveWhitePresets();
-      if (btnElement) btnElement.classList.add('active');
+      if (btnElement) {
+        btnElement.classList.add('active');
+        animateSpring(btnElement, 0.9, 1);
+      }
 
       currentCt = ct;
       document.getElementById('ctSlider').value = ct;
@@ -1584,7 +1724,7 @@ Current Endpoint:',
       if (!isBulbOn) {
         isBulbOn = true;
         document.getElementById('masterPowerBtn').classList.add('active');
-        document.getElementById('auraCore').style.opacity = '1';
+        if (window.gsap) gsap.to(document.getElementById('auraCore'), { opacity: 1, duration: 0.3 });
       }
 
       sendCommand(`CT ${ct}`, 0);
@@ -1601,13 +1741,27 @@ Current Endpoint:',
       activeTab = tab;
       document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
       const activeBtn = document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
-      if (activeBtn) activeBtn.classList.add('active');
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+        animateSpring(activeBtn, 0.92, 1);
+      }
 
-      document.getElementById('spectrumPanel').style.display = (tab === 'spectrum') ? 'flex' : 'none';
-      document.getElementById('whitePanel').style.display = (tab === 'white') ? 'flex' : 'none';
-      document.getElementById('musicPanel').style.display = (tab === 'music') ? 'flex' : 'none';
-      document.getElementById('livingPanel').style.display = (tab === 'living') ? 'flex' : 'none';
-      document.getElementById('flowPanel').style.display = (tab === 'flow') ? 'flex' : 'none';
+      const panels = {
+        spectrum: document.getElementById('spectrumPanel'),
+        white: document.getElementById('whitePanel'),
+        music: document.getElementById('musicPanel'),
+        living: document.getElementById('livingPanel'),
+        flow: document.getElementById('flowPanel')
+      };
+
+      Object.keys(panels).forEach(key => {
+        if (key === tab) {
+          panels[key].style.display = 'flex';
+          animatePanelSwitch(panels[key]);
+        } else {
+          panels[key].style.display = 'none';
+        }
+      });
 
       if (tab === 'white') {
         sendCommand(`CT ${currentCt}`, 0);
@@ -1619,34 +1773,41 @@ Current Endpoint:',
 
     function refreshVisualAura() {
       const core = document.getElementById('auraCore');
-      const bg = document.getElementById('ambientBg');
       const label = document.getElementById('auraLabel');
 
       if (!isBulbOn) {
-        core.style.background = '#1e293b';
-        core.style.boxShadow = 'none';
-        bg.style.background = 'radial-gradient(circle at 50% 25%, rgba(15,23,42,0.4) 0%, #07080d 80%)';
+        if (core) {
+          core.style.background = '#1e293b';
+          core.style.boxShadow = 'none';
+        }
+        tweenAmbientToRgb(15, 23, 42);
         return;
       }
 
       if (activeTab === 'white') {
         const kelvin = Math.round(1000000 / currentCt);
         const rgb = kelvinToRgb(kelvin);
-        core.style.background = `radial-gradient(circle at 35% 35%, #ffffff 0%, rgb(${rgb.r},${rgb.g},${rgb.b}) 55%, rgba(20,20,30,0.9) 100%)`;
-        core.style.boxShadow = `0 0 55px rgba(${rgb.r},${rgb.g},${rgb.b}, 0.55), 0 0 90px rgba(${rgb.r},${rgb.g},${rgb.b}, 0.25)`;
-        bg.style.background = `radial-gradient(circle at 50% 25%, rgba(${rgb.r},${rgb.g},${rgb.b}, 0.45) 0%, rgba(7,8,13,0.85) 55%, #07080d 85%)`;
+        if (core) {
+          core.style.background = `radial-gradient(circle at 35% 32%, #ffffff 0%, rgb(${rgb.r},${rgb.g},${rgb.b}) 55%, rgba(15,20,30,0.95) 100%)`;
+          core.style.boxShadow = `0 0 60px rgba(${rgb.r},${rgb.g},${rgb.b}, 0.6), 0 0 110px rgba(${rgb.r},${rgb.g},${rgb.b}, 0.3), inset 0 0 25px rgba(255,255,255,0.7)`;
+        }
+        tweenAmbientToRgb(rgb.r, rgb.g, rgb.b);
         label.textContent = `${kelvin}K • ${currentDimmer}%`;
       } else {
-        const rgbStr = hslToRgbString(currentHue, 100, 50);
-        core.style.background = `radial-gradient(circle at 35% 35%, #ffffff 0%, ${rgbStr} 50%, rgba(15,23,42,0.95) 100%)`;
-        core.style.boxShadow = `0 0 55px hsla(${currentHue}, 100%, 60%, 0.55), 0 0 95px hsla(${currentHue}, 100%, 50%, 0.3)`;
-        bg.style.background = `radial-gradient(circle at 50% 25%, hsla(${currentHue}, 100%, 50%, 0.45) 0%, rgba(7,8,13,0.85) 55%, #07080d 85%)`;
+        const rgb = hslToRgbValues(currentHue, 100, 50);
+        const rgbStr = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+        if (core) {
+          core.style.background = `radial-gradient(circle at 35% 32%, #ffffff 0%, ${rgbStr} 50%, rgba(15,23,42,0.95) 100%)`;
+          core.style.boxShadow = `0 0 60px hsla(${currentHue}, 100%, 60%, 0.6), 0 0 110px hsla(${currentHue}, 100%, 50%, 0.35), inset 0 0 25px rgba(255,255,255,0.7)`;
+        }
+        tweenAmbientToRgb(rgb.r, rgb.g, rgb.b);
         label.textContent = `${getHueName(currentHue)} • ${currentDimmer}%`;
       }
     }
 
     function cycleNextColor() {
       triggerHaptic('light');
+      animateSpring(document.getElementById('auraCore'), 0.94, 1);
       stopLivingScene();
       clearActiveMoods();
       currentHue = (currentHue + 45) % 360;
@@ -1692,7 +1853,7 @@ Current Endpoint:',
       }
 
       document.getElementById('circadianStatusText').textContent = `Active • ${phaseName}`;
-      applyWhitePreset(targetCt, Math.round(1000000 / targetCt), phaseName);
+      applyWhitePreset(targetCt, Math.round(1000000 / targetCt), phaseName, null);
       onDimmerSlide(targetBri);
     }
 
@@ -1783,7 +1944,6 @@ Current Endpoint:',
           document.getElementById('spotifySyncToggle').checked = true;
           toggleSpotifySync(true);
         } else {
-          // Token expired
           localStorage.removeItem('spotify_access_token');
           spotifyToken = null;
           document.getElementById('spotifyBtnText').textContent = 'Connect';
@@ -1846,10 +2006,11 @@ Current Endpoint:',
               }
             }
 
-            // Pulse badge
+            // Pulse badge with GSAP spring
             const indicator = document.getElementById('beatPulseIndicator');
-            indicator.style.transform = 'scale(1.18)';
-            setTimeout(() => indicator.style.transform = 'scale(1)', 220);
+            if (window.gsap) {
+              gsap.fromTo(indicator, { scale: 1.25 }, { scale: 1, duration: 0.35, ease: "elastic.out(1, 0.4)" });
+            }
 
             if (track.id !== lastTrackId) {
               lastTrackId = track.id;
@@ -1921,13 +2082,16 @@ Current Endpoint:',
       activeLivingScene = scene;
       document.querySelectorAll('.fx-card').forEach(c => c.classList.remove('active'));
       const activeCard = document.getElementById(`fx${scene.charAt(0).toUpperCase() + scene.slice(1)}`);
-      if (activeCard) activeCard.classList.add('active');
+      if (activeCard) {
+        activeCard.classList.add('active');
+        animateSpring(activeCard, 0.94, 1);
+      }
       document.getElementById('livingBadge').textContent = 'Playing (Tap to Stop)';
 
       if (!isBulbOn) {
         isBulbOn = true;
         document.getElementById('masterPowerBtn').classList.add('active');
-        document.getElementById('auraCore').style.opacity = '1';
+        if (window.gsap) gsap.to(document.getElementById('auraCore'), { opacity: 1, duration: 0.3 });
       }
 
       if (scene === 'fireplace') {
@@ -2005,7 +2169,11 @@ Current Endpoint:',
 
       stopTimers();
       activeTimerType = timerKey;
-      document.getElementById(`timerPomo${minutes}`).classList.add('active');
+      const card = document.getElementById(`timerPomo${minutes}`);
+      if (card) {
+        card.classList.add('active');
+        animateSpring(card, 0.92, 1);
+      }
 
       applyWhitePreset(200, 5000, 'Focus Daylight', null);
       onDimmerSlide(100);
@@ -2034,7 +2202,11 @@ Current Endpoint:',
 
       stopTimers();
       activeTimerType = timerKey;
-      document.getElementById(`timerDrift${minutes}`).classList.add('active');
+      const card = document.getElementById(`timerDrift${minutes}`);
+      if (card) {
+        card.classList.add('active');
+        animateSpring(card, 0.92, 1);
+      }
 
       applyWhitePreset(450, 2200, 'Night Drift', null);
       let steps = minutes;
@@ -2132,6 +2304,8 @@ Current Endpoint:',
     async function toggleMicSync() {
       triggerHaptic('medium');
       const btn = document.getElementById('micToggleBtn');
+      animateSpring(btn, 0.92, 1);
+
       if (isMicSyncing) {
         isMicSyncing = false;
         btn.textContent = 'Start Mic Sync';
@@ -2176,7 +2350,7 @@ Current Endpoint:',
         for (let i = 0; i < bufferLength; i++) {
           if (i < 6) bass += dataArray[i];
           const barHeight = (dataArray[i] / 255) * canvas.height;
-          ctx.fillStyle = `hsl(${(i / bufferLength) * 360}, 100%, 50%)`;
+          ctx.fillStyle = `hsl(${(i / bufferLength) * 360}, 100%, 55%)`;
           ctx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
           x += barWidth;
         }
@@ -2212,12 +2386,16 @@ Current Endpoint:',
       return 'Crisp Arctic';
     }
 
-    function hslToRgbString(h, s, l) {
+    function hslToRgbValues(h, s, l) {
       s /= 100; l /= 100;
       const k = n => (n + h / 30) % 12;
       const a = s * Math.min(l, 1 - l);
       const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-      return `rgb(${Math.round(255 * f(0))}, ${Math.round(255 * f(8))}, ${Math.round(255 * f(4))})`;
+      return {
+        r: Math.round(255 * f(0)),
+        g: Math.round(255 * f(8)),
+        b: Math.round(255 * f(4))
+      };
     }
 
     function rgbToHsl(r, g, b) {
@@ -2255,12 +2433,24 @@ Current Endpoint:',
 
     // ─── INITIALIZATION ───────────────────────────────────────────────────────
     window.addEventListener('DOMContentLoaded', () => {
+      resizeMeshCanvas();
       checkSpotifyOAuthReturn();
       renderCustomScenes();
 
       if (isCircadianActive) {
         document.getElementById('circadianToggle').checked = true;
         toggleCircadian(true);
+      }
+
+      // Initial GSAP intro stagger
+      if (window.gsap) {
+        gsap.from(".studio-header, .orb-stage, .mode-tab-bar, .studio-panel", {
+          opacity: 0,
+          y: 20,
+          duration: 0.7,
+          stagger: 0.08,
+          ease: "power3.out"
+        });
       }
 
       const proxy = getProxyBase();
