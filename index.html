@@ -2610,16 +2610,19 @@
 
     function getCandidateEndpoints() {
       const candidates = [];
+      const isHttps = window.location.protocol === 'https:';
       const saved = localStorage.getItem('lumina_proxy_url');
       if (saved && (saved.startsWith('http://') || saved.startsWith('https://'))) {
-        candidates.push(saved.replace(/\/$/, ''));
+        if (!isHttps || saved.startsWith('https://')) {
+          candidates.push(saved.replace(/\/$/, ''));
+        }
       }
       if (window.location.origin && window.location.origin !== 'null' && !window.location.protocol.startsWith('file')) {
         candidates.push(window.location.origin.replace(/\/$/, ''));
       }
       candidates.push(DEFAULT_NGROK_URL);
-      candidates.push(LOCAL_LAN_URL);
-      if (window.location.protocol === 'http:') {
+      if (!isHttps) {
+        candidates.push(LOCAL_LAN_URL);
         candidates.push('http://127.0.0.1:7070');
         candidates.push('http://localhost:7070');
       }
