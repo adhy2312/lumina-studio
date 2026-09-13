@@ -2603,20 +2603,44 @@
     let isCircadianActive = localStorage.getItem('lumina_circadian') === 'true';
     let circadianInterval = null;
 
-    // Active ngrok tunnel
+    // Active ngrok tunnel & local endpoints
     const DEFAULT_NGROK_URL = 'https://epidermis-coliseum-masses.ngrok-free.dev';
+    const LOCAL_LAN_URL = 'http://192.168.1.9:7070';
+    let activeApiBase = null;
 
-    // Universal API base resolver:
-    // Seamlessly works whether accessing via ngrok, local network IP (192.168.1.9:7070), or localhost!
-    function getApiBase() {
+    function getCandidateEndpoints() {
+      const candidates = [];
       const saved = localStorage.getItem('lumina_proxy_url');
       if (saved && (saved.startsWith('http://') || saved.startsWith('https://'))) {
-        return saved.replace(/\/$/, '');
+        candidates.push(saved.replace(/\/$/, ''));
       }
       if (window.location.origin && window.location.origin !== 'null' && !window.location.protocol.startsWith('file')) {
-        return window.location.origin;
+        candidates.push(window.location.origin.replace(/\/$/, ''));
       }
-      return DEFAULT_NGROK_URL;
+      candidates.push(DEFAULT_NGROK_URL);
+      candidates.push(LOCAL_LAN_URL);
+      if (window.location.protocol === 'http:') {
+        candidates.push('http://127.0.0.1:7070');
+        candidates.push('http://localhost:7070');
+      }
+      // Return deduplicated array
+      return [...new Set(candidates)];
+    }
+
+    // Universal API base resolver with cached active endpoint
+    function getApiBase() {
+      if (activeApiBase) return activeApiBase;
+      const saved = localStorage.getItem('lumina_proxy_url');
+      if (saved && (saved.startsWith('http://') || saved.startsWith('https://'))) {
+        activeApiBase = saved.replace(/\/$/, '');
+        return activeApiBase;
+      }
+      if (window.location.origin && window.location.origin !== 'null' && !window.location.protocol.startsWith('file')) {
+        activeApiBase = window.location.origin.replace(/\/$/, '');
+        return activeApiBase;
+      }
+      activeApiBase = DEFAULT_NGROK_URL;
+      return activeApiBase;
     }
 
     function isLocalHost() {
@@ -2755,24 +2779,73 @@
     let watchdogTimer = null;
     let lastSuccessTime = Date.now();
     let heartbeatTimeoutId = null;
+    let isFailoverProbing = false;
 
-    function reportSuccess() {
+    function reportSuccess(endpoint = null) {
       consecutiveFailures = 0;
       lastSuccessTime = Date.now();
+      if (endpoint && endpoint !== activeApiBase) {
+        activeApiBase = endpoint;
+      }
       updateLiveStatus(true);
     }
 
     function reportFailure() {
-      // 3-second blip grace period
+      // 5-second grace window prevents transient mobile carrier jitter from flickering the UI
       const msSinceSuccess = Date.now() - lastSuccessTime;
-      if (msSinceSuccess < 3000) return;
+      if (msSinceSuccess < 5000) return;
       consecutiveFailures++;
-      if (consecutiveFailures >= 3) {
+
+      // Automatically probe alternative candidate endpoints on 2 consecutive glitches
+      if (consecutiveFailures >= 2 && !isFailoverProbing) {
+        probeAndSwitchEndpoint();
+      }
+
+      // Only display "Reconnecting..." if sustained 4 consecutive failures occur
+      if (consecutiveFailures >= 4) {
         updateLiveStatus(false);
       }
     }
 
-    function sendCommand(cmd, debounceMs = 60) {
+    // High-speed parallel endpoint race: whichever responds first becomes the active API base!
+    async function probeAndSwitchEndpoint() {
+      if (isFailoverProbing) return;
+      isFailoverProbing = true;
+      const candidates = getCandidateEndpoints();
+      const probes = candidates.map(async (base) => {
+        const c = new AbortController();
+        const t = setTimeout(() => c.abort(), 2800);
+        try {
+          const res = await fetch(`${base}/api/ping`, {
+            headers: { 'ngrok-skip-browser-warning': 'true' },
+            cache: 'no-store',
+            signal: c.signal
+          });
+          clearTimeout(t);
+          if (res.ok) {
+            return base;
+          }
+          throw new Error('Endpoint not ok');
+        } catch (e) {
+          clearTimeout(t);
+          throw e;
+        }
+      });
+
+      try {
+        const fastestEndpoint = await Promise.any(probes);
+        if (fastestEndpoint) {
+          activeApiBase = fastestEndpoint;
+          reportSuccess(fastestEndpoint);
+        }
+      } catch (err) {
+        // All endpoints currently unreachable
+      } finally {
+        isFailoverProbing = false;
+      }
+    }
+
+    function sendCommand(cmd, debounceMs = 50) {
       if (debounceMs > 0) {
         clearTimeout(commandDebounce);
         commandDebounce = setTimeout(() => enqueueCommand(cmd), debounceMs);
@@ -2792,7 +2865,7 @@
     async function _dispatch(cmd) {
       isSending = true;
 
-      // Unstick watchdog: 2.8s safety threshold
+      // Unstick watchdog: 4.5s safety threshold
       clearTimeout(watchdogTimer);
       watchdogTimer = setTimeout(() => {
         isSending = false;
@@ -2801,11 +2874,11 @@
           pendingCommand = null;
           _dispatch(next);
         }
-      }, 2800);
+      }, 4500);
 
-      const apiBase = getApiBase();
+      let apiBase = getApiBase();
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2400);
+      const timeoutId = setTimeout(() => controller.abort(), 4200);
 
       try {
         const url = `${apiBase}/api/cmd?c=${encodeURIComponent(cmd)}`;
@@ -2816,22 +2889,46 @@
         });
         clearTimeout(timeoutId);
         if (res.ok) {
-          reportSuccess();
+          reportSuccess(apiBase);
         } else {
           reportFailure();
         }
       } catch (e) {
-        // Direct browser image beacon fallback for direct LAN HTTP
-        if (window.location.protocol === 'http:' && !apiBase.includes(BULB_IP)) {
+        clearTimeout(timeoutId);
+        // Fast instant fallback retry if another candidate endpoint exists
+        const candidates = getCandidateEndpoints().filter(c => c !== apiBase);
+        let retried = false;
+        if (candidates.length > 0) {
           try {
-            const img = new Image();
-            img.src = `http://${BULB_IP}/cm?cmnd=${encodeURIComponent(cmd)}&_t=${Date.now()}`;
-            reportSuccess();
-          } catch (err) {
+            const fallbackBase = candidates[0];
+            const fbController = new AbortController();
+            const fbTimeout = setTimeout(() => fbController.abort(), 3000);
+            const fbRes = await fetch(`${fallbackBase}/api/cmd?c=${encodeURIComponent(cmd)}`, {
+              cache: 'no-store',
+              headers: { 'ngrok-skip-browser-warning': 'true' },
+              signal: fbController.signal
+            });
+            clearTimeout(fbTimeout);
+            if (fbRes.ok) {
+              activeApiBase = fallbackBase;
+              reportSuccess(fallbackBase);
+              retried = true;
+            }
+          } catch (fbErr) {}
+        }
+        if (!retried) {
+          // Direct browser image beacon fallback for direct LAN HTTP
+          if (window.location.protocol === 'http:' && !apiBase.includes(BULB_IP)) {
+            try {
+              const img = new Image();
+              img.src = `http://${BULB_IP}/cm?cmnd=${encodeURIComponent(cmd)}&_t=${Date.now()}`;
+              reportSuccess();
+            } catch (err) {
+              reportFailure();
+            }
+          } else {
             reportFailure();
           }
-        } else {
-          reportFailure();
         }
       } finally {
         clearTimeout(watchdogTimer);
@@ -4122,12 +4219,12 @@
       refreshVisualAura();
     });
 
-    // ─── SELF-HEALING PING HEARTBEAT ──────────────────────────────────────────
+    // ─── SELF-HEALING PING HEARTBEAT (RAPID & CONTINUOUS) ────────────────────
     async function doPing(isManual = false) {
       if (isSending && !isManual) return;
       const apiBase = getApiBase();
       const controller = new AbortController();
-      const tId = setTimeout(() => controller.abort(), 2600);
+      const tId = setTimeout(() => controller.abort(), 4200);
       try {
         const res = await fetch(`${apiBase}/api/ping`, {
           headers: { 'ngrok-skip-browser-warning': 'true' },
@@ -4136,7 +4233,7 @@
         });
         clearTimeout(tId);
         if (res.ok) {
-          reportSuccess();
+          reportSuccess(apiBase);
           if (isManual) showToast('Bridge Connected', 'Bulb bridge online & responsive', 'music', '#10b981');
         } else {
           reportFailure();
@@ -4144,40 +4241,59 @@
       } catch (e) {
         clearTimeout(tId);
         reportFailure();
-        if (isManual) showToast('Bridge Unreachable', 'Check WiFi or tap to configure endpoint', 'music', '#ef4444');
+        // If manual or struggling, trigger multi-endpoint race immediately
+        if (isManual || consecutiveFailures >= 2) {
+          probeAndSwitchEndpoint();
+        }
+        if (isManual) showToast('Bridge Reconnecting...', 'Probing alternative pathways', 'music', '#f59e0b');
       }
     }
 
-    function scheduleHeartbeat(delayMs = 12000) {
+    function scheduleHeartbeat(delayMs = 4500) {
       if (heartbeatTimeoutId) clearTimeout(heartbeatTimeoutId);
       heartbeatTimeoutId = setTimeout(() => {
         doPing().finally(() => {
-          // If offline/reconnecting: fast retry every 3.5s to restore immediately!
-          // If healthy: 15s to conserve phone battery.
-          const nextInterval = (consecutiveFailures >= 2) ? 3500 : 15000;
+          // If offline: hyper-rapid retry every 1.2s to restore instantly!
+          // If healthy: keep hot 4.5s pulse so mobile carrier NAT never drops the socket!
+          const nextInterval = (consecutiveFailures >= 2) ? 1200 : 4500;
           scheduleHeartbeat(nextInterval);
         });
       }, delayMs);
     }
 
-    // On phone tab or screen wake up: immediately re-ping
+    // Touch & interaction keep-alive: keeps TCP carrier link awake whenever phone is touched
+    let lastTouchKeepAlive = 0;
+    function keepConnectionWarm() {
+      const now = Date.now();
+      if (now - lastTouchKeepAlive > 3500 && now - lastSuccessTime > 3000) {
+        lastTouchKeepAlive = now;
+        doPing(false);
+      }
+    }
+    document.addEventListener('touchstart', keepConnectionWarm, { passive: true });
+    document.addEventListener('pointerdown', keepConnectionWarm, { passive: true });
+
+    // On phone tab or screen wake up: immediately restore connection in <150ms
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         consecutiveFailures = 0;
+        updateLiveStatus(true);
         setTimeout(() => {
           doPing(false);
-          scheduleHeartbeat(15000);
-        }, 400);
+          scheduleHeartbeat(4500);
+        }, 150);
       }
     });
 
     window.addEventListener('focus', () => {
       consecutiveFailures = 0;
-      setTimeout(() => doPing(false), 300);
+      updateLiveStatus(true);
+      setTimeout(() => doPing(false), 100);
     });
 
     window.addEventListener('online', () => {
       consecutiveFailures = 0;
+      updateLiveStatus(true);
       doPing(true);
     });
 

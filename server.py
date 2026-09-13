@@ -17,7 +17,7 @@ def execute_tasmota(cmd):
         'Referer': f'http://{BULB_IP}/'
     })
     try:
-        with urllib.request.urlopen(req, timeout=2.5) as r:
+        with urllib.request.urlopen(req, timeout=3.8) as r:
             return r.status, r.read()
     except Exception as e:
         return 500, json.dumps({"error": str(e)}).encode()
