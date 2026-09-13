@@ -420,6 +420,89 @@
       border-radius: 8px;
     }
 
+    /* ── Color Wheel / Bar Toggle Picker ── */
+    .color-picker-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .picker-view-toggle {
+      display: flex;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-specular);
+      border-radius: 14px;
+      padding: 4px;
+      gap: 4px;
+      align-self: flex-start;
+    }
+
+    .picker-view-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-soft);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .picker-view-btn.active {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.35);
+    }
+
+    /* Color Wheel Canvas */
+    .color-wheel-container {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      touch-action: none;
+    }
+
+    #colorWheelCanvas {
+      border-radius: 50%;
+      cursor: crosshair;
+      touch-action: none;
+      display: block;
+    }
+
+    .wheel-cursor {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.7), 0 0 0 1.5px rgba(0,0,0,0.4);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      transition: background 0.1s ease;
+      top: 50%;
+      left: 50%;
+    }
+
+    /* Saturation & Brightness sliders shown below wheel */
+    .wheel-sliders {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bar-picker-wrap {
+      width: 100%;
+    }
+
     .kelvin-slider {
       background: linear-gradient(to right,
         #ff8b26 0%, #ffbe76 35%, #fff1df 60%, #d8ebff 85%, #b2d7ff 100%
@@ -961,16 +1044,54 @@
           <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24M14.83 14.83l4.24 4.24M14.83 9.17l4.24-4.24M4.93 19.07l4.24-4.24"/></svg>
           Chroma Spectrum
         </span>
-        <span class="panel-badge" id="hueReadout">260°</span>
       </div>
 
-      <!-- Hue Slider -->
-      <div class="slider-container">
-        <div class="slider-title-row">
-          <span>Hue Angle</span>
-          <span class="slider-val" id="hueColorName">Violet</span>
+
+      <!-- Color Picker: Wheel / Bar Toggle -->
+      <div class="color-picker-wrap" id="colorPickerWrap">
+        <!-- Toggle Pill -->
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+          <div class="picker-view-toggle">
+            <button class="picker-view-btn active" id="pickerWheelBtn" onclick="setPickerMode('wheel')">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"/></svg>
+              Wheel
+            </button>
+            <button class="picker-view-btn" id="pickerBarBtn" onclick="setPickerMode('bar')">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="8" rx="4"/></svg>
+              Bar
+            </button>
+          </div>
+          <span class="panel-badge" id="hueReadout">260°</span>
         </div>
-        <input type="range" min="0" max="360" value="260" class="touch-slider hue-spectrum-slider" id="hueSlider" oninput="onHueSlide(this.value)">
+
+        <!-- Wheel Mode -->
+        <div id="wheelPickerSection">
+          <div class="color-wheel-container" id="wheelContainer">
+            <canvas id="colorWheelCanvas" width="220" height="220"></canvas>
+            <div class="wheel-cursor" id="wheelCursor"></div>
+          </div>
+          <!-- Brightness sub-slider under wheel -->
+          <div class="wheel-sliders">
+            <div class="slider-container" style="margin-top:6px;">
+              <div class="slider-title-row">
+                <span>Brightness</span>
+                <span class="slider-val" id="hueColorName">Violet</span>
+              </div>
+              <input type="range" min="1" max="100" value="100" class="touch-slider" id="hueSlider" oninput="onHueSlide(this.value)" style="display:none;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Bar Mode -->
+        <div id="barPickerSection" style="display:none; width:100%;" class="bar-picker-wrap">
+          <div class="slider-container">
+            <div class="slider-title-row">
+              <span>Hue Angle</span>
+              <span class="slider-val" id="hueColorNameBar">Violet</span>
+            </div>
+            <input type="range" min="0" max="360" value="260" class="touch-slider hue-spectrum-slider" id="hueSliderBar" oninput="onHueSlideBar(this.value)">
+          </div>
+        </div>
       </div>
 
       <!-- Master Dimmer Slider -->
@@ -1429,15 +1550,22 @@
     let pendingCommand = null;
     let consecutiveFailures = 0;
     let watchdogTimer = null;
+    let lastSuccessTime = Date.now();
+    let reconnectCooldown = false;
 
     function reportSuccess() {
       consecutiveFailures = 0;
+      lastSuccessTime = Date.now();
       updateLiveStatus(true);
     }
 
     function reportFailure() {
+      // Only count failure if we haven't had success very recently
+      // This prevents background-tab throttling from causing false disconnects
+      const msSinceSuccess = Date.now() - lastSuccessTime;
+      if (msSinceSuccess < 4000) return; // Grace period — ignore blips
       consecutiveFailures++;
-      if (consecutiveFailures >= 3) {
+      if (consecutiveFailures >= 5) { // Raise threshold from 3 → 5
         updateLiveStatus(false);
       }
     }
@@ -2491,6 +2619,7 @@
       resizeMeshCanvas();
       checkSpotifyOAuthReturn();
       renderCustomScenes();
+      initColorWheel();
 
       if (isCircadianActive) {
         document.getElementById('circadianToggle').checked = true;
@@ -2508,52 +2637,236 @@
         });
       }
 
+      // On startup: ping proxy once to check reachability (lightweight /api/ping, not /api/status)
       const proxy = getProxyBase();
-      const statusUrl = (proxy && proxy.startsWith('https://')) ? `${proxy}/api/status` : '/api/status';
-      const headers = (proxy && proxy.startsWith('https://')) ? { 'ngrok-skip-browser-warning': 'true' } : {};
-
-      fetch(statusUrl, { headers, cache: 'no-store' })
-        .then(r => r.json())
-        .then(data => {
-          if (data && data.StatusSTS) {
+      if (proxy && proxy.startsWith('https://')) {
+        fetch(`${proxy}/api/ping`, {
+          headers: { 'ngrok-skip-browser-warning': 'true' },
+          cache: 'no-store'
+        }).then(r => {
+          if (r.ok) {
             reportSuccess();
-            if (data.StatusSTS.Dimmer) {
-              currentDimmer = data.StatusSTS.Dimmer;
-              document.getElementById('dimmerSlider').value = currentDimmer;
-              document.getElementById('whiteDimmerSlider').value = currentDimmer;
-              document.getElementById('brightnessReadout').textContent = `${currentDimmer}%`;
-              document.getElementById('whiteBriReadout').textContent = `${currentDimmer}%`;
-            }
+            // If ping succeeds, fetch actual status to sync dimmer
+            return fetch(`${proxy}/api/status`, { headers: { 'ngrok-skip-browser-warning': 'true' }, cache: 'no-store' });
           }
-        })
-        .catch(() => reportSuccess());
+        }).then(r => r && r.json()).then(data => {
+          if (data && data.StatusSTS && data.StatusSTS.Dimmer) {
+            currentDimmer = data.StatusSTS.Dimmer;
+            document.getElementById('dimmerSlider').value = currentDimmer;
+            document.getElementById('whiteDimmerSlider').value = currentDimmer;
+            document.getElementById('brightnessReadout').textContent = `${currentDimmer}%`;
+            document.getElementById('whiteBriReadout').textContent = `${currentDimmer}%`;
+          }
+        }).catch(() => reportSuccess()); // Assume connected on startup; let heartbeat surface true failures
+      } else {
+        reportSuccess();
+      }
 
       refreshVisualAura();
     });
 
-    setInterval(() => {
-      if (!isSending) {
-        const proxy = getProxyBase();
-        if (proxy && proxy.startsWith('https://')) {
-          fetch(`${proxy}/api/status`, {
-            headers: { 'ngrok-skip-browser-warning': 'true' },
-            cache: 'no-store'
-          }).then(r => { if (r.ok) reportSuccess(); }).catch(() => {});
-        }
-      }
-    }, 8000);
+    // ─── LIGHTWEIGHT PING HEARTBEAT (does NOT hit bulb, just checks proxy is alive) ───
+    function doPing() {
+      if (isSending) return; // skip if actively sending
+      const proxy = getProxyBase();
+      if (!proxy || !proxy.startsWith('https://')) return;
+      const controller = new AbortController();
+      const tId = setTimeout(() => controller.abort(), 4000);
+      fetch(`${proxy}/api/ping`, {
+        headers: { 'ngrok-skip-browser-warning': 'true' },
+        cache: 'no-store',
+        signal: controller.signal
+      }).then(r => {
+        clearTimeout(tId);
+        if (r.ok) reportSuccess();
+      }).catch(() => {
+        clearTimeout(tId);
+        reportFailure(); // Only reportFailure here, NOT in silent background heartbeat
+      });
+    }
 
+    // Heartbeat every 12s (was 8s; less aggressive = fewer false disconnects)
+    setInterval(doPing, 12000);
+
+    // On tab becoming visible — wait 1.5s before pinging to let mobile radio wake up
+    // Avoids the classic: "comes back from background → immediate disconnect" flicker
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
-        const proxy = getProxyBase();
-        if (proxy && proxy.startsWith('https://')) {
-          fetch(`${proxy}/api/status`, {
-            headers: { 'ngrok-skip-browser-warning': 'true' },
-            cache: 'no-store'
-          }).then(r => { if (r.ok) reportSuccess(); }).catch(() => {});
-        }
+        // First restore to "reconnecting" visually if we were offline,
+        // then actually ping and resolve
+        setTimeout(() => {
+          consecutiveFailures = 0; // Reset on return from background (radio re-establishing)
+          lastSuccessTime = Date.now() - 1000; // Don't fail immediately
+          doPing();
+        }, 1500);
       }
     });
+
+    // ─── COLOR WHEEL ENGINE ───────────────────────────────────────────────────
+    let pickerMode = 'wheel'; // 'wheel' | 'bar'
+    let currentWheelSat = 100;
+
+    function setPickerMode(mode) {
+      pickerMode = mode;
+      document.getElementById('pickerWheelBtn').classList.toggle('active', mode === 'wheel');
+      document.getElementById('pickerBarBtn').classList.toggle('active', mode === 'bar');
+      document.getElementById('wheelPickerSection').style.display = mode === 'wheel' ? 'flex' : 'none';
+      document.getElementById('wheelPickerSection').style.flexDirection = 'column';
+      document.getElementById('wheelPickerSection').style.alignItems = 'center';
+      document.getElementById('barPickerSection').style.display = mode === 'bar' ? 'block' : 'none';
+      if (mode === 'wheel') {
+        drawColorWheel();
+        updateWheelCursor(currentHue, currentWheelSat);
+      }
+    }
+
+    function drawColorWheel() {
+      const canvas = document.getElementById('colorWheelCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const radius = cx - 2;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw HSL color wheel using small arc segments
+      for (let angle = 0; angle < 360; angle++) {
+        const startAngle = (angle - 1) * Math.PI / 180;
+        const endAngle = (angle + 1) * Math.PI / 180;
+        const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+        gradient.addColorStop(0, `hsl(${angle}, 0%, 100%)`);
+        gradient.addColorStop(0.15, `hsl(${angle}, 30%, 95%)`);
+        gradient.addColorStop(0.6, `hsl(${angle}, 100%, 60%)`);
+        gradient.addColorStop(1, `hsl(${angle}, 100%, 40%)`);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, radius, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      }
+
+      // Dark edge vignette
+      const vignette = ctx.createRadialGradient(cx, cy, radius * 0.72, cx, cy, radius);
+      vignette.addColorStop(0, 'rgba(0,0,0,0)');
+      vignette.addColorStop(1, 'rgba(0,0,0,0.22)');
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = vignette;
+      ctx.fill();
+
+      // Center white glow
+      const center = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius * 0.14);
+      center.addColorStop(0, 'rgba(255,255,255,0.95)');
+      center.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius * 0.14, 0, 2 * Math.PI);
+      ctx.fillStyle = center;
+      ctx.fill();
+    }
+
+    function getHueSatFromWheelEvent(e, canvas) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      // Scale from CSS pixels to canvas pixels
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const x = (clientX - rect.left) * scaleX - canvas.width / 2;
+      const y = (clientY - rect.top) * scaleY - canvas.height / 2;
+      const radius = canvas.width / 2 - 2;
+      const dist = Math.sqrt(x * x + y * y);
+      if (dist > radius) return null; // outside wheel
+      let angle = Math.atan2(y, x) * 180 / Math.PI;
+      if (angle < 0) angle += 360;
+      const sat = Math.min(100, Math.round((dist / radius) * 100));
+      return { hue: Math.round(angle), sat };
+    }
+
+    function updateWheelCursor(hue, sat) {
+      const canvas = document.getElementById('colorWheelCanvas');
+      const cursor = document.getElementById('wheelCursor');
+      if (!canvas || !cursor) return;
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const radius = cx - 2;
+      const angle = hue * Math.PI / 180;
+      const dist = (sat / 100) * radius;
+      const px = cx + dist * Math.cos(angle);
+      const py = cy + dist * Math.sin(angle);
+      // Convert canvas px to percentage within container
+      const pct_x = (px / canvas.width) * 100;
+      const pct_y = (py / canvas.height) * 100;
+      cursor.style.left = pct_x + '%';
+      cursor.style.top = pct_y + '%';
+      cursor.style.background = `hsl(${hue}, ${sat}%, 55%)`;
+    }
+
+    function handleWheelInteraction(e) {
+      e.preventDefault();
+      const canvas = document.getElementById('colorWheelCanvas');
+      const result = getHueSatFromWheelEvent(e, canvas);
+      if (!result) return;
+      currentHue = result.hue;
+      currentWheelSat = result.sat;
+      updateWheelCursor(currentHue, currentWheelSat);
+      document.getElementById('hueReadout').textContent = `${currentHue}°`;
+      document.getElementById('hueColorName').textContent = getHueName(currentHue);
+      document.getElementById('hueSlider').value = currentHue;
+      // Also sync bar mode slider
+      const barSlider = document.getElementById('hueSliderBar');
+      if (barSlider) { barSlider.value = currentHue; document.getElementById('hueColorNameBar').textContent = getHueName(currentHue); }
+
+      stopLivingScene();
+      clearActiveMoods();
+      if (!isBulbOn) {
+        isBulbOn = true;
+        document.getElementById('masterPowerBtn').classList.add('active');
+        if (window.gsap) gsap.to(document.getElementById('auraCore'), { opacity: 1, duration: 0.3 });
+      }
+      sendCommand(`HsbColor ${currentHue},${currentWheelSat},${currentDimmer}`, 50);
+      refreshVisualAura();
+    }
+
+    function onHueSlideBar(val) {
+      currentHue = parseInt(val);
+      document.getElementById('hueReadout').textContent = `${currentHue}°`;
+      document.getElementById('hueColorNameBar').textContent = getHueName(currentHue);
+      document.getElementById('hueSlider').value = currentHue;
+      stopLivingScene();
+      clearActiveMoods();
+      if (!isBulbOn) {
+        isBulbOn = true;
+        document.getElementById('masterPowerBtn').classList.add('active');
+        if (window.gsap) gsap.to(document.getElementById('auraCore'), { opacity: 1, duration: 0.3 });
+      }
+      sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 50);
+      refreshVisualAura();
+    }
+
+    function initColorWheel() {
+      const canvas = document.getElementById('colorWheelCanvas');
+      if (!canvas) return;
+
+      // Draw
+      drawColorWheel();
+      updateWheelCursor(currentHue, currentWheelSat);
+
+      // CSS: make canvas fill container
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+
+      let isDragging = false;
+
+      canvas.addEventListener('mousedown', e => { isDragging = true; handleWheelInteraction(e); });
+      window.addEventListener('mousemove', e => { if (isDragging) handleWheelInteraction(e); });
+      window.addEventListener('mouseup', () => { isDragging = false; });
+
+      canvas.addEventListener('touchstart', e => { isDragging = true; handleWheelInteraction(e); }, { passive: false });
+      window.addEventListener('touchmove', e => { if (isDragging) handleWheelInteraction(e); }, { passive: false });
+      window.addEventListener('touchend', () => { isDragging = false; });
+    }
   </script>
 </body>
 </html>
