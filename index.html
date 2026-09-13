@@ -1857,7 +1857,12 @@
       onDimmerSlide(targetBri);
     }
 
-    // ─── SPOTIFY WEB API: ROBUST AUTH & BEAT/PALETTE SYNC ─────────────────────
+    // ─── SPOTIFY WEB API: LIVE BEAT RHYTHM & PALETTE ENGINE ──────────────────
+    let spotifyRhythmTimer = null;
+    let currentBpm = 120;
+    let isRhythmBeatHigh = false;
+    let isTrackPlaying = false;
+
     function getSpotifyRedirectUri() {
       return window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
     }
@@ -1872,7 +1877,7 @@
 
     function enterSpotifyTokenManually() {
       triggerHaptic('medium');
-      const token = prompt('Paste your Spotify Access Token:\n(You can copy from Spotify Developer Console / Dashboard):');
+      const token = prompt('Paste your Spotify Access Token:\n(Copy from Spotify Developer Console / Dashboard):');
       if (token && token.trim()) {
         spotifyToken = token.trim().replace(/^Bearer\s+/i, '');
         localStorage.setItem('spotify_access_token', spotifyToken);
@@ -1885,6 +1890,8 @@
       localStorage.removeItem('spotify_access_token');
       spotifyToken = null;
       isSpotifySyncActive = false;
+      isTrackPlaying = false;
+      stopSpotifyRhythmEngine();
       document.getElementById('spotifySyncToggle').checked = false;
       document.getElementById('spotifyBtnText').textContent = 'Connect';
       document.getElementById('spotifyDisconnectBtn').style.display = 'none';
@@ -1896,7 +1903,7 @@
       triggerHaptic('light');
       const uri = getSpotifyRedirectUri();
       navigator.clipboard.writeText(uri).then(() => {
-        alert('Copied Redirect URI to clipboard:\n' + uri + '\n\nAdd this exact URL in your Spotify Developer App Dashboard under Redirect URIs.');
+        alert('Copied Redirect URI to clipboard:\n' + uri + '\n\nAdd this in your Spotify App Dashboard under Redirect URIs.');
       });
     }
 
@@ -1904,15 +1911,13 @@
       const redirectText = document.getElementById('spotifyRedirectUriText');
       if (redirectText) redirectText.textContent = getSpotifyRedirectUri();
 
-      // Check query params for errors
       const searchParams = new URLSearchParams(window.location.search);
       if (searchParams.has('error')) {
         const err = searchParams.get('error');
-        alert('Spotify Login Note: ' + err + '\n\nTip: You can also tap "Paste Token" to connect directly!');
+        alert('Spotify Login Note: ' + err + '\n\nTip: You can tap "Paste Token" to connect directly!');
         return;
       }
 
-      // Check hash for access_token
       const hash = window.location.hash;
       if (hash.includes('access_token=')) {
         const params = new URLSearchParams(hash.substring(1));
@@ -1959,7 +1964,12 @@
 
       if (enable) {
         if (!spotifyToken) {
-          initiateSpotifyAuth();
+          const choice = confirm('Connect Spotify:\n\nTap OK to log in via Spotify, or Cancel to paste a token.');
+          if (choice) {
+            initiateSpotifyAuth();
+          } else {
+            enterSpotifyTokenManually();
+          }
           return;
         }
         card.style.display = 'flex';
@@ -1968,6 +1978,8 @@
         spotifyPollInterval = setInterval(pollSpotifyPlayback, 2500);
       } else {
         card.style.display = 'none';
+        isTrackPlaying = false;
+        stopSpotifyRhythmEngine();
         if (spotifyPollInterval) clearInterval(spotifyPollInterval);
       }
     }
@@ -1986,6 +1998,8 @@
 
         if (res.status === 204 || res.status === 200) {
           if (res.status === 204) {
+            isTrackPlaying = false;
+            stopSpotifyRhythmEngine();
             document.getElementById('spotifyTrackTitle').textContent = 'Playback Paused';
             document.getElementById('spotifyTrackArtist').textContent = 'Start music on your Spotify app';
             return;
@@ -1994,6 +2008,7 @@
           const data = await res.json();
           if (data && data.item) {
             const track = data.item;
+            isTrackPlaying = (data.is_playing === true);
             document.getElementById('spotifyTrackTitle').textContent = track.name;
             document.getElementById('spotifyTrackArtist').textContent = track.artists.map(a => a.name).join(', ');
 
@@ -2006,15 +2021,13 @@
               }
             }
 
-            // Pulse badge with GSAP spring
-            const indicator = document.getElementById('beatPulseIndicator');
-            if (window.gsap) {
-              gsap.fromTo(indicator, { scale: 1.25 }, { scale: 1, duration: 0.35, ease: "elastic.out(1, 0.4)" });
-            }
-
             if (track.id !== lastTrackId) {
               lastTrackId = track.id;
               fetchSpotifyAudioAnalysis(track.id);
+            } else if (isTrackPlaying && !spotifyRhythmTimer) {
+              startSpotifyRhythmEngine(currentBpm);
+            } else if (!isTrackPlaying) {
+              stopSpotifyRhythmEngine();
             }
           }
         }
@@ -2046,8 +2059,7 @@
         currentHue = Math.round(hsl.h);
         document.getElementById('hueSlider').value = currentHue;
         document.getElementById('hueReadout').textContent = `${currentHue}°`;
-        document.getElementById('hueColorName').textContent = 'Album Harmony';
-        sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 0);
+        document.getElementById('hueColorName').textContent = 'Album Rhythm';
         refreshVisualAura();
       };
       img.src = imageUrl;
@@ -2061,11 +2073,54 @@
         if (res.ok) {
           const analysis = await res.json();
           if (analysis.track && analysis.track.tempo) {
-            const bpm = Math.round(analysis.track.tempo);
-            document.getElementById('audioModeBadge').textContent = `${bpm} BPM`;
+            currentBpm = Math.round(analysis.track.tempo);
+            document.getElementById('audioModeBadge').textContent = `${currentBpm} BPM Synced`;
+            if (isTrackPlaying) {
+              startSpotifyRhythmEngine(currentBpm);
+            }
           }
         }
-      } catch (e) {}
+      } catch (e) {
+        // Fallback default 120 BPM rhythm
+        if (isTrackPlaying) startSpotifyRhythmEngine(120);
+      }
+    }
+
+    // ─── PRECISION RHYTHMIC BEAT ENGINE ──────────────────────────────────────
+    function startSpotifyRhythmEngine(bpm) {
+      stopSpotifyRhythmEngine();
+      currentBpm = Math.max(70, Math.min(170, bpm || 120));
+      const pulseDurationMs = Math.round(60000 / currentBpm);
+
+      spotifyRhythmTimer = setInterval(() => {
+        if (!isSpotifySyncActive || !isBulbOn || !isTrackPlaying) return;
+
+        isRhythmBeatHigh = !isRhythmBeatHigh;
+        const core = document.getElementById('auraCore');
+        const badge = document.getElementById('beatPulseIndicator');
+
+        if (isRhythmBeatHigh) {
+          // Downbeat Kick: Max 100% lumen punch with spring scale
+          if (window.gsap && core) {
+            gsap.fromTo(core, { scale: 1.15 }, { scale: 1, duration: 0.28, ease: "power2.out" });
+          }
+          if (badge) badge.style.transform = 'scale(1.22)';
+          sendCommand(`HsbColor ${currentHue},100,100`, 0);
+        } else {
+          // Offbeat Groove dip to 65% for punchy dynamic contrast
+          if (badge) badge.style.transform = 'scale(1)';
+          sendCommand(`HsbColor ${currentHue},90,65`, 0);
+        }
+      }, pulseDurationMs);
+    }
+
+    function stopSpotifyRhythmEngine() {
+      if (spotifyRhythmTimer) {
+        clearInterval(spotifyRhythmTimer);
+        spotifyRhythmTimer = null;
+      }
+      const badge = document.getElementById('beatPulseIndicator');
+      if (badge) badge.style.transform = 'scale(1)';
     }
 
     // ─── LIVING DYNAMIC SCENES (WITH TOGGLE-OFF UNSELECT) ──────────────────────
