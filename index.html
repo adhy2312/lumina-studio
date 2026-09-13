@@ -861,15 +861,34 @@
     let lastBeatTime = 0;
 
     function editBulbIp() {
-      const newIp = prompt('Enter Bulb IP address (e.g. 192.168.1.11) or Local Proxy URL:', BULB_IP);
-      if (newIp && newIp.trim()) {
-        BULB_IP = newIp.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
+      const current = localStorage.getItem('lumina_proxy_url') || BULB_IP;
+      const input = prompt(
+        '🔌 Enter your ngrok HTTPS URL (for Vercel):\ne.g.  https://abc123.ngrok-free.app\n\nOR enter local IP if using local server:\ne.g.  192.168.1.11',
+        current
+      );
+      if (input && input.trim()) {
+        const val = input.trim().replace(/\/$/, '');
+        if (val.startsWith('https://') || val.startsWith('http://')) {
+          // Full URL — treat as HTTPS proxy (ngrok)
+          localStorage.setItem('lumina_proxy_url', val);
+          BULB_IP = val.replace(/^https?:\/\//, '');
+          document.getElementById('connStatus').textContent = `Adhy Bulb • ngrok proxy ✅`;
+        } else {
+          // Plain IP — local usage
+          BULB_IP = val;
+          localStorage.removeItem('lumina_proxy_url');
+          document.getElementById('connStatus').textContent = `Adhy Bulb • ${BULB_IP}`;
+        }
         localStorage.setItem('lumina_bulb_ip', BULB_IP);
-        document.getElementById('connStatus').textContent = `Adhy Bulb • ${BULB_IP}`;
       }
     }
 
-    // ─── COMMAND PIPELINE (PROXY & DIRECT IMAGE BEACON) ───────────────────────
+    // Returns saved proxy base URL if set, otherwise null
+    function getProxyBase() {
+      return localStorage.getItem('lumina_proxy_url') || null;
+    }
+
+    // ─── COMMAND PIPELINE ─────────────────────────────────────────────────────
     function sendCommand(cmd, debounceMs = 60) {
       if (debounceMs > 0) {
         clearTimeout(commandDebounce);
@@ -880,26 +899,32 @@
     }
 
     async function _dispatch(cmd) {
-      // 1. If running on local server (port 7070), use reliable local proxy
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')) {
+      const proxyBase = getProxyBase();
+
+      // 1. HTTPS Proxy (ngrok): fully works from Vercel — HTTPS to HTTPS, no mixed content
+      if (proxyBase && proxyBase.startsWith('https://')) {
         try {
-          const proxyUrl = `/api/cmd?c=${encodeURIComponent(cmd)}`;
-          const res = await fetch(proxyUrl, { cache: 'no-store' });
-          if (res.ok) {
-            updateLiveStatus(true);
-            return;
-          }
+          const url = `${proxyBase}/api/cmd?c=${encodeURIComponent(cmd)}`;
+          const res = await fetch(url, { cache: 'no-store' });
+          if (res.ok) { updateLiveStatus(true); return; }
+        } catch (e) {}
+        updateLiveStatus(false);
+        return;
+      }
+
+      // 2. Local server proxy (same LAN, port 7070)
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ||
+          window.location.hostname.startsWith('192.168.')) {
+        try {
+          const res = await fetch(`/api/cmd?c=${encodeURIComponent(cmd)}`, { cache: 'no-store' });
+          if (res.ok) { updateLiveStatus(true); return; }
         } catch (e) {}
       }
 
-      // 2. Direct HTTP Image Beacon: Works from Vercel (HTTPS) to Local IP (HTTP)
-      // Browsers fire Image GET requests to local network without CORS restrictions
-      try {
-        const directUrl = `http://${BULB_IP}/cm?cmnd=${encodeURIComponent(cmd)}&_t=${Date.now()}`;
-        const img = new Image();
-        img.src = directUrl;
-        updateLiveStatus(true);
-      } catch (err) {}
+      // 3. Image Beacon fallback (HTTP to HTTP only — works on local network, blocked on Vercel HTTPS)
+      const img = new Image();
+      img.src = `http://${BULB_IP}/cm?cmnd=${encodeURIComponent(cmd)}&_t=${Date.now()}`;
+      updateLiveStatus(true);
     }
 
     function updateLiveStatus(isOnline) {
