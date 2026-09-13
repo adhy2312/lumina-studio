@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Lumina Aura Studio • Smart Lighting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #07080d;
+      --bg-card: rgba(18, 20, 29, 0.72);
+      --bg-card-elevated: rgba(28, 32, 48, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(255, 255, 255, 0.16);
+      --text-pure: #ffffff;
+      --text-muted: #8e95a5;
+      --accent-glow: rgba(139, 92, 246, 0.5);
+      --active-hue: 260;
+      --active-sat: 100%;
+      --active-lum: 55%;
+      --active-rgb: rgb(139, 92, 246);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-pure);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Ambient Dynamic Reactive Atmosphere */
+    .ambient-atmosphere {
+      position: fixed;
+      top: -25vw;
+      left: -25vw;
+      width: 150vw;
+      height: 150vh;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 28%, var(--accent-glow) 0%, rgba(7, 8, 13, 0.75) 50%, var(--bg-dark) 85%);
+      filter: blur(100px);
+      transition: background 0.4s ease-out;
+      opacity: 0.85;
+    }
+
+    .noise-grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.025;
+      background: radial-gradient(circle at 50% 50%, #fff 1px, transparent 1px);
+      background-size: 8px 8px;
+    }
+
+    /* Main Container */
+    .studio-shell {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 480px;
+      padding: 24px 20px 80px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Header */
+    .studio-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 6px;
+    }
+
+    .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 40%, #c4b5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .connection-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 4px 10px;
+      margin-top: 4px;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulseLive 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseLive {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+    }
+
+    /* Master Power Button */
+    .master-power-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(16px);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .master-power-btn:hover {
+      transform: scale(1.08);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .master-power-btn:active {
+      transform: scale(0.94);
+    }
+
+    .master-power-btn.active {
+      background: #ffffff;
+      border-color: #ffffff;
+      box-shadow: 0 0 32px rgba(255, 255, 255, 0.8), 0 0 60px var(--accent-glow);
+    }
+
+    .master-power-btn svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--text-muted);
+      stroke-width: 2.2;
+      transition: stroke 0.3s ease;
+    }
+
+    .master-power-btn.active svg {
+      stroke: #0a0a0f;
+    }
+
+    /* Centerpiece Visualizer: Aura Orb */
+    .orb-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 0 16px 0;
+      position: relative;
+    }
+
+    .aura-orb-container {
+      width: 170px;
+      height: 170px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .aura-orb-core {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, var(--active-rgb) 45%, rgba(0, 0, 0, 0.6) 100%);
+      box-shadow: 0 0 45px var(--accent-glow), inset 0 0 20px rgba(255, 255, 255, 0.7);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      z-index: 2;
+    }
+
+    .aura-orb-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(255, 255, 255, 0.25);
+      animation: spinRing 25s linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes spinRing {
+      100% { transform: rotate(360deg); }
+    }
+
+    .aura-status-label {
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 14px;
+      letter-spacing: -0.2px;
+      color: #ffffff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+      text-align: center;
+    }
+
+    .aura-sublabel {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      text-align: center;
+    }
+
+    /* Navigation Mode Tabs */
+    .mode-tab-bar {
+      display: flex;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 4px;
+      backdrop-filter: blur(12px);
+      gap: 4px;
+    }
+
+    .mode-tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px 8px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .mode-tab.active {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Glass Panels */
+    .studio-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 22px;
+      backdrop-filter: blur(24px);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-heading {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+
+    .panel-badge {
+      font-size: 12px;
+      font-weight: 700;
+      color: #a78bfa;
+      background: rgba(167, 139, 250, 0.14);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-family: monospace;
+    }
+
+    /* Glass Sliders */
+    .slider-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .slider-title-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .slider-val {
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .touch-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 38px;
+      border-radius: 19px;
+      background: rgba(255, 255, 255, 0.07);
+      outline: none;
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+
+    .touch-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #ffffff;
+      cursor: pointer;
+      box-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+      border: 2px solid rgba(0, 0, 0, 0.2);
+      transition: transform 0.15s ease;
+    }
+
+    .touch-slider:active::-webkit-slider-thumb {
+      transform: scale(1.15);
+    }
+
+    /* Hue Wheel Slider Gradient */
+    .hue-spectrum-slider {
+      background: linear-gradient(to right, 
+        #ff0000 0%, #ffff00 17%, #00ff00 33%, 
+        #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%
+      );
+    }
+
+    /* Color Temp Slider Gradient */
+    .ct-spectrum-slider {
+      background: linear-gradient(to right, #9cd5ff 0%, #d8ecff 30%, #fff4e8 60%, #ffa54c 100%);
+    }
+
+    /* Curated Mood Grid */
+    .mood-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .mood-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .mood-item:hover {
+      background: rgba(255, 255, 255, 0.09);
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .mood-item:active {
+      transform: scale(0.95);
+    }
+
+    .mood-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .mood-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-pure);
+      text-align: center;
+    }
+
+    /* Quick Action Pills */
+    .quick-scenes-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .quick-scenes-row::-webkit-scrollbar { display: none; }
+
+    .quick-pill-btn {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      color: var(--text-pure);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+    }
+
+    .quick-pill-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Music / Spotify Reactive Visualizer */
+    .music-panel {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .music-viz-canvas {
+      width: 100%;
+      height: 80px;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      margin-top: 4px;
+    }
+
+    .music-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .spotify-hero-btn {
+      flex: 1;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: none;
+      background: linear-gradient(135deg, #1db954 0%, #178a3f 100%);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(29, 185, 84, 0.35);
+      transition: all 0.25s ease;
+    }
+
+    .spotify-hero-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(29, 185, 84, 0.5);
+    }
+
+    .spotify-hero-btn.recording {
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+      box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+      animation: micGlow 1.5s infinite;
+    }
+
+    @keyframes micGlow {
+      0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+      50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.85); }
+    }
+
+    .music-mode-chips {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-top: 4px;
+    }
+
+    .music-mode-chips::-webkit-scrollbar { display: none; }
+
+    .music-chip {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .music-chip.active {
+      background: rgba(29, 185, 84, 0.2);
+      border-color: #1db954;
+      color: #1db954;
+    }
+
+    /* Google Home Integration Explainer Accordion */
+    .guide-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 16px 20px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .guide-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .guide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .google-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #4285f4;
+      background: rgba(66, 133, 244, 0.14);
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+
+    .guide-content {
+      margin-top: 14px;
+      display: none;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 14px;
+    }
+
+    .guide-content.open {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .guide-step-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+
+    .guide-code {
+      font-family: monospace;
+      background: rgba(255, 255, 255, 0.12);
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #facc15;
+    }
+
+    /* Mobile Phone QR & Network Banner */
+    .network-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 10px 0;
+    }
+
+    .phone-link {
+      color: #a78bfa;
+      text-decoration: none;
+      font-weight: 600;
+      background: rgba(167, 139, 250, 0.1);
+      padding: 4px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(167, 139, 250, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Dynamic Reactive Atmosphere Backdrop -->
+  <div class="ambient-atmosphere" id="ambientBg"></div>
+  <div class="noise-grain"></div>
+
+  <!-- Studio Shell -->
+  <main class="studio-shell">
+
+    <!-- Header -->
+    <header class="studio-header">
+      <div>
+        <h1 class="brand-title">Lumina Studio</h1>
+        <div class="connection-pill" onclick="editBulbIp()" style="cursor: pointer;" title="Tap to configure bulb IP / Endpoint">
+          <span class="live-dot" id="liveIndicator"></span>
+          <span id="connStatus">Adhy Bulb • 192.168.1.11</span>
+          <span style="font-size: 10px; opacity: 0.6;">⚙️</span>
+        </div>
+      </div>
+
+      <button class="master-power-btn active" id="masterPowerBtn" onclick="toggleBulbPower()" title="Toggle Master Power">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 2v10M18.36 6.64a9 9 0 1 1-12.73 0" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Centerpiece Aura Orb -->
+    <div class="orb-stage">
+      <div class="aura-orb-container" onclick="cycleNextColor()">
+        <div class="aura-orb-ring"></div>
+        <div class="aura-orb-core" id="auraCore"></div>
+      </div>
+      <div class="aura-status-label" id="auraLabel">Neon Violet • 80%</div>
+      <div class="aura-sublabel" id="auraSub">5-Channel RGBCCT • Active</div>
+    </div>
+
+    <!-- Mode Tab Navigation -->
+    <nav class="mode-tab-bar">
+      <button class="mode-tab active" id="tabSpectrum" onclick="switchMode('spectrum')">
+        🎨 Spectrum
+      </button>
+      <button class="mode-tab" id="tabWhite" onclick="switchMode('white')">
+        ☀️ Tunable White
+      </button>
+      <button class="mode-tab" id="tabMusic" onclick="switchMode('music')">
+        🎵 Music Sync
+      </button>
+    </nav>
+
+    <!-- Spectrum Panel (RGB Colors & Moods) -->
+    <section class="studio-panel" id="spectrumPanel">
+      <div class="panel-header">
+        <span class="panel-heading">Chroma Spectrum</span>
+        <span class="panel-badge" id="hueReadout">260°</span>
+      </div>
+
+      <!-- Hue Slider -->
+      <div class="slider-container">
+        <div class="slider-title-row">
+          <span>Hue Wheel</span>
+          <span class="slider-val" id="hueColorName">Violet</span>
+        </div>
+        <input type="range" min="0" max="360" value="260" class="touch-slider hue-spectrum-slider" id="hueSlider" oninput="onHueSlide(this.value)">
+      </div>
+
+      <!-- Brightness / Dimmer Slider -->
+      <div class="slider-container">
+        <div class="slider-title-row">
+          <span>Intensity</span>
+          <span class="slider-val" id="brightnessReadout">80%</span>
+        </div>
+        <input type="range" min="1" max="100" value="80" class="touch-slider" id="dimmerSlider" oninput="onDimmerSlide(this.value)">
+      </div>
+
+      <!-- Curated Moods Grid -->
+      <div class="slider-title-row" style="margin-top: 4px;">
+        <span>Artistic Mood Palettes</span>
+      </div>
+      <div class="mood-grid">
+        <div class="mood-item" onclick="applyChromaPreset(280, 100, 90, 'Cyberpunk Neon')">
+          <div class="mood-swatch" style="background: linear-gradient(135deg, #f355da, #7000ff);"></div>
+          <span class="mood-title">Cyberpunk</span>
+        </div>
+        <div class="mood-item" onclick="applyChromaPreset(18, 100, 85, 'Sunset Tokyo')">
+          <div class="mood-swatch" style="background: linear-gradient(135deg, #ff416c, #ff4b2b);"></div>
+          <span class="mood-title">Sunset</span>
+        </div>
+        <div class="mood-item" onclick="applyChromaPreset(195, 100, 80, 'Nordic Aurora')">
+          <div class="mood-swatch" style="background: linear-gradient(135deg, #00c6ff, #0072ff);"></div>
+          <span class="mood-title">Aurora</span>
+        </div>
+        <div class="mood-item" onclick="applyChromaPreset(150, 100, 75, 'Emerald Glow')">
+          <div class="mood-swatch" style="background: linear-gradient(135deg, #11998e, #38ef7d);"></div>
+          <span class="mood-title">Emerald</span>
+        </div>
+        <div class="mood-item" onclick="applyChromaPreset(330, 100, 85, 'Velvet Lounge')">
+          <div class="mood-swatch" style="background: linear-gradient(135deg, #ff758c, #ff7eb3);"></div>
+          <span class="mood-title">Velvet</span>
+        </div>
+        <div class="mood-item" onclick="applyChromaPreset(220, 100, 70, 'Deep Oceanic')">
+          <div class="mood-swatch" style="background: linear-gradient(135deg, #2b5876, #4e4376);"></div>
+          <span class="mood-title">Ocean</span>
+        </div>
+        <div class="mood-item" onclick="applyChromaPreset(45, 100, 80, 'Warm Amber')">
+          <div class="mood-swatch" style="background: linear-gradient(135deg, #f7971e, #ffd200);"></div>
+          <span class="mood-title">Amber</span>
+        </div>
+        <div class="mood-item" onclick="startCandleFlicker()">
+          <div class="mood-swatch" style="background: radial-gradient(circle, #ffe066 30%, #ff6b4a 90%);"></div>
+          <span class="mood-title">Fireplace</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tunable White Panel (CCT Kelvin Control) -->
+    <section class="studio-panel" id="whitePanel" style="display: none;">
+      <div class="panel-header">
+        <span class="panel-heading">High-CRI Tunable White</span>
+        <span class="panel-badge" id="kelvinReadout">3000K</span>
+      </div>
+
+      <!-- Color Temperature Slider (153 mireds = 6500K, 500 mireds = 2000K) -->
+      <div class="slider-container">
+        <div class="slider-title-row">
+          <span>Temperature Scale</span>
+          <span class="slider-val" id="ctModeLabel">Warm Amber (3000K)</span>
+        </div>
+        <input type="range" min="153" max="500" value="333" class="touch-slider ct-spectrum-slider" id="ctSlider" oninput="onCtSlide(this.value)">
+      </div>
+
+      <!-- White Brightness Slider -->
+      <div class="slider-container">
+        <div class="slider-title-row">
+          <span>White Intensity</span>
+          <span class="slider-val" id="whiteDimmerReadout">80%</span>
+        </div>
+        <input type="range" min="1" max="100" value="80" class="touch-slider" id="whiteDimmerSlider" oninput="onDimmerSlide(this.value)">
+      </div>
+
+      <!-- White Presets -->
+      <div class="quick-scenes-row" style="margin-top: 6px;">
+        <button class="quick-pill-btn" onclick="applyWhitePreset(500, 30, '🕯️ Candle Cozy (2000K)')">🕯️ Candle (2000K)</button>
+        <button class="quick-pill-btn" onclick="applyWhitePreset(370, 75, '🛋️ Warm Living (2700K)')">🛋️ Living (2700K)</button>
+        <button class="quick-pill-btn" onclick="applyWhitePreset(250, 95, '📖 Reading Focus (4000K)')">📖 Reading (4000K)</button>
+        <button class="quick-pill-btn" onclick="applyWhitePreset(153, 100, '☀️ Crisp Daylight (6500K)')">☀️ Daylight (6500K)</button>
+      </div>
+    </section>
+
+    <!-- Music & Spotify Sound Reactive Panel -->
+    <section class="studio-panel music-panel" id="musicPanel" style="display: none;">
+      <div class="panel-header">
+        <span class="panel-heading">Music & Spotify Light Sync</span>
+        <span class="panel-badge" id="musicStatusBadge">Microphone / Audio</span>
+      </div>
+
+      <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+        Sync the bulb with songs playing on <strong>Spotify</strong>, YouTube, or your phone speakers! Real-time sound analysis syncs your room's light with beats and rhythm.
+      </p>
+
+      <!-- Live Waveform / Spectrum Visualizer Canvas -->
+      <canvas class="music-viz-canvas" id="musicCanvas"></canvas>
+
+      <!-- Music Mode Chips -->
+      <div class="music-mode-chips">
+        <div class="music-chip active" id="chipBass" onclick="setMusicMode('bass')">⚡ Club Bass Kick</div>
+        <div class="music-chip" id="chipLoFi" onclick="setMusicMode('lofi')">🌊 Lo-Fi Chill Flow</div>
+        <div class="music-chip" id="chipSpectrum" onclick="setMusicMode('spectrum')">🌈 Frequency Chroma</div>
+        <div class="music-chip" id="chipRave" onclick="setMusicMode('rave')">🎉 Party Dynamic</div>
+      </div>
+
+      <div class="music-controls">
+        <button class="spotify-hero-btn" id="startMusicBtn" onclick="toggleAudioSync()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.58 14.42c-.18.3-.57.39-.87.21-2.39-1.46-5.4-1.79-8.95-.98-.34.08-.68-.14-.76-.48-.08-.34.14-.68.48-.76 3.9-.89 7.24-.51 9.9 1.13.29.19.38.58.2.88zm1.22-2.73c-.23.38-.72.5-1.1.27-2.74-1.68-6.92-2.17-10.15-1.18-.42.13-.86-.11-.99-.53-.13-.42.11-.86.53-.99 3.7-1.13 8.32-.59 11.44 1.33.39.24.51.72.27 1.1zm.11-2.85C14.62 8.86 9.17 8.68 6.01 9.64c-.5.15-1.02-.14-1.17-.64-.15-.5.14-1.02.64-1.17 3.65-1.11 9.69-.9 13.5 1.37.45.27.6.86.33 1.31-.27.46-.86.61-1.4.33z"/>
+          </svg>
+          <span id="musicBtnText">Start Real-Time Music Sync</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Google Home Explainer Card -->
+    <div class="guide-card" onclick="toggleGuide()">
+      <div class="guide-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="google-badge">Google Home</span>
+          <span style="font-size: 13px; font-weight: 600;">16–22 Character Pairing Code Guide</span>
+        </div>
+        <span id="guideArrow" style="color: var(--text-muted); font-size: 12px;">▼</span>
+      </div>
+
+      <div class="guide-content" id="guideContent">
+        <div class="guide-step-box">
+          <strong style="color: #60a5fa;">Why is Google Home asking for a 16–22 character code?</strong><br>
+          When you tap <span class="guide-code">+ Add &gt; Set up device &gt; Matter-enabled device</span>, Google Home strictly looks for a <strong>Matter / Thread</strong> QR code or a numeric 16–22 digit pairing code. The ESP8266 does not natively support Matter.
+        </div>
+
+        <div class="guide-step-box">
+          <strong style="color: #34d399;">Method 1: If you have a Google Nest / Home Mini Speaker</strong><br>
+          Your bulb's built-in <strong>Philips Hue emulation</strong> is already active! Just say to your speaker:<br>
+          👉 <span class="guide-code">"Hey Google, discover devices"</span><br>
+          Your Google Home speaker will automatically detect your Adhy bulb on the local Wi-Fi without needing any code or cloud account!
+        </div>
+
+        <div class="guide-step-box">
+          <strong style="color: #f472b6;">Method 2: Use Matterbridge for Phone Only (Zero Speaker needed)</strong><br>
+          If you don't have a Google speaker and want to connect via your phone app, you can run <span class="guide-code">Matterbridge</span> on this PC with 1 click. It generates an authentic Matter QR code and 16-digit pin that Google Home on Android/iOS accepts instantly!
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone Access Footer -->
+    <footer class="network-footer">
+      <div>Open on your phone (same Wi-Fi):</div>
+      <a href="http://192.168.1.9:7070" target="_blank" class="phone-link">http://192.168.1.9:7070</a>
+      <div style="font-size: 11px; margin-top: 4px;">Custom Crafted for Adhithya • Lumina v2.0</div>
+    </footer>
+
+  </main>
+
+  <script>
+    // ─── STATE & CONFIGURATION ───────────────────────────────────────────────
+    let BULB_IP = localStorage.getItem('lumina_bulb_ip') || '192.168.1.11';
+    let isBulbOn = true;
+    let currentHue = 260;
+    let currentDimmer = 80;
+    let currentCt = 333;
+    let activeTab = 'spectrum';
+    let commandDebounce = null;
+    let candleInterval = null;
+
+    // Music Sync State
+    let audioCtx = null;
+    let analyser = null;
+    let micStream = null;
+    let isMusicSyncing = false;
+    let musicMode = 'bass';
+    let animationFrameId = null;
+    let lastBeatTime = 0;
+
+    function editBulbIp() {
+      const newIp = prompt('Enter Bulb IP address (e.g. 192.168.1.11) or Local Proxy URL:', BULB_IP);
+      if (newIp && newIp.trim()) {
+        BULB_IP = newIp.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
+        localStorage.setItem('lumina_bulb_ip', BULB_IP);
+        document.getElementById('connStatus').textContent = `Adhy Bulb • ${BULB_IP}`;
+      }
+    }
+
+    // ─── COMMAND PIPELINE (PROXY & DIRECT IMAGE BEACON) ───────────────────────
+    function sendCommand(cmd, debounceMs = 60) {
+      if (debounceMs > 0) {
+        clearTimeout(commandDebounce);
+        commandDebounce = setTimeout(() => _dispatch(cmd), debounceMs);
+      } else {
+        _dispatch(cmd);
+      }
+    }
+
+    async function _dispatch(cmd) {
+      // 1. If running on local server (port 7070), use reliable local proxy
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')) {
+        try {
+          const proxyUrl = `/api/cmd?c=${encodeURIComponent(cmd)}`;
+          const res = await fetch(proxyUrl, { cache: 'no-store' });
+          if (res.ok) {
+            updateLiveStatus(true);
+            return;
+          }
+        } catch (e) {}
+      }
+
+      // 2. Direct HTTP Image Beacon: Works from Vercel (HTTPS) to Local IP (HTTP)
+      // Browsers fire Image GET requests to local network without CORS restrictions
+      try {
+        const directUrl = `http://${BULB_IP}/cm?cmnd=${encodeURIComponent(cmd)}&_t=${Date.now()}`;
+        const img = new Image();
+        img.src = directUrl;
+        updateLiveStatus(true);
+      } catch (err) {}
+    }
+
+    function updateLiveStatus(isOnline) {
+      const dot = document.getElementById('liveIndicator');
+      const text = document.getElementById('connStatus');
+      if (isOnline) {
+        dot.style.background = '#10b981';
+        dot.style.boxShadow = '0 0 8px #10b981';
+        text.textContent = 'Adhy Bulb • 192.168.1.11 (Online)';
+      } else {
+        dot.style.background = '#ef4444';
+        dot.style.boxShadow = '0 0 8px #ef4444';
+        text.textContent = 'Adhy Bulb • Connecting...';
+      }
+    }
+
+    // ─── MASTER CONTROLS ──────────────────────────────────────────────────────
+    function toggleBulbPower() {
+      isBulbOn = !isBulbOn;
+      const btn = document.getElementById('masterPowerBtn');
+      const core = document.getElementById('auraCore');
+
+      if (isBulbOn) {
+        btn.classList.add('active');
+        core.style.opacity = '1';
+        sendCommand('Power On', 0);
+        document.getElementById('auraLabel').textContent = `${document.getElementById('hueColorName').textContent} • ${currentDimmer}%`;
+        document.getElementById('auraSub').textContent = '5-Channel RGBCCT • Active';
+      } else {
+        btn.classList.remove('active');
+        core.style.opacity = '0.15';
+        sendCommand('Power Off', 0);
+        document.getElementById('auraLabel').textContent = 'Bulb Powered Off';
+        document.getElementById('auraSub').textContent = 'Tap to Power On';
+      }
+      refreshVisualAura();
+    }
+
+    // ─── SPECTRUM & CHROMA CONTROLS ───────────────────────────────────────────
+    function onHueSlide(hue) {
+      stopCandleFlicker();
+      currentHue = parseInt(hue, 10);
+      document.getElementById('hueReadout').textContent = `${currentHue}°`;
+      
+      const name = getHueName(currentHue);
+      document.getElementById('hueColorName').textContent = name;
+      
+      // HsbColor: hue(0-360), sat(0-100), bri(0-100)
+      sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 70);
+      refreshVisualAura();
+    }
+
+    // ─── MATHEMATICALLY CALIBRATED RGBW TUNABLE WHITE ────────────────────────
+    function calculateWhiteRgbwHex(ctMireds, dimmerPct) {
+      // ctMireds: 153 (6500K Arctic Daylight) to 500 (2000K Deep Golden Warmth)
+      const t = Math.max(0, Math.min(1, (ctMireds - 153) / (500 - 153)));
+      
+      // Dynamic spectrum calibration:
+      // At t = 0 (Cool): Crisp Arctic Daylight with subtle blue undertone (W=255, B=48)
+      // At t = 1 (Warm): Deep Cozy Golden Amber (R=255, G=160, W=135)
+      const bBase = Math.round(48 * Math.max(0, 1 - t * 3.0));
+      const rBase = Math.round(255 * Math.pow(t, 1.1));
+      const gBase = Math.round(160 * Math.pow(t, 1.25));
+      const wBase = Math.round(255 - 120 * t);
+
+      // Scale by master brightness percentage
+      const scale = (dimmerPct / 100);
+      const r = Math.round(rBase * scale);
+      const g = Math.round(gBase * scale);
+      const b = Math.round(bBase * scale);
+      const w = Math.round(wBase * scale);
+
+      const toHex = (n) => Math.max(0, Math.min(255, n)).toString(16).padStart(2, '0').toUpperCase();
+      return `${toHex(r)}${toHex(g)}${toHex(b)}${toHex(w)}`;
+    }
+
+    function onDimmerSlide(dim) {
+      currentDimmer = parseInt(dim, 10);
+      document.getElementById('brightnessReadout').textContent = `${currentDimmer}%`;
+      document.getElementById('whiteDimmerReadout').textContent = `${currentDimmer}%`;
+      document.getElementById('dimmerSlider').value = currentDimmer;
+      document.getElementById('whiteDimmerSlider').value = currentDimmer;
+
+      if (activeTab === 'white') {
+        const hex = calculateWhiteRgbwHex(currentCt, currentDimmer);
+        sendCommand(`Color ${hex}`, 60);
+        refreshVisualWhiteAura(Math.round(1000000 / currentCt));
+      } else {
+        sendCommand(`Dimmer ${currentDimmer}`, 80);
+        refreshVisualAura();
+      }
+    }
+
+    function applyChromaPreset(hue, sat, bri, title) {
+      stopCandleFlicker();
+      currentHue = hue;
+      currentDimmer = bri;
+      document.getElementById('hueSlider').value = hue;
+      document.getElementById('dimmerSlider').value = bri;
+      document.getElementById('hueReadout').textContent = `${hue}°`;
+      document.getElementById('brightnessReadout').textContent = `${bri}%`;
+      document.getElementById('hueColorName').textContent = title;
+
+      sendCommand(`HsbColor ${hue},${sat},${bri}`, 0);
+      refreshVisualAura();
+    }
+
+    function cycleNextColor() {
+      if (!isBulbOn) {
+        toggleBulbPower();
+        return;
+      }
+      currentHue = (currentHue + 45) % 360;
+      document.getElementById('hueSlider').value = currentHue;
+      onHueSlide(currentHue);
+    }
+
+    // ─── TUNABLE WHITE CONTROLS ───────────────────────────────────────────────
+    function onCtSlide(ctVal) {
+      stopCandleFlicker();
+      currentCt = parseInt(ctVal, 10);
+      const kelvin = Math.round(1000000 / currentCt);
+      document.getElementById('kelvinReadout').textContent = `${kelvin}K`;
+      
+      let label = 'Warm Golden Amber';
+      if (kelvin > 5200) label = 'Crisp Daylight';
+      else if (kelvin > 4000) label = 'Neutral Daylight';
+      else if (kelvin > 2800) label = 'Warm Living';
+      else label = 'Cozy Golden Amber';
+      
+      document.getElementById('ctModeLabel').textContent = `${label} (${kelvin}K)`;
+      
+      const hex = calculateWhiteRgbwHex(currentCt, currentDimmer);
+      sendCommand(`Color ${hex}`, 60);
+      refreshVisualWhiteAura(kelvin);
+    }
+
+    function applyWhitePreset(mireds, bri, label) {
+      stopCandleFlicker();
+      currentCt = mireds;
+      currentDimmer = bri;
+      document.getElementById('ctSlider').value = mireds;
+      document.getElementById('whiteDimmerSlider').value = bri;
+      document.getElementById('dimmerSlider').value = bri;
+      document.getElementById('brightnessReadout').textContent = `${bri}%`;
+      document.getElementById('whiteDimmerReadout').textContent = `${bri}%`;
+      onCtSlide(mireds);
+    }
+
+    // ─── VISUAL ATMOSPHERE & AURA UPDATES ─────────────────────────────────────
+    function refreshVisualAura() {
+      if (!isBulbOn) return;
+      const rgbColor = `hsl(${currentHue}, 100%, 55%)`;
+      const glowColor = `hsla(${currentHue}, 100%, 55%, ${Math.max(0.15, currentDimmer / 100 * 0.7)})`;
+
+      document.documentElement.style.setProperty('--active-rgb', rgbColor);
+      document.documentElement.style.setProperty('--accent-glow', glowColor);
+
+      const auraCore = document.getElementById('auraCore');
+      auraCore.style.boxShadow = `0 0 ${25 + currentDimmer * 0.4}px ${glowColor}, inset 0 0 20px rgba(255, 255, 255, 0.8)`;
+      
+      document.getElementById('auraLabel').textContent = `${document.getElementById('hueColorName').textContent} • ${currentDimmer}%`;
+      document.getElementById('auraSub').textContent = `Hue: ${currentHue}° • Intensity: ${currentDimmer}%`;
+    }
+
+    function refreshVisualWhiteAura(kelvin) {
+      if (!isBulbOn) return;
+      let whiteRgb = 'rgb(255, 220, 180)';
+      if (kelvin > 5000) whiteRgb = 'rgb(200, 230, 255)';
+      else if (kelvin > 3800) whiteRgb = 'rgb(240, 245, 255)';
+      else if (kelvin < 2500) whiteRgb = 'rgb(255, 170, 90)';
+
+      const glowColor = `rgba(255, 200, 150, ${Math.max(0.15, currentDimmer / 100 * 0.7)})`;
+      document.documentElement.style.setProperty('--active-rgb', whiteRgb);
+      document.documentElement.style.setProperty('--accent-glow', glowColor);
+
+      document.getElementById('auraLabel').textContent = `${kelvin}K White • ${currentDimmer}%`;
+      document.getElementById('auraSub').textContent = `Color Temp: ${currentCt} Mireds`;
+    }
+
+    function getHueName(h) {
+      if (h < 15 || h >= 345) return 'Crimson Red';
+      if (h < 40) return 'Sunset Orange';
+      if (h < 70) return 'Amber Gold';
+      if (h < 150) return 'Emerald Green';
+      if (h < 190) return 'Cyan Teal';
+      if (h < 255) return 'Electric Blue';
+      if (h < 300) return 'Neon Violet';
+      return 'Magenta Pink';
+    }
+
+    // ─── CANDLE FLICKER SIMULATION ────────────────────────────────────────────
+    function startCandleFlicker() {
+      stopCandleFlicker();
+      document.getElementById('auraLabel').textContent = 'Fireplace Candlelight';
+      document.getElementById('auraSub').textContent = 'Organic Dynamic Flame';
+      sendCommand('HsbColor 30,95,65', 0);
+
+      candleInterval = setInterval(() => {
+        if (!isBulbOn) return;
+        const jitterBri = Math.floor(45 + Math.random() * 35);
+        const jitterHue = Math.floor(25 + Math.random() * 12);
+        sendCommand(`HsbColor ${jitterHue},95,${jitterBri}`, 0);
+        document.getElementById('auraCore').style.boxShadow = `0 0 ${jitterBri * 0.8}px rgba(255, 120, 30, 0.7)`;
+      }, 350);
+    }
+
+    function stopCandleFlicker() {
+      if (candleInterval) {
+        clearInterval(candleInterval);
+        candleInterval = null;
+      }
+    }
+
+    // ─── TAB NAVIGATION ───────────────────────────────────────────────────────
+    function switchMode(mode) {
+      activeTab = mode;
+      document.getElementById('tabSpectrum').classList.toggle('active', mode === 'spectrum');
+      document.getElementById('tabWhite').classList.toggle('active', mode === 'white');
+      document.getElementById('tabMusic').classList.toggle('active', mode === 'music');
+
+      document.getElementById('spectrumPanel').style.display = mode === 'spectrum' ? 'flex' : 'none';
+      document.getElementById('whitePanel').style.display = mode === 'white' ? 'flex' : 'none';
+      document.getElementById('musicPanel').style.display = mode === 'music' ? 'flex' : 'none';
+
+      if (mode === 'white') {
+        onCtSlide(currentCt);
+      } else if (mode === 'spectrum') {
+        refreshVisualAura();
+      }
+    }
+
+    // ─── REAL-TIME MUSIC & SPOTIFY SOUND REACTIVE SYNC ────────────────────────
+    async function toggleAudioSync() {
+      if (isMusicSyncing) {
+        stopAudioSync();
+      } else {
+        await startAudioSync();
+      }
+    }
+
+    async function startAudioSync() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        micStream = stream;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioCtx.createMediaStreamSource(stream);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 128;
+        source.connect(analyser);
+
+        isMusicSyncing = true;
+        const btn = document.getElementById('startMusicBtn');
+        btn.classList.add('recording');
+        document.getElementById('musicBtnText').textContent = '⏹ Stop Music Sync';
+        document.getElementById('musicStatusBadge').textContent = 'Live Audio Reacting';
+        document.getElementById('musicStatusBadge').style.color = '#10b981';
+
+        visualizeAndSyncMusic();
+      } catch (err) {
+        alert('Microphone access was denied or not supported in this browser. Please allow microphone permissions so the app can hear the music!');
+      }
+    }
+
+    function stopAudioSync() {
+      isMusicSyncing = false;
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      if (micStream) micStream.getTracks().forEach(t => t.stop());
+      if (audioCtx) audioCtx.close();
+
+      const btn = document.getElementById('startMusicBtn');
+      btn.classList.remove('recording');
+      document.getElementById('musicBtnText').textContent = 'Start Real-Time Music Sync';
+      document.getElementById('musicStatusBadge').textContent = 'Microphone / Audio';
+      document.getElementById('musicStatusBadge').style.color = '#a78bfa';
+
+      const canvas = document.getElementById('musicCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function setMusicMode(mode) {
+      musicMode = mode;
+      document.getElementById('chipBass').classList.toggle('active', mode === 'bass');
+      document.getElementById('chipLoFi').classList.toggle('active', mode === 'lofi');
+      document.getElementById('chipSpectrum').classList.toggle('active', mode === 'spectrum');
+      document.getElementById('chipRave').classList.toggle('active', mode === 'rave');
+    }
+
+    function visualizeAndSyncMusic() {
+      if (!isMusicSyncing || !analyser) return;
+
+      const canvas = document.getElementById('musicCanvas');
+      const ctx = canvas.getContext('2d');
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      canvas.width = canvas.clientWidth * window.devicePixelRatio;
+      canvas.height = canvas.clientHeight * window.devicePixelRatio;
+
+      let lastSentTime = 0;
+
+      function renderFrame(now) {
+        if (!isMusicSyncing) return;
+        animationFrameId = requestAnimationFrame(renderFrame);
+
+        analyser.getByteFrequencyData(dataArray);
+
+        // Draw audio spectrum wave
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const barWidth = (canvas.width / bufferLength) * 2;
+        let x = 0;
+
+        // Calculate Bass (bins 1-6) and Energy
+        let bassSum = 0;
+        let totalSum = 0;
+        for (let i = 0; i < bufferLength; i++) {
+          const val = dataArray[i];
+          totalSum += val;
+          if (i >= 1 && i <= 8) bassSum += val;
+
+          const barHeight = (val / 255) * canvas.height;
+          const hue = (i / bufferLength) * 360;
+          ctx.fillStyle = `hsl(${hue}, 100%, 55%)`;
+          ctx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
+          x += barWidth;
+        }
+
+        const avgBass = bassSum / 8;
+        const avgEnergy = totalSum / bufferLength;
+
+        // Throttle bulb network commands to avoid flooding (max 10 commands/sec)
+        if (now - lastSentTime > 110) {
+          lastSentTime = now;
+          handleMusicReaction(avgBass, avgEnergy, now);
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(renderFrame);
+    }
+
+    function handleMusicReaction(bass, energy, now) {
+      if (!isBulbOn) return;
+
+      if (musicMode === 'bass') {
+        // Kick drum / Bass drop detection
+        if (bass > 110 && (now - lastBeatTime > 260)) {
+          lastBeatTime = now;
+          currentHue = (currentHue + 75) % 360;
+          const bri = Math.min(100, Math.max(50, Math.round(bass / 2.2)));
+          sendCommand(`HsbColor ${currentHue},100,${bri}`, 0);
+          flashAura(currentHue, bri);
+        }
+      } else if (musicMode === 'lofi') {
+        // Smooth chill mood morphing
+        if (energy > 25) {
+          const shift = Math.round(energy / 15);
+          currentHue = (currentHue + shift) % 360;
+          const bri = Math.min(85, Math.max(20, Math.round(energy * 0.9)));
+          sendCommand(`HsbColor ${currentHue},90,${bri}`, 0);
+          refreshVisualAura();
+        }
+      } else if (musicMode === 'spectrum') {
+        // Bass = Red/Pink, Mids = Purple/Blue, Highs = Cyan
+        const targetHue = Math.min(360, Math.round((255 - bass) * 1.3));
+        const bri = Math.min(100, Math.max(30, Math.round(energy * 1.1)));
+        sendCommand(`HsbColor ${targetHue},100,${bri}`, 0);
+        currentHue = targetHue;
+        refreshVisualAura();
+      } else if (musicMode === 'rave') {
+        if (energy > 80) {
+          const randomHue = Math.floor(Math.random() * 360);
+          sendCommand(`HsbColor ${randomHue},100,100`, 0);
+          currentHue = randomHue;
+          flashAura(randomHue, 100);
+        }
+      }
+    }
+
+    function flashAura(hue, bri) {
+      const core = document.getElementById('auraCore');
+      core.style.boxShadow = `0 0 70px hsl(${hue}, 100%, 65%), inset 0 0 25px #ffffff`;
+      document.getElementById('auraLabel').textContent = `Beat Pulse • ${bri}%`;
+      setTimeout(refreshVisualAura, 120);
+    }
+
+    // ─── GOOGLE HOME GUIDE TOGGLE ─────────────────────────────────────────────
+    function toggleGuide() {
+      const content = document.getElementById('guideContent');
+      const arrow = document.getElementById('guideArrow');
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        arrow.textContent = '▼';
+      } else {
+        content.classList.add('open');
+        arrow.textContent = '▲';
+      }
+    }
+
+    // Initial Status Check
+    fetch('/api/status').then(r => r.json()).then(data => {
+      if (data && data.StatusSTS) {
+        updateLiveStatus(true);
+        if (data.StatusSTS.Dimmer) {
+          currentDimmer = data.StatusSTS.Dimmer;
+          document.getElementById('dimmerSlider').value = currentDimmer;
+          document.getElementById('brightnessReadout').textContent = `${currentDimmer}%`;
+        }
+      }
+    }).catch(() => {
+      updateLiveStatus(true); // default online
+    });
+
+    refreshVisualAura();
+  </script>
+</body>
+</html>
