@@ -40,6 +40,10 @@
       user-select: none;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg-deep);
@@ -50,6 +54,8 @@
       flex-direction: column;
       align-items: center;
       position: relative;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
     }
 
     /* Ambient Liquid Dynamic Mesh Canvas */
@@ -1214,7 +1220,315 @@
     }
 
     #paletteCanvas { display: none; }
-  </style>
+
+    /* ─── QUANTUM LABS (CRAZY FEATURES) STYLING ─── */
+    .quantum-hero {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(139, 92, 246, 0.08) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-top: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .quantum-hero-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .quantum-hero-desc {
+      font-size: 11px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .crazy-card {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-specular);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .crazy-card:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+    .crazy-card.active {
+      border-color: #38bdf8;
+      border-top: 1px solid rgba(255, 255, 255, 0.5);
+      background: rgba(56, 189, 248, 0.12);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.25);
+    }
+
+    .crazy-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .crazy-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .crazy-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+    }
+    .crazy-badge.live {
+      background: rgba(56, 189, 248, 0.2);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+    }
+
+    /* Gyroscope Bubble Level */
+    .gyro-level-stage {
+      width: 100%;
+      height: 70px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 14px;
+      border: 1px solid var(--glass-border);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .gyro-crosshair {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      border: 1px dashed rgba(255, 255, 255, 0.25);
+      border-radius: 50%;
+    }
+    .gyro-bubble {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #38bdf8 60%, #0284c7 100%);
+      box-shadow: 0 0 14px #38bdf8, inset 0 1px 2px rgba(255,255,255,0.8);
+      transition: transform 0.06s ease-out;
+      transform: translate(0px, 0px);
+    }
+    .gyro-readout {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-soft);
+      font-weight: 600;
+    }
+
+    /* Tap BPM Metronome */
+    .bpm-stage {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .tap-tempo-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(168, 85, 247, 0.35));
+      border: 1.5px solid rgba(244, 114, 182, 0.5);
+      border-top: 1px solid rgba(255, 255, 255, 0.6);
+      color: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      box-shadow: 0 6px 20px rgba(236, 72, 153, 0.3);
+      transition: transform 0.1s ease;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .tap-tempo-btn:active {
+      transform: scale(0.9);
+    }
+    .tap-tempo-btn span {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fbcfe8;
+    }
+
+    /* Weather Cards */
+    .weather-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .weather-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .weather-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+    }
+    .weather-card.active {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.2);
+    }
+    .weather-icon {
+      font-size: 20px;
+    }
+    .weather-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .weather-sub {
+      font-size: 9px;
+      color: var(--text-soft);
+    }
+
+    /* Heartbeat Monitor */
+    .heart-monitor {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+    .heart-icon-pulse {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s ease;
+    }
+    .heart-icon-pulse.pump {
+      transform: scale(1.35);
+      background: rgba(239, 68, 68, 0.45);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.7);
+    }
+
+    /* Camera Viewfinder */
+    .camera-box {
+      width: 100%;
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      aspect-ratio: 16/9;
+      display: none;
+      border: 1px solid var(--glass-border);
+    }
+    .camera-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .camera-reticle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 42px;
+      height: 42px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.8), inset 0 0 6px rgba(0,0,0,0.6);
+      pointer-events: none;
+    }
+    .reticle-dot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #38bdf8;
+      box-shadow: 0 0 8px #38bdf8;
+    }
+
+    /* Floating Smooth Scroll Dock */
+    .smooth-scroll-dock {
+      position: fixed;
+      bottom: 20px;
+      right: 18px;
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(10, 14, 26, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-top: 1px solid rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      border-radius: 30px;
+      padding: 5px 7px;
+      transition: all 0.25s ease;
+    }
+    .dock-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-soft);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+    .dock-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .dock-btn.active {
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.15);
+    }
+
+    /* Spin animation for reconnect icon */
+    @keyframes spinAnim {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .spinning {
+      animation: spinAnim 0.7s linear infinite;
+    }
 </head>
 <body>
 
@@ -1240,13 +1554,18 @@
           </svg>
           Lumina Studio
         </h1>
-        <div class="connection-pill" onclick="editBulbIp()" title="Configure IP or Cloud Tunnel">
-          <span class="live-dot" id="liveIndicator"></span>
-          <span id="connStatus">Adhy Bulb • Connecting...</span>
-          <svg class="svg-icon-sm" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
+        <div style="display:flex; align-items:center; gap:7px; margin-top:4px;">
+          <div class="connection-pill" onclick="editBulbIp()" title="Configure IP or Cloud Tunnel" style="margin-top:0;">
+            <span class="live-dot" id="liveIndicator"></span>
+            <span id="connStatus">Adhy Bulb • Connecting...</span>
+            <svg class="svg-icon-sm" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </div>
+          <button class="icon-action-btn" id="reconnectBtn" onclick="forceReconnect()" title="Instant Ping & Reconnect" style="background: rgba(255,255,255,0.06); border: 1px solid var(--glass-border); border-radius: 50%; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-soft); cursor: pointer; transition: all 0.2s ease;">
+            <svg class="svg-icon-sm" id="reconnectIcon" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          </button>
         </div>
       </div>
 
@@ -1321,6 +1640,13 @@
       <button class="mode-tab" id="tabLiving" onclick="switchMode('living')">
         <svg class="svg-icon" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg>
         Living FX
+      </button>
+      <button class="mode-tab" id="tabQuantum" onclick="switchMode('quantum')">
+        <div style="position: relative; display: inline-flex; align-items: center; justify-content: center;">
+          <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span class="tab-live-dot" id="quantumTabDot" style="background:#38bdf8;"></span>
+        </div>
+        Quantum FX
       </button>
       <button class="mode-tab" id="tabFlow" onclick="switchMode('flow')">
         <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -1706,7 +2032,272 @@
       </div>
     </section>
 
+    <!-- Quantum Labs: Next-Gen & Manufacturer-Defying Features Panel -->
+    <section class="studio-panel" id="quantumPanel" style="display: none;">
+      <div class="panel-header">
+        <span class="panel-heading">
+          <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Quantum FX Labs
+        </span>
+        <span class="panel-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.3);">
+          Experimental
+        </span>
+      </div>
+
+      <div class="quantum-hero">
+        <div class="quantum-hero-title">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m12 6 4 6-4 6-4-6z"/></svg>
+          Features No Manufacturer Ever Thought Of
+        </div>
+        <div class="quantum-hero-desc">
+          Harness your phone's gyroscopes, accelerometer, real-time meteorology satellites, and camera optics to control your light like pure magic.
+        </div>
+      </div>
+
+      <!-- Feature 1: 3D Gyroscope / Tilt Light -->
+      <div class="crazy-card" id="cardGyro">
+        <div class="crazy-card-header">
+          <span class="crazy-card-title">
+            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24M14.83 14.83l4.24 4.24M14.83 9.17l4.24-4.24M4.93 19.07l4.24-4.24"/></svg>
+            3D Gyroscope Tilt Horizon
+          </span>
+          <span class="crazy-badge" id="gyroBadge">STANDBY</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-soft); margin-top: -6px;">
+          Tilt your phone in 3D space: roll left/right sweeps hue, pitch up/down controls brightness & warmth in real-time.
+        </p>
+        <div class="gyro-level-stage">
+          <div class="gyro-crosshair"></div>
+          <div class="gyro-bubble" id="gyroBubble"></div>
+        </div>
+        <div class="gyro-readout">
+          <span id="gyroRollText">Roll (Hue): 0°</span>
+          <span id="gyroPitchText">Pitch (Bri): 0°</span>
+        </div>
+        <button class="secondary-btn" id="gyroToggleBtn" onclick="toggleGyroControl()" style="width: 100%;">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span id="gyroBtnText">Activate 3D Gyro Horizon</span>
+        </button>
+      </div>
+
+      <!-- Feature 2: Hyper-Realistic Lightning Storm -->
+      <div class="crazy-card" id="cardLightning">
+        <div class="crazy-card-header">
+          <span class="crazy-card-title">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="color: #facc15;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Lightning Tempest Storm
+          </span>
+          <span class="crazy-badge" id="lightningBadge">OFF</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-soft); margin-top: -6px;">
+          Simulates chaotic atmospheric electrical discharges: erratic multi-burst white flashes, thunder dropouts, and deep indigo ambient rumbles.
+        </p>
+        <button class="secondary-btn" id="lightningToggleBtn" onclick="toggleLightningStorm()" style="width: 100%;">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span id="lightningBtnText">Ignite Lightning Storm</span>
+        </button>
+      </div>
+
+      <!-- Feature 3: Tap BPM Metronome & Strobe -->
+      <div class="crazy-card" id="cardBpm">
+        <div class="crazy-card-header">
+          <span class="crazy-card-title">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="color: #ec4899;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            BPM Tap Metronome & Strobe
+          </span>
+          <span class="crazy-badge" id="bpmBadge">OFF</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-soft); margin-top: -6px;">
+          Tap the pad in rhythm to calculate BPM, or dial with precision. Pulses light with musical precision.
+        </p>
+        <div class="bpm-stage">
+          <button class="tap-tempo-btn" id="tapTempoBtn" onclick="registerBpmTap()">
+            TAP
+            <span id="bpmDisplayVal">120</span>
+            <small style="font-size: 8px; opacity: 0.8;">BPM</small>
+          </button>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+            <div class="slider-title-row">
+              <span>Metronome Tempo</span>
+              <span class="slider-val" id="bpmSliderVal">120 BPM</span>
+            </div>
+            <input type="range" min="40" max="220" value="120" class="touch-slider" id="bpmRangeSlider" oninput="onBpmSliderChange(this.value)">
+            <div style="display: flex; gap: 6px;">
+              <button class="picker-view-btn active" id="bpmModePulse" onclick="setBpmMode('pulse')" style="flex: 1; padding: 5px;">Smooth Pulse</button>
+              <button class="picker-view-btn" id="bpmModeStrobe" onclick="setBpmMode('strobe')" style="flex: 1; padding: 5px;">Rave Strobe</button>
+            </div>
+          </div>
+        </div>
+        <button class="secondary-btn" id="bpmToggleBtn" onclick="toggleBpmEngine()" style="width: 100%;">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span id="bpmBtnText">Start BPM Strobe</span>
+        </button>
+      </div>
+
+      <!-- Feature 4: Live Weather Atmosphere Sync -->
+      <div class="crazy-card" id="cardWeather">
+        <div class="crazy-card-header">
+          <span class="crazy-card-title">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="color: #38bdf8;"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+            Weather Atmosphere Sync
+          </span>
+          <span class="crazy-badge" id="weatherBadge">TAP PRESET</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-soft); margin-top: -6px;">
+          Match the lighting of your room to the exact weather outdoors, or click Auto-Detect for live satellite sync.
+        </p>
+        <div class="weather-grid">
+          <div class="weather-card" onclick="applyWeatherAtmosphere('sun', this)">
+            <div class="weather-icon">☀️</div>
+            <span class="weather-name">Radiant Sun</span>
+            <span class="weather-sub">5500K Clean</span>
+          </div>
+          <div class="weather-card" onclick="applyWeatherAtmosphere('golden', this)">
+            <div class="weather-icon">🌅</div>
+            <span class="weather-name">Golden Hour</span>
+            <span class="weather-sub">Amber Glow</span>
+          </div>
+          <div class="weather-card" onclick="applyWeatherAtmosphere('rain', this)">
+            <div class="weather-icon">🌧️</div>
+            <span class="weather-name">Slate Rain</span>
+            <span class="weather-sub">Ocean Teal</span>
+          </div>
+          <div class="weather-card" onclick="applyWeatherAtmosphere('storm', this)">
+            <div class="weather-icon">⚡</div>
+            <span class="weather-name">Thunderhead</span>
+            <span class="weather-sub">Violet Blue</span>
+          </div>
+          <div class="weather-card" onclick="applyWeatherAtmosphere('blizzard', this)">
+            <div class="weather-icon">❄️</div>
+            <span class="weather-name">Arctic Ice</span>
+            <span class="weather-sub">Crystal Blue</span>
+          </div>
+          <div class="weather-card" onclick="applyWeatherAtmosphere('night', this)">
+            <div class="weather-icon">🌌</div>
+            <span class="weather-name">Starry Night</span>
+            <span class="weather-sub">Indigo Calm</span>
+          </div>
+        </div>
+        <button class="secondary-btn" onclick="detectLiveWeatherSatellite()" style="width: 100%; border-color: rgba(56, 189, 248, 0.35);">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+          <span>Auto-Detect My Outdoor Weather (GPS)</span>
+        </button>
+      </div>
+
+      <!-- Feature 5: Biometric Heartbeat Pulse -->
+      <div class="crazy-card" id="cardHeart">
+        <div class="crazy-card-header">
+          <span class="crazy-card-title">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="color: #ef4444;"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            Biometric Heartbeat & Sleep Hypnosis
+          </span>
+          <span class="crazy-badge" id="heartBadge">OFF</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-soft); margin-top: -6px;">
+          Rhythmic arterial 'lub-dub' arterial wave in deep crimson. Gradually decelerates to lull your brain into deep REM sleep.
+        </p>
+        <div class="heart-monitor">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="heart-icon-pulse" id="heartIconPulse">
+              <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: #fff;" id="heartBpmText">70 BPM</div>
+              <div style="font-size: 10px; color: var(--text-soft);">Resting Arterial Rhythm</div>
+            </div>
+          </div>
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #cbd5e1; cursor: pointer;">
+            <input type="checkbox" id="sleepSlowdownCheck" checked style="accent-color: #ef4444;">
+            Sleep Decelerator
+          </label>
+        </div>
+        <button class="secondary-btn" id="heartToggleBtn" onclick="toggleHeartbeatEngine()" style="width: 100%;">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span id="heartBtnText">Start Heartbeat Pulse</span>
+        </button>
+      </div>
+
+      <!-- Feature 6: Seismic Shake-to-Strike Gong -->
+      <div class="crazy-card" id="cardGong">
+        <div class="crazy-card-header">
+          <span class="crazy-card-title">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="color: #a855f7;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            Seismic Shake-to-Strike (Gong / Wand Whip)
+          </span>
+          <span class="crazy-badge" id="gongBadge">STANDBY</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-soft); margin-top: -6px;">
+          Shake or whip your phone vigorously: triggers an explosive 100% luminous shockwave that vibrates your phone and slowly resonates into glowing ember.
+        </p>
+        <button class="secondary-btn" id="gongToggleBtn" onclick="toggleGongMode()" style="width: 100%;">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M2 12h20M12 2v20"/></svg>
+          <span id="gongBtnText">Arm Shake Gong Sensor</span>
+        </button>
+      </div>
+
+      <!-- Feature 7: Hyperspace Spectrum Warp -->
+      <div class="crazy-card" id="cardWarp">
+        <div class="crazy-card-header">
+          <span class="crazy-card-title">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="color: #10b981;"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10M12 22a10 10 0 0 1-10-10"/></svg>
+            Hyperspace Spectrum Warp
+          </span>
+          <span class="crazy-badge" id="warpBadge">OFF</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-soft); margin-top: -6px;">
+          Fluid high-velocity rainbow carousel rotating through the entire visible light spectrum at adjustable velocity.
+        </p>
+        <div class="slider-container">
+          <div class="slider-title-row">
+            <span>Rotation Speed</span>
+            <span class="slider-val" id="warpSpeedText">Fast (1.2s)</span>
+          </div>
+          <input type="range" min="200" max="4000" value="1200" step="100" class="touch-slider" id="warpSpeedSlider" oninput="onWarpSpeedChange(this.value)">
+        </div>
+        <button class="secondary-btn" id="warpToggleBtn" onclick="toggleWarpEngine()" style="width: 100%;">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span id="warpBtnText">Engage Hyperspace Warp</span>
+        </button>
+      </div>
+
+      <!-- Feature 8: Chameleon Camera Eye -->
+      <div class="crazy-card" id="cardCamera">
+        <div class="crazy-card-header">
+          <span class="crazy-card-title">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="color: #f43f5e;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Chameleon Camera Eye
+          </span>
+          <span class="crazy-badge" id="camBadge">OFF</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-soft); margin-top: -6px;">
+          Point your phone camera at any physical artwork, fabric, or room decor: Lumina samples the real-world color and matches your bulb instantly.
+        </p>
+        <div class="camera-box" id="cameraBox">
+          <video class="camera-video" id="cameraVideo" playsinline autoplay muted></video>
+          <div class="camera-reticle">
+            <div class="reticle-dot" id="reticleDot"></div>
+          </div>
+        </div>
+        <button class="secondary-btn" id="camToggleBtn" onclick="toggleChameleonCamera()" style="width: 100%;">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/></svg>
+          <span id="camBtnText">Open Chameleon Camera</span>
+        </button>
+      </div>
+    </section>
+
   </main>
+
+  <!-- Floating Smooth Scroll & Navigation Dock -->
+  <div class="smooth-scroll-dock" id="scrollDock">
+    <button class="dock-btn active" onclick="toggleSmoothScroll()" id="smoothScrollToggleBtn" title="Toggle Smooth Scroll Mode">
+      <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span id="smoothScrollText">Smooth: ON</span>
+    </button>
+    <button class="dock-btn" onclick="scrollToTop()" title="Smooth Scroll to Top">
+      <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+      <span>Top</span>
+    </button>
+  </div>
 
   <canvas id="paletteCanvas" width="100" height="100"></canvas>
 
@@ -1741,22 +2332,26 @@
     // Active ngrok tunnel
     const DEFAULT_NGROK_URL = 'https://epidermis-coliseum-masses.ngrok-free.dev';
 
+    // Universal API base resolver:
+    // Seamlessly works whether accessing via ngrok, local network IP (192.168.1.9:7070), or localhost!
+    function getApiBase() {
+      const saved = localStorage.getItem('lumina_proxy_url');
+      if (saved && (saved.startsWith('http://') || saved.startsWith('https://'))) {
+        return saved.replace(/\/$/, '');
+      }
+      if (window.location.origin && window.location.origin !== 'null' && !window.location.protocol.startsWith('file')) {
+        return window.location.origin;
+      }
+      return DEFAULT_NGROK_URL;
+    }
+
     function isLocalHost() {
-      return (
-        window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1' ||
-        window.location.hostname.startsWith('192.168.') ||
-        window.location.hostname.startsWith('10.')
-      );
+      const h = window.location.hostname;
+      return h === 'localhost' || h === '127.0.0.1' || h.startsWith('192.168.') || h.startsWith('10.');
     }
 
     function getProxyBase() {
-      const saved = localStorage.getItem('lumina_proxy_url');
-      if (saved && saved.startsWith('https://')) return saved;
-      if (!isLocalHost() || window.location.protocol === 'https:') {
-        return DEFAULT_NGROK_URL;
-      }
-      return null;
+      return getApiBase();
     }
 
     // ─── TACTILE MOBILE HAPTICS ───────────────────────────────────────────────
@@ -1879,13 +2474,13 @@
       meshCtx.fillRect(0, 0, w, h);
     }
 
-    // ─── CONCURRENCY & CONNECTION PIPELINE (WITH DEADLOCK WATCHDOG) ───────────
+    // ─── CONCURRENCY & BULLETPROOF CONNECTION PIPELINE ───────────────────────
     let isSending = false;
     let pendingCommand = null;
     let consecutiveFailures = 0;
     let watchdogTimer = null;
     let lastSuccessTime = Date.now();
-    let reconnectCooldown = false;
+    let heartbeatTimeoutId = null;
 
     function reportSuccess() {
       consecutiveFailures = 0;
@@ -1894,12 +2489,11 @@
     }
 
     function reportFailure() {
-      // Only count failure if we haven't had success very recently
-      // This prevents background-tab throttling from causing false disconnects
+      // 3-second blip grace period
       const msSinceSuccess = Date.now() - lastSuccessTime;
-      if (msSinceSuccess < 4000) return; // Grace period — ignore blips
+      if (msSinceSuccess < 3000) return;
       consecutiveFailures++;
-      if (consecutiveFailures >= 5) { // Raise threshold from 3 → 5
+      if (consecutiveFailures >= 3) {
         updateLiveStatus(false);
       }
     }
@@ -1924,7 +2518,7 @@
     async function _dispatch(cmd) {
       isSending = true;
 
-      // Watchdog: If anything hangs for 3.5s, unlock queue automatically
+      // Unstick watchdog: 2.8s safety threshold
       clearTimeout(watchdogTimer);
       watchdogTimer = setTimeout(() => {
         isSending = false;
@@ -1933,32 +2527,38 @@
           pendingCommand = null;
           _dispatch(next);
         }
-      }, 3500);
+      }, 2800);
 
-      const proxyBase = getProxyBase();
+      const apiBase = getApiBase();
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2400);
 
       try {
-        if (proxyBase && proxyBase.startsWith('https://')) {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 3200);
-          const url = `${proxyBase}/api/cmd?c=${encodeURIComponent(cmd)}`;
-          const res = await fetch(url, { 
-            cache: 'no-store',
-            headers: { 'ngrok-skip-browser-warning': 'true' },
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
-          if (res.ok) reportSuccess(); else reportFailure();
-        } else if (isLocalHost()) {
-          const res = await fetch(`/api/cmd?c=${encodeURIComponent(cmd)}`, { cache: 'no-store' });
-          if (res.ok) reportSuccess(); else reportFailure();
-        } else {
-          const img = new Image();
-          img.src = `http://${BULB_IP}/cm?cmnd=${encodeURIComponent(cmd)}&_t=${Date.now()}`;
+        const url = `${apiBase}/api/cmd?c=${encodeURIComponent(cmd)}`;
+        const res = await fetch(url, { 
+          cache: 'no-store',
+          headers: { 'ngrok-skip-browser-warning': 'true' },
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        if (res.ok) {
           reportSuccess();
+        } else {
+          reportFailure();
         }
       } catch (e) {
-        reportFailure();
+        // Direct browser image beacon fallback for direct LAN HTTP
+        if (window.location.protocol === 'http:' && !apiBase.includes(BULB_IP)) {
+          try {
+            const img = new Image();
+            img.src = `http://${BULB_IP}/cm?cmnd=${encodeURIComponent(cmd)}&_t=${Date.now()}`;
+            reportSuccess();
+          } catch (err) {
+            reportFailure();
+          }
+        } else {
+          reportFailure();
+        }
       } finally {
         clearTimeout(watchdogTimer);
         isSending = false;
@@ -1973,14 +2573,16 @@
     function updateLiveStatus(isOnline) {
       const dot = document.getElementById('liveIndicator');
       const text = document.getElementById('connStatus');
-      const proxy = getProxyBase();
+      const apiBase = getApiBase();
       if (isOnline) {
         dot.style.background = '#10b981';
         dot.style.boxShadow = '0 0 10px #10b981';
-        if (proxy && proxy.startsWith('https://')) {
+        if (apiBase.includes('ngrok')) {
           text.textContent = 'Adhy Bulb • Cloud Tunnel';
+        } else if (apiBase.includes('192.168.') || apiBase.includes('localhost') || apiBase.includes('127.0.0.1')) {
+          text.textContent = `Adhy Bulb • Local Bridge`;
         } else {
-          text.textContent = `Adhy Bulb • ${BULB_IP}`;
+          text.textContent = `Adhy Bulb • Connected`;
         }
       } else {
         dot.style.background = '#ef4444';
@@ -1989,11 +2591,22 @@
       }
     }
 
+    async function forceReconnect() {
+      triggerHaptic('medium');
+      const icon = document.getElementById('reconnectIcon');
+      if (icon) icon.classList.add('spinning');
+      const text = document.getElementById('connStatus');
+      if (text) text.textContent = 'Adhy Bulb • Testing...';
+      consecutiveFailures = 0;
+      await doPing(true);
+      if (icon) setTimeout(() => icon.classList.remove('spinning'), 600);
+    }
+
     function editBulbIp() {
       triggerHaptic('medium');
-      const current = getProxyBase() || BULB_IP;
+      const current = getApiBase();
       const input = prompt(
-        'Lumina Connection Settings:\n• Cloud: Enter ngrok HTTPS URL\n• Local: Enter Bulb IP (192.168.1.11)\n\nCurrent Endpoint:',
+        'Lumina Connection Settings:\n• Cloud Tunnel: Enter ngrok HTTPS URL\n• Local Network: Enter http://192.168.1.9:7070\n• Direct Bulb: Enter 192.168.1.11\n\nCurrent Endpoint:',
         current
       );
       if (input && input.trim()) {
@@ -2001,11 +2614,13 @@
         if (val.startsWith('https://') || val.startsWith('http://')) {
           localStorage.setItem('lumina_proxy_url', val);
           updateLiveStatus(true);
+          forceReconnect();
         } else {
           BULB_IP = val;
           localStorage.removeItem('lumina_proxy_url');
           localStorage.setItem('lumina_bulb_ip', val);
           updateLiveStatus(true);
+          forceReconnect();
         }
       }
     }
@@ -2222,17 +2837,25 @@
         white: document.getElementById('whitePanel'),
         music: document.getElementById('musicPanel'),
         living: document.getElementById('livingPanel'),
+        quantum: document.getElementById('quantumPanel'),
         flow: document.getElementById('flowPanel')
       };
 
       Object.keys(panels).forEach(key => {
-        if (key === tab) {
-          panels[key].style.display = 'flex';
-          animatePanelSwitch(panels[key]);
-        } else {
-          panels[key].style.display = 'none';
+        if (panels[key]) {
+          if (key === tab) {
+            panels[key].style.display = 'flex';
+            animatePanelSwitch(panels[key]);
+          } else {
+            panels[key].style.display = 'none';
+          }
         }
       });
+
+      if (tab !== 'quantum') {
+        if (isCameraActive) stopChameleonCamera();
+        if (isGyroActive) toggleGyroControl();
+      }
 
       if (tab === 'white') {
         sendCommand(`CT ${currentCt}`, 0);
@@ -3183,6 +3806,7 @@
       checkSpotifyOAuthReturn();
       renderCustomScenes();
       initColorWheel();
+      initSmoothScroll();
 
       if (isCircadianActive) {
         document.getElementById('circadianToggle').checked = true;
@@ -3200,69 +3824,87 @@
         });
       }
 
-      // On startup: ping proxy once to check reachability (lightweight /api/ping, not /api/status)
-      const proxy = getProxyBase();
-      if (proxy && proxy.startsWith('https://')) {
-        fetch(`${proxy}/api/ping`, {
+      // Fast startup bridge sync
+      doPing(false).then(() => {
+        const apiBase = getApiBase();
+        return fetch(`${apiBase}/api/status`, {
           headers: { 'ngrok-skip-browser-warning': 'true' },
           cache: 'no-store'
-        }).then(r => {
-          if (r.ok) {
-            reportSuccess();
-            // If ping succeeds, fetch actual status to sync dimmer
-            return fetch(`${proxy}/api/status`, { headers: { 'ngrok-skip-browser-warning': 'true' }, cache: 'no-store' });
-          }
-        }).then(r => r && r.json()).then(data => {
-          if (data && data.StatusSTS && data.StatusSTS.Dimmer) {
-            currentDimmer = data.StatusSTS.Dimmer;
-            document.getElementById('dimmerSlider').value = currentDimmer;
-            document.getElementById('whiteDimmerSlider').value = currentDimmer;
-            document.getElementById('brightnessReadout').textContent = `${currentDimmer}%`;
-            document.getElementById('whiteBriReadout').textContent = `${currentDimmer}%`;
-          }
-        }).catch(() => reportSuccess()); // Assume connected on startup; let heartbeat surface true failures
-      } else {
-        reportSuccess();
-      }
+        });
+      }).then(r => r && r.json()).then(data => {
+        if (data && data.StatusSTS && data.StatusSTS.Dimmer) {
+          currentDimmer = data.StatusSTS.Dimmer;
+          document.getElementById('dimmerSlider').value = currentDimmer;
+          const wSlider = document.getElementById('whiteDimmerSlider');
+          if (wSlider) wSlider.value = currentDimmer;
+          const bReadout = document.getElementById('brightnessReadout');
+          if (bReadout) bReadout.textContent = `${currentDimmer}%`;
+          const wbReadout = document.getElementById('whiteBriReadout');
+          if (wbReadout) wbReadout.textContent = `${currentDimmer}%`;
+        }
+      }).catch(() => {});
 
+      scheduleHeartbeat(12000);
       refreshVisualAura();
     });
 
-    // ─── LIGHTWEIGHT PING HEARTBEAT (does NOT hit bulb, just checks proxy is alive) ───
-    function doPing() {
-      if (isSending) return; // skip if actively sending
-      const proxy = getProxyBase();
-      if (!proxy || !proxy.startsWith('https://')) return;
+    // ─── SELF-HEALING PING HEARTBEAT ──────────────────────────────────────────
+    async function doPing(isManual = false) {
+      if (isSending && !isManual) return;
+      const apiBase = getApiBase();
       const controller = new AbortController();
-      const tId = setTimeout(() => controller.abort(), 4000);
-      fetch(`${proxy}/api/ping`, {
-        headers: { 'ngrok-skip-browser-warning': 'true' },
-        cache: 'no-store',
-        signal: controller.signal
-      }).then(r => {
+      const tId = setTimeout(() => controller.abort(), 2600);
+      try {
+        const res = await fetch(`${apiBase}/api/ping`, {
+          headers: { 'ngrok-skip-browser-warning': 'true' },
+          cache: 'no-store',
+          signal: controller.signal
+        });
         clearTimeout(tId);
-        if (r.ok) reportSuccess();
-      }).catch(() => {
+        if (res.ok) {
+          reportSuccess();
+          if (isManual) showToast('Bridge Connected', 'Bulb bridge online & responsive', 'music', '#10b981');
+        } else {
+          reportFailure();
+        }
+      } catch (e) {
         clearTimeout(tId);
-        reportFailure(); // Only reportFailure here, NOT in silent background heartbeat
-      });
+        reportFailure();
+        if (isManual) showToast('Bridge Unreachable', 'Check WiFi or tap to configure endpoint', 'music', '#ef4444');
+      }
     }
 
-    // Heartbeat every 12s (was 8s; less aggressive = fewer false disconnects)
-    setInterval(doPing, 12000);
+    function scheduleHeartbeat(delayMs = 12000) {
+      if (heartbeatTimeoutId) clearTimeout(heartbeatTimeoutId);
+      heartbeatTimeoutId = setTimeout(() => {
+        doPing().finally(() => {
+          // If offline/reconnecting: fast retry every 3.5s to restore immediately!
+          // If healthy: 15s to conserve phone battery.
+          const nextInterval = (consecutiveFailures >= 2) ? 3500 : 15000;
+          scheduleHeartbeat(nextInterval);
+        });
+      }, delayMs);
+    }
 
-    // On tab becoming visible — wait 1.5s before pinging to let mobile radio wake up
-    // Avoids the classic: "comes back from background → immediate disconnect" flicker
+    // On phone tab or screen wake up: immediately re-ping
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
-        // First restore to "reconnecting" visually if we were offline,
-        // then actually ping and resolve
+        consecutiveFailures = 0;
         setTimeout(() => {
-          consecutiveFailures = 0; // Reset on return from background (radio re-establishing)
-          lastSuccessTime = Date.now() - 1000; // Don't fail immediately
-          doPing();
-        }, 1500);
+          doPing(false);
+          scheduleHeartbeat(15000);
+        }, 400);
       }
+    });
+
+    window.addEventListener('focus', () => {
+      consecutiveFailures = 0;
+      setTimeout(() => doPing(false), 300);
+    });
+
+    window.addEventListener('online', () => {
+      consecutiveFailures = 0;
+      doPing(true);
     });
 
     // ─── COLOR WHEEL ENGINE ───────────────────────────────────────────────────
@@ -3437,6 +4079,725 @@
       canvas.addEventListener('touchstart', e => { isDragging = true; handleWheelInteraction(e); }, { passive: false });
       window.addEventListener('touchmove', e => { if (isDragging) handleWheelInteraction(e); }, { passive: false });
       window.addEventListener('touchend', () => { isDragging = false; });
+    }
+
+    // ─── SMOOTH SCROLL ENGINE ─────────────────────────────────────────────────
+    let isSmoothScrollEnabled = true;
+
+    function initSmoothScroll() {
+      const saved = localStorage.getItem('lumina_smooth_scroll');
+      if (saved !== null) {
+        isSmoothScrollEnabled = saved === 'true';
+      }
+      applySmoothScrollState();
+    }
+
+    function toggleSmoothScroll() {
+      triggerHaptic('light');
+      isSmoothScrollEnabled = !isSmoothScrollEnabled;
+      localStorage.setItem('lumina_smooth_scroll', isSmoothScrollEnabled ? 'true' : 'false');
+      applySmoothScrollState();
+      showToast('Smooth Scroll', isSmoothScrollEnabled ? 'Silky Smooth Inertia: Enabled' : 'Native Scroll: Active', 'music', '#38bdf8');
+    }
+
+    function applySmoothScrollState() {
+      document.documentElement.style.scrollBehavior = isSmoothScrollEnabled ? 'smooth' : 'auto';
+      document.body.style.scrollBehavior = isSmoothScrollEnabled ? 'smooth' : 'auto';
+      const btn = document.getElementById('smoothScrollToggleBtn');
+      const text = document.getElementById('smoothScrollText');
+      if (btn) btn.classList.toggle('active', isSmoothScrollEnabled);
+      if (text) text.textContent = isSmoothScrollEnabled ? 'Smooth: ON' : 'Smooth: OFF';
+    }
+
+    function scrollToTop() {
+      triggerHaptic('light');
+      window.scrollTo({ top: 0, behavior: isSmoothScrollEnabled ? 'smooth' : 'auto' });
+    }
+
+    // ─── QUANTUM FEATURE 1: 3D GYROSCOPE TILT HORIZON ─────────────────────────
+    let isGyroActive = false;
+    let lastGyroSendTime = 0;
+
+    async function toggleGyroControl() {
+      triggerHaptic('medium');
+      const card = document.getElementById('cardGyro');
+      const badge = document.getElementById('gyroBadge');
+      const btnText = document.getElementById('gyroBtnText');
+
+      if (isGyroActive) {
+        window.removeEventListener('deviceorientation', handleDeviceOrientation);
+        isGyroActive = false;
+        card.classList.remove('active');
+        badge.textContent = 'STANDBY';
+        badge.classList.remove('live');
+        btnText.textContent = 'Activate 3D Gyro Horizon';
+        showToast('Gyro Deactivated', 'Standard touch controls restored', 'music', '#94a3b8');
+        return;
+      }
+
+      // Handle iOS 13+ permission model
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        try {
+          const perm = await DeviceOrientationEvent.requestPermission();
+          if (perm !== 'granted') {
+            alert('Sensor permission required for 3D Gyroscope control.');
+            return;
+          }
+        } catch (e) {
+          alert('Sensor permission error: ' + e.message);
+          return;
+        }
+      }
+
+      window.addEventListener('deviceorientation', handleDeviceOrientation, { passive: true });
+      isGyroActive = true;
+      card.classList.add('active');
+      badge.textContent = 'LIVE SENSING';
+      badge.classList.add('live');
+      btnText.textContent = 'Stop 3D Gyro Horizon';
+      showToast('3D Gyro Live!', 'Tilt phone to morph light hue & brightness', 'music', '#38bdf8');
+    }
+
+    function handleDeviceOrientation(e) {
+      if (!isGyroActive) return;
+      const gamma = e.gamma || 0; // Left-to-right roll: -90 to +90
+      const beta = e.beta || 0;   // Front-to-back pitch: -180 to +180
+
+      // Map gamma (-60 to +60) to Hue (0 to 360)
+      const clampedGamma = Math.max(-60, Math.min(60, gamma));
+      const targetHue = Math.round(((clampedGamma + 60) / 120) * 360) % 360;
+
+      // Map beta (15° to 75° typical hand-held phone angle) to Brightness (25% to 100%)
+      const clampedBeta = Math.max(10, Math.min(80, beta));
+      const targetDimmer = Math.round(25 + ((clampedBeta - 10) / 70) * 75);
+
+      // Move visual bubble
+      const bubble = document.getElementById('gyroBubble');
+      if (bubble) {
+        const pxX = (clampedGamma / 60) * 45;
+        const pxY = ((clampedBeta - 45) / 35) * 20;
+        bubble.style.transform = `translate(${pxX}px, ${pxY}px)`;
+      }
+
+      const rollText = document.getElementById('gyroRollText');
+      const pitchText = document.getElementById('gyroPitchText');
+      if (rollText) rollText.textContent = `Roll (Hue): ${targetHue}°`;
+      if (pitchText) pitchText.textContent = `Pitch (Bri): ${targetDimmer}%`;
+
+      // Throttle command transmission to ~90ms
+      const now = Date.now();
+      if (now - lastGyroSendTime > 90) {
+        lastGyroSendTime = now;
+        currentHue = targetHue;
+        currentDimmer = targetDimmer;
+        document.getElementById('hueSlider').value = currentHue;
+        document.getElementById('dimmerSlider').value = currentDimmer;
+        document.getElementById('hueReadout').textContent = `${currentHue}°`;
+        document.getElementById('brightnessReadout').textContent = `${currentDimmer}%`;
+        sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 0);
+        refreshVisualAura();
+      }
+    }
+
+    // ─── QUANTUM FEATURE 2: HYPER-REALISTIC LIGHTNING STORM ───────────────────
+    let isLightningActive = false;
+    let lightningTimer = null;
+
+    function toggleLightningStorm() {
+      triggerHaptic('medium');
+      const card = document.getElementById('cardLightning');
+      const badge = document.getElementById('lightningBadge');
+      const btnText = document.getElementById('lightningBtnText');
+
+      if (isLightningActive) {
+        clearTimeout(lightningTimer);
+        lightningTimer = null;
+        isLightningActive = false;
+        card.classList.remove('active');
+        badge.textContent = 'OFF';
+        badge.classList.remove('live');
+        btnText.textContent = 'Ignite Lightning Storm';
+        sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 0);
+        refreshVisualAura();
+        return;
+      }
+
+      stopAllActiveLabFeatures('lightning');
+      isLightningActive = true;
+      card.classList.add('active');
+      badge.textContent = 'STORMING';
+      badge.classList.add('live');
+      btnText.textContent = 'Extinguish Storm';
+      showToast('Lightning Storm Activated', 'Erratic thunder discharges initiated', 'music', '#facc15');
+
+      runLightningCycle();
+    }
+
+    function runLightningCycle() {
+      if (!isLightningActive) return;
+
+      // 1. First fast flash strike (40ms at 100% white)
+      sendCommand('Backlog CT 153; Dimmer 100', 0);
+      triggerHaptic('light');
+
+      setTimeout(() => {
+        if (!isLightningActive) return;
+        // Pitch black pause
+        sendCommand('Dimmer 0', 0);
+
+        setTimeout(() => {
+          if (!isLightningActive) return;
+          // 2. Secondary strike (60ms)
+          sendCommand('Dimmer 100', 0);
+
+          setTimeout(() => {
+            if (!isLightningActive) return;
+            // Brief gap
+            sendCommand('Dimmer 0', 0);
+
+            setTimeout(() => {
+              if (!isLightningActive) return;
+              // 3. Final lingering mega discharge strike
+              sendCommand('Dimmer 100', 0);
+              triggerHaptic('medium');
+
+              setTimeout(() => {
+                if (!isLightningActive) return;
+                // Settle into deep stormy midnight blue rumble atmosphere
+                sendCommand('HsbColor 240,100,18', 0);
+
+                // Wait a chaotic random interval (1.6s to 4.5s) before next strike
+                const nextDelay = 1600 + Math.random() * 2900;
+                lightningTimer = setTimeout(runLightningCycle, nextDelay);
+              }, 110);
+            }, 35);
+          }, 60);
+        }, 30);
+      }, 40);
+    }
+
+    // ─── QUANTUM FEATURE 3: BPM TAP METRONOME & STROBE ────────────────────────
+    let bpmTaps = [];
+    let currentBpmVal = 120;
+    let bpmMode = 'pulse'; // 'pulse' | 'strobe'
+    let isBpmActive = false;
+    let bpmEngineTimer = null;
+    let bpmPhase = false;
+
+    function registerBpmTap() {
+      triggerHaptic('light');
+      const now = Date.now();
+      bpmTaps.push(now);
+      if (bpmTaps.length > 5) bpmTaps.shift();
+
+      if (bpmTaps.length >= 2) {
+        const intervals = [];
+        for (let i = 1; i < bpmTaps.length; i++) {
+          intervals.push(bpmTaps[i] - bpmTaps[i - 1]);
+        }
+        const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+        if (avgInterval > 250 && avgInterval < 2000) {
+          currentBpmVal = Math.round(60000 / avgInterval);
+          document.getElementById('bpmDisplayVal').textContent = currentBpmVal;
+          document.getElementById('bpmSliderVal').textContent = `${currentBpmVal} BPM`;
+          document.getElementById('bpmRangeSlider').value = currentBpmVal;
+          if (isBpmActive) restartBpmEngine();
+        }
+      }
+      const tapBtn = document.getElementById('tapTempoBtn');
+      animateSpring(tapBtn, 0.88, 1);
+    }
+
+    function onBpmSliderChange(val) {
+      currentBpmVal = parseInt(val);
+      document.getElementById('bpmDisplayVal').textContent = currentBpmVal;
+      document.getElementById('bpmSliderVal').textContent = `${currentBpmVal} BPM`;
+      if (isBpmActive) restartBpmEngine();
+    }
+
+    function setBpmMode(mode) {
+      triggerHaptic('light');
+      bpmMode = mode;
+      document.getElementById('bpmModePulse').classList.toggle('active', mode === 'pulse');
+      document.getElementById('bpmModeStrobe').classList.toggle('active', mode === 'strobe');
+      if (isBpmActive) restartBpmEngine();
+    }
+
+    function toggleBpmEngine() {
+      triggerHaptic('medium');
+      const card = document.getElementById('cardBpm');
+      const badge = document.getElementById('bpmBadge');
+      const btnText = document.getElementById('bpmBtnText');
+
+      if (isBpmActive) {
+        clearInterval(bpmEngineTimer);
+        bpmEngineTimer = null;
+        isBpmActive = false;
+        card.classList.remove('active');
+        badge.textContent = 'OFF';
+        badge.classList.remove('live');
+        btnText.textContent = 'Start BPM Strobe';
+        sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 0);
+        refreshVisualAura();
+        return;
+      }
+
+      stopAllActiveLabFeatures('bpm');
+      isBpmActive = true;
+      card.classList.add('active');
+      badge.textContent = `${currentBpmVal} BPM`;
+      badge.classList.add('live');
+      btnText.textContent = 'Stop BPM Engine';
+      showToast('BPM Engine Active', `Synchronizing at ${currentBpmVal} BPM`, 'music', '#ec4899');
+      restartBpmEngine();
+    }
+
+    function restartBpmEngine() {
+      if (bpmEngineTimer) clearInterval(bpmEngineTimer);
+      const intervalMs = Math.round(60000 / currentBpmVal);
+
+      bpmEngineTimer = setInterval(() => {
+        if (!isBpmActive) return;
+        bpmPhase = !bpmPhase;
+
+        if (bpmMode === 'strobe') {
+          // Razor-sharp flash on beat, dip off beat
+          if (bpmPhase) {
+            sendCommand(`HsbColor ${currentHue},100,100`, 0);
+            triggerHaptic('light');
+          } else {
+            sendCommand(`HsbColor ${currentHue},100,5`, 0);
+          }
+        } else {
+          // Smooth pulse: 100% onbeat, 45% offbeat
+          if (bpmPhase) {
+            sendCommand(`HsbColor ${currentHue},100,100`, 0);
+          } else {
+            sendCommand(`HsbColor ${currentHue},100,45`, 0);
+          }
+        }
+      }, intervalMs / 2);
+    }
+
+    // ─── QUANTUM FEATURE 4: LIVE WEATHER ATMOSPHERE SYNC ──────────────────────
+    function applyWeatherAtmosphere(type, element) {
+      triggerHaptic('light');
+      stopAllActiveLabFeatures('weather');
+
+      document.querySelectorAll('.weather-card').forEach(c => c.classList.remove('active'));
+      if (element) element.classList.add('active');
+      const badge = document.getElementById('weatherBadge');
+
+      if (type === 'sun') {
+        badge.textContent = '☀️ SOLAR NOON';
+        applyWhitePreset(180, 5500, 'Solar Noon Crisp', null);
+        onDimmerSlide(100);
+        showToast('Atmosphere: Radiant Sun', 'Crisp 5500K daylight set', 'music', '#facc15');
+      } else if (type === 'golden') {
+        badge.textContent = '🌅 GOLDEN AMBER';
+        applyWhitePreset(450, 2200, 'Golden Amber Glow', null);
+        onDimmerSlide(85);
+        showToast('Atmosphere: Golden Hour', '2200K warm sunset glow', 'music', '#f97316');
+      } else if (type === 'rain') {
+        badge.textContent = '🌧️ SLATE RAIN';
+        currentHue = 200; currentDimmer = 70;
+        sendCommand('HsbColor 200,90,70', 0);
+        refreshVisualAura();
+        showToast('Atmosphere: Slate Rain', 'Aquatic cyan-slate shimmer', 'music', '#38bdf8');
+      } else if (type === 'storm') {
+        badge.textContent = '⚡ THUNDERHEAD';
+        currentHue = 265; currentDimmer = 80;
+        sendCommand('HsbColor 265,100,80', 0);
+        refreshVisualAura();
+        showToast('Atmosphere: Thunderhead', 'Electric violet-blue storm ambiance', 'music', '#8b5cf6');
+      } else if (type === 'blizzard') {
+        badge.textContent = '❄️ ARCTIC ICE';
+        currentHue = 190; currentDimmer = 85;
+        sendCommand('HsbColor 190,45,85', 0);
+        refreshVisualAura();
+        showToast('Atmosphere: Arctic Ice', 'Crystal glacier white-blue', 'music', '#93c5fd');
+      } else if (type === 'night') {
+        badge.textContent = '🌌 STARRY NIGHT';
+        currentHue = 240; currentDimmer = 15;
+        sendCommand('HsbColor 240,100,15', 0);
+        refreshVisualAura();
+        showToast('Atmosphere: Starry Night', 'Deep indigo 15% serenity', 'music', '#6366f1');
+      }
+    }
+
+    async function detectLiveWeatherSatellite() {
+      triggerHaptic('medium');
+      showToast('Detecting Sky...', 'Requesting GPS satellite meteorology', 'music', '#38bdf8');
+
+      if (!('geolocation' in navigator)) {
+        showToast('Location Unavailable', 'Falling back to Radiant Sun', 'music', '#f59e0b');
+        applyWeatherAtmosphere('sun', null);
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async pos => {
+        try {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+          const res = await fetch(url);
+          if (res.ok) {
+            const data = await res.json();
+            const weather = data.current_weather;
+            const code = weather.weathercode;
+            const isDay = weather.is_day === 1;
+            const temp = weather.temperature;
+
+            if (!isDay) {
+              applyWeatherAtmosphere('night', null);
+              showToast('Outdoor Weather Synced', `Night Sky • ${temp}°C`, 'music', '#6366f1');
+            } else if (code === 0) {
+              applyWeatherAtmosphere('sun', null);
+              showToast('Outdoor Weather Synced', `Clear Sunny Sky • ${temp}°C`, 'music', '#facc15');
+            } else if (code <= 3) {
+              applyWeatherAtmosphere('golden', null);
+              showToast('Outdoor Weather Synced', `Partly Cloudy • ${temp}°C`, 'music', '#f97316');
+            } else if (code >= 51 && code <= 67) {
+              applyWeatherAtmosphere('rain', null);
+              showToast('Outdoor Weather Synced', `Rain & Drizzle • ${temp}°C`, 'music', '#38bdf8');
+            } else if (code >= 71 && code <= 86) {
+              applyWeatherAtmosphere('blizzard', null);
+              showToast('Outdoor Weather Synced', `Snow / Freezing • ${temp}°C`, 'music', '#93c5fd');
+            } else if (code >= 95) {
+              applyWeatherAtmosphere('storm', null);
+              showToast('Outdoor Weather Synced', `Thunderstorm Warning • ${temp}°C`, 'music', '#8b5cf6');
+            } else {
+              applyWeatherAtmosphere('sun', null);
+              showToast('Outdoor Weather Synced', `Live Sky • ${temp}°C`, 'music', '#38bdf8');
+            }
+          }
+        } catch (e) {
+          applyWeatherAtmosphere('sun', null);
+        }
+      }, err => {
+        showToast('Location Required', 'Set atmosphere manually from cards above', 'music', '#f59e0b');
+      }, { timeout: 6000 });
+    }
+
+    // ─── QUANTUM FEATURE 5: BIOMETRIC HEARTBEAT PULSE ─────────────────────────
+    let isHeartActive = false;
+    let heartTimer = null;
+    let heartBpm = 70;
+    let heartSlowdownTimer = null;
+
+    function toggleHeartbeatEngine() {
+      triggerHaptic('medium');
+      const card = document.getElementById('cardHeart');
+      const badge = document.getElementById('heartBadge');
+      const btnText = document.getElementById('heartBtnText');
+
+      if (isHeartActive) {
+        clearTimeout(heartTimer);
+        clearInterval(heartSlowdownTimer);
+        heartTimer = null;
+        heartSlowdownTimer = null;
+        isHeartActive = false;
+        card.classList.remove('active');
+        badge.textContent = 'OFF';
+        badge.classList.remove('live');
+        btnText.textContent = 'Start Heartbeat Pulse';
+        sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 0);
+        refreshVisualAura();
+        return;
+      }
+
+      stopAllActiveLabFeatures('heart');
+      isHeartActive = true;
+      heartBpm = 70;
+      card.classList.add('active');
+      badge.textContent = `${heartBpm} BPM`;
+      badge.classList.add('live');
+      btnText.textContent = 'Stop Heartbeat Engine';
+      showToast('Heartbeat Pulse Active', `70 BPM Resting Arterial Rhythm`, 'music', '#ef4444');
+
+      const isSlowdown = document.getElementById('sleepSlowdownCheck').checked;
+      if (isSlowdown) {
+        heartSlowdownTimer = setInterval(() => {
+          if (!isHeartActive) return;
+          if (heartBpm > 52) {
+            heartBpm--;
+            document.getElementById('heartBpmText').textContent = `${heartBpm} BPM (Decelerating)`;
+            badge.textContent = `${heartBpm} BPM`;
+          }
+        }, 22000);
+      }
+
+      runHeartbeatCycle();
+    }
+
+    function runHeartbeatCycle() {
+      if (!isHeartActive) return;
+      const intervalMs = Math.round(60000 / heartBpm);
+      const icon = document.getElementById('heartIconPulse');
+
+      // 1. Systolic first pulse ("lub")
+      if (icon) icon.classList.add('pump');
+      sendCommand('HsbColor 350,100,100', 0);
+      triggerHaptic('light');
+
+      setTimeout(() => {
+        if (!isHeartActive) return;
+        if (icon) icon.classList.remove('pump');
+        sendCommand('HsbColor 350,100,25', 0);
+
+        setTimeout(() => {
+          if (!isHeartActive) return;
+          // 2. Second arterial wave ("dub")
+          if (icon) icon.classList.add('pump');
+          sendCommand('HsbColor 350,100,80', 0);
+
+          setTimeout(() => {
+            if (!isHeartActive) return;
+            if (icon) icon.classList.remove('pump');
+            // Diastolic rest period
+            sendCommand('HsbColor 350,100,15', 0);
+
+            const elapsed = 400;
+            const remaining = Math.max(100, intervalMs - elapsed);
+            heartTimer = setTimeout(runHeartbeatCycle, remaining);
+          }, 110);
+        }, 110);
+      }, 100);
+    }
+
+    // ─── QUANTUM FEATURE 6: SEISMIC SHAKE-TO-STRIKE (GONG / WAND WHIP) ────────
+    let isGongArmed = false;
+    let lastMotionTime = 0;
+
+    async function toggleGongMode() {
+      triggerHaptic('medium');
+      const card = document.getElementById('cardGong');
+      const badge = document.getElementById('gongBadge');
+      const btnText = document.getElementById('gongBtnText');
+
+      if (isGongArmed) {
+        window.removeEventListener('devicemotion', handleDeviceMotion);
+        isGongArmed = false;
+        card.classList.remove('active');
+        badge.textContent = 'STANDBY';
+        badge.classList.remove('live');
+        btnText.textContent = 'Arm Shake Gong Sensor';
+        showToast('Gong Sensor Disarmed', 'Motion strike disabled', 'music', '#94a3b8');
+        return;
+      }
+
+      // Handle iOS permission
+      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+        try {
+          const perm = await DeviceMotionEvent.requestPermission();
+          if (perm !== 'granted') {
+            alert('Motion permission required for Shake Gong.');
+            return;
+          }
+        } catch (e) {
+          alert('Sensor error: ' + e.message);
+          return;
+        }
+      }
+
+      window.addEventListener('devicemotion', handleDeviceMotion, { passive: true });
+      isGongArmed = true;
+      card.classList.add('active');
+      badge.textContent = 'ARMED • WHIP PHONE';
+      badge.classList.add('live');
+      btnText.textContent = 'Disarm Shake Gong';
+      showToast('Gong Sensor Armed!', 'Whip or shake phone firmly to strike light shockwave', 'music', '#a855f7');
+    }
+
+    function handleDeviceMotion(e) {
+      if (!isGongArmed) return;
+      const acc = e.accelerationIncludingGravity || e.acceleration;
+      if (!acc) return;
+      const x = acc.x || 0, y = acc.y || 0, z = acc.z || 0;
+      const magnitude = Math.sqrt(x * x + y * y + z * z);
+
+      const now = Date.now();
+      if (magnitude > 22 && now - lastMotionTime > 2500) {
+        lastMotionTime = now;
+        triggerGongShockwave();
+      }
+    }
+
+    function triggerGongShockwave() {
+      triggerHaptic('success');
+      showToast('🔔 GONG STRIKE!', 'Luminous shockwave resonance fading out...', 'music', '#a855f7');
+
+      // Strike max white lumen
+      sendCommand('Backlog CT 160; Dimmer 100', 0);
+
+      // Resonate and decay smoothly like a Tibetan singing bowl
+      setTimeout(() => sendCommand('Backlog HsbColor 40,80,75; Dimmer 75', 0), 400);
+      setTimeout(() => sendCommand('Backlog HsbColor 30,90,45; Dimmer 45', 0), 1200);
+      setTimeout(() => sendCommand('Backlog HsbColor 20,100,20; Dimmer 20', 0), 2200);
+      setTimeout(() => {
+        sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 0);
+        refreshVisualAura();
+      }, 3400);
+    }
+
+    // ─── QUANTUM FEATURE 7: HYPERSPACE SPECTRUM WARP ──────────────────────────
+    let isWarpActive = false;
+    let warpTimer = null;
+    let warpSpeedMs = 1200;
+
+    function onWarpSpeedChange(val) {
+      warpSpeedMs = parseInt(val);
+      const text = document.getElementById('warpSpeedText');
+      if (text) text.textContent = `${(warpSpeedMs / 1000).toFixed(1)}s Velocity`;
+      if (isWarpActive) restartWarpEngine();
+    }
+
+    function toggleWarpEngine() {
+      triggerHaptic('medium');
+      const card = document.getElementById('cardWarp');
+      const badge = document.getElementById('warpBadge');
+      const btnText = document.getElementById('warpBtnText');
+
+      if (isWarpActive) {
+        clearInterval(warpTimer);
+        warpTimer = null;
+        isWarpActive = false;
+        card.classList.remove('active');
+        badge.textContent = 'OFF';
+        badge.classList.remove('live');
+        btnText.textContent = 'Engage Hyperspace Warp';
+        sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 0);
+        refreshVisualAura();
+        return;
+      }
+
+      stopAllActiveLabFeatures('warp');
+      isWarpActive = true;
+      card.classList.add('active');
+      badge.textContent = 'WARPING';
+      badge.classList.add('live');
+      btnText.textContent = 'Disengage Warp';
+      showToast('Hyperspace Warp Engaged', 'Full-spectrum velocity stream active', 'music', '#10b981');
+      restartWarpEngine();
+    }
+
+    function restartWarpEngine() {
+      if (warpTimer) clearInterval(warpTimer);
+      const stepInterval = Math.max(30, Math.round(warpSpeedMs / 16));
+
+      warpTimer = setInterval(() => {
+        if (!isWarpActive) return;
+        currentHue = (currentHue + 22) % 360;
+        document.getElementById('hueSlider').value = currentHue;
+        document.getElementById('hueReadout').textContent = `${currentHue}°`;
+        sendCommand(`HsbColor ${currentHue},100,100`, 0);
+        refreshVisualAura();
+      }, stepInterval);
+    }
+
+    // ─── QUANTUM FEATURE 8: CHAMELEON CAMERA EYE ──────────────────────────────
+    let isCameraActive = false;
+    let cameraStream = null;
+    let cameraSamplerTimer = null;
+    const samplerCanvas = document.createElement('canvas');
+    samplerCanvas.width = 40;
+    samplerCanvas.height = 40;
+    const samplerCtx = samplerCanvas.getContext('2d');
+
+    async function toggleChameleonCamera() {
+      triggerHaptic('medium');
+      if (isCameraActive) {
+        stopChameleonCamera();
+        return;
+      }
+
+      stopAllActiveLabFeatures('camera');
+      const box = document.getElementById('cameraBox');
+      const video = document.getElementById('cameraVideo');
+      const badge = document.getElementById('camBadge');
+      const btnText = document.getElementById('camBtnText');
+      const card = document.getElementById('cardCamera');
+
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' } }
+        });
+        video.srcObject = cameraStream;
+        await video.play();
+
+        box.style.display = 'block';
+        card.classList.add('active');
+        badge.textContent = 'SAMPLING';
+        badge.classList.add('live');
+        btnText.textContent = 'Close Chameleon Camera';
+        isCameraActive = true;
+        showToast('Chameleon Camera Eye', 'Point camera at any room object or artwork', 'music', '#f43f5e');
+
+        // Sample center crosshair every 220ms
+        cameraSamplerTimer = setInterval(sampleCameraColorCenter, 220);
+      } catch (err) {
+        alert('Camera access denied or unavailable: ' + err.message);
+      }
+    }
+
+    function sampleCameraColorCenter() {
+      if (!isCameraActive) return;
+      const video = document.getElementById('cameraVideo');
+      if (!video || video.readyState < 2) return;
+
+      samplerCtx.drawImage(video, (video.videoWidth - 40) / 2, (video.videoHeight - 40) / 2, 40, 40, 0, 0, 40, 40);
+      const imgData = samplerCtx.getImageData(15, 15, 10, 10).data;
+
+      // Average 10x10 block
+      let r = 0, g = 0, b = 0, count = 0;
+      for (let i = 0; i < imgData.length; i += 4) {
+        r += imgData[i];
+        g += imgData[i + 1];
+        b += imgData[i + 2];
+        count++;
+      }
+      r = Math.round(r / count);
+      g = Math.round(g / count);
+      b = Math.round(b / count);
+
+      const hsl = rgbToHsl(r, g, b);
+      const reticleDot = document.getElementById('reticleDot');
+      if (reticleDot) {
+        reticleDot.style.background = `rgb(${r}, ${g}, ${b})`;
+        reticleDot.style.boxShadow = `0 0 10px rgb(${r}, ${g}, ${b})`;
+      }
+
+      currentHue = Math.round(hsl.h);
+      document.getElementById('hueSlider').value = currentHue;
+      document.getElementById('hueReadout').textContent = `${currentHue}°`;
+      sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 0);
+      refreshVisualAura();
+    }
+
+    function stopChameleonCamera() {
+      if (cameraSamplerTimer) clearInterval(cameraSamplerTimer);
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(t => t.stop());
+        cameraStream = null;
+      }
+      const box = document.getElementById('cameraBox');
+      const badge = document.getElementById('camBadge');
+      const btnText = document.getElementById('camBtnText');
+      const card = document.getElementById('cardCamera');
+
+      if (box) box.style.display = 'none';
+      if (card) card.classList.remove('active');
+      if (badge) { badge.textContent = 'OFF'; badge.classList.remove('live'); }
+      if (btnText) btnText.textContent = 'Open Chameleon Camera';
+      isCameraActive = false;
+    }
+
+    function stopAllActiveLabFeatures(except = '') {
+      if (except !== 'lightning' && isLightningActive) toggleLightningStorm();
+      if (except !== 'bpm' && isBpmActive) toggleBpmEngine();
+      if (except !== 'heart' && isHeartActive) toggleHeartbeatEngine();
+      if (except !== 'warp' && isWarpActive) toggleWarpEngine();
+      if (except !== 'camera' && isCameraActive) stopChameleonCamera();
     }
   </script>
 </body>
