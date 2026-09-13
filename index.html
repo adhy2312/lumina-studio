@@ -951,6 +951,268 @@
       color: #d8b4fe;
     }
 
+    /* ── Subtle Premium Micro-Animations & Glow FX ── */
+    @keyframes auraBreathe {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.026); filter: brightness(1.06); }
+    }
+    .aura-orb-core.breathing {
+      animation: auraBreathe 4.8s ease-in-out infinite;
+    }
+
+    @keyframes specularShift {
+      0%, 100% { transform: rotate(-30deg) scale(1); opacity: 0.65; }
+      50% { transform: rotate(-18deg) scale(1.08); opacity: 0.88; }
+    }
+    .aura-glass-specular {
+      animation: specularShift 6.5s ease-in-out infinite;
+    }
+
+    /* Tactile Hover Shimmer & Active Micro-Springs */
+    .mood-btn, .fx-card, .timer-card, .secondary-btn, .picker-view-btn, .mode-tab {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mood-btn::after, .fx-card::after, .timer-card::after, .secondary-btn::after {
+      content: '';
+      position: absolute;
+      inset: -50%;
+      background: radial-gradient(circle at center, rgba(255, 255, 255, 0.16) 0%, transparent 60%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      transform: scale(0.6);
+    }
+    .mood-btn:hover::after, .fx-card:hover::after, .timer-card:hover::after, .secondary-btn:hover::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .mood-btn:active, .timer-card:active, .fx-card:active, .secondary-btn:active, .picker-view-btn:active, .mode-tab:active {
+      transform: scale(0.95) !important;
+      transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    }
+
+    /* Active Card Luminous Shimmer Border */
+    @keyframes fxGlowPulse {
+      0%, 100% { box-shadow: 0 0 16px rgba(139, 92, 246, 0.35); border-color: rgba(139, 92, 246, 0.6); }
+      50% { box-shadow: 0 0 30px rgba(139, 92, 246, 0.65); border-color: rgba(167, 139, 250, 0.9); }
+    }
+    .fx-card.active {
+      animation: fxGlowPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes timerGlowPulse {
+      0%, 100% { box-shadow: 0 0 14px rgba(56, 189, 248, 0.3); border-color: rgba(56, 189, 248, 0.6); }
+      50% { box-shadow: 0 0 26px rgba(56, 189, 248, 0.6); border-color: rgba(125, 211, 252, 0.9); }
+    }
+    .timer-card.active {
+      animation: timerGlowPulse 2.8s ease-in-out infinite;
+    }
+
+    /* Live Audio Dot on Tab Bar */
+    .tab-live-dot {
+      position: absolute;
+      top: -2px;
+      right: -4px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--spotify-green);
+      box-shadow: 0 0 8px var(--spotify-green);
+      display: none;
+      animation: livePulse 1.8s infinite ease-in-out;
+    }
+    .tab-live-dot.active { display: block; }
+
+    /* ── Dynamic Music Island (Sleek Phone/Spotify Live State) ── */
+    .dynamic-island {
+      position: relative;
+      background: rgba(14, 18, 28, 0.82);
+      border: 1px solid rgba(29, 185, 84, 0.4);
+      border-top: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 22px;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      cursor: pointer;
+      backdrop-filter: blur(28px) saturate(190%);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), 0 0 24px rgba(29, 185, 84, 0.22);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .dynamic-island:hover {
+      background: rgba(18, 24, 38, 0.92);
+      border-color: rgba(29, 185, 84, 0.65);
+      transform: translateY(-2px);
+    }
+
+    .island-art-wrap {
+      position: relative;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+    .island-art-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      animation: spinRecord 12s linear infinite;
+    }
+    @keyframes spinRecord { to { transform: rotate(360deg); } }
+
+    .island-meta {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+    .island-track-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .island-track-sub {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-soft);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 1px;
+    }
+    .island-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--spotify-green);
+      background: rgba(29, 185, 84, 0.16);
+      padding: 2px 7px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    /* Animated Sound Wave Equalizer */
+    .island-eq {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 16px;
+      flex-shrink: 0;
+      padding-right: 4px;
+    }
+    .eq-bar {
+      width: 3px;
+      border-radius: 2px;
+      background: var(--spotify-green);
+      animation: eqBounce 0.9s ease-in-out infinite alternate;
+    }
+    .bar1 { height: 6px; animation-duration: 0.75s; }
+    .bar2 { height: 16px; animation-duration: 0.5s; animation-delay: 0.15s; }
+    .bar3 { height: 10px; animation-duration: 0.65s; animation-delay: 0.3s; }
+    .bar4 { height: 14px; animation-duration: 0.55s; animation-delay: 0.1s; }
+
+    @keyframes eqBounce {
+      0% { height: 4px; opacity: 0.45; }
+      100% { height: 16px; opacity: 1; }
+    }
+
+    /* ── Floating Notification Toast ── */
+    .toast-container {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 90%;
+      max-width: 420px;
+    }
+    .toast-pill {
+      background: rgba(14, 18, 28, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-top: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 20px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #fff;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 18px rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(28px) saturate(190%);
+      pointer-events: auto;
+      font-size: 12px;
+    }
+    .toast-icon-wrap {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .toast-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .toast-title {
+      font-weight: 700;
+      font-size: 12px;
+      color: #fff;
+    }
+    .toast-sub {
+      font-size: 11px;
+      color: var(--text-soft);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 1px;
+    }
+
+    /* Inline Spotify Token Drawer */
+    .spotify-token-drawer {
+      background: rgba(0, 0, 0, 0.38);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .glass-input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 8px 12px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .glass-input:focus {
+      border-color: var(--spotify-green);
+    }
+
     #paletteCanvas { display: none; }
   </style>
 </head>
@@ -995,6 +1257,32 @@
       </button>
     </header>
 
+    <!-- Floating Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Dynamic Music Island (Sleek Phone/Spotify Live State) -->
+    <div class="dynamic-island" id="dynamicIsland" style="display: none;" onclick="switchMode('music')">
+      <div class="island-art-wrap">
+        <img id="islandAlbumImg" class="island-art-img" src="" alt="Album Artwork">
+      </div>
+      <div class="island-meta">
+        <div class="island-track-title" id="islandTrackTitle">Playing on Spotify</div>
+        <div class="island-track-sub">
+          <span class="island-badge">
+            <svg viewBox="0 0 24 24" style="width:10px; height:10px; fill:currentColor;"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.494 17.316c-.216.353-.674.464-1.026.248-2.813-1.718-6.354-2.107-10.525-1.154-.402.091-.803-.162-.895-.563-.092-.402.162-.803.563-.895 4.571-1.045 8.48-.606 11.636 1.339.352.215.464.673.247 1.025zm1.468-3.262c-.272.443-.852.585-1.295.313-3.22-1.979-8.13-2.552-11.939-1.396-.499.151-1.026-.135-1.178-.634-.151-.499.135-1.026.634-1.178 4.364-1.325 9.775-.688 13.465 1.577.443.272.585.852.313 1.295zm.126-3.41c-3.86-2.292-10.228-2.503-13.902-1.388-.592.18-1.222-.158-1.402-.75-.18-.592.158-1.222.75-1.402 4.225-1.283 11.258-1.036 15.698 1.597.533.316.708 1.009.392 1.542-.316.533-1.009.708-1.542.392z"/></svg>
+            Live on Phone
+          </span>
+          <span id="islandTrackArtist">Play any music on Spotify</span>
+        </div>
+      </div>
+      <div class="island-eq">
+        <span class="eq-bar bar1"></span>
+        <span class="eq-bar bar2"></span>
+        <span class="eq-bar bar3"></span>
+        <span class="eq-bar bar4"></span>
+      </div>
+    </div>
+
     <!-- Centerpiece Liquid Glass Aura Orb -->
     <div class="orb-stage">
       <div class="aura-orb-container" onclick="cycleNextColor()">
@@ -1024,7 +1312,10 @@
         White
       </button>
       <button class="mode-tab" id="tabMusic" onclick="switchMode('music')">
-        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <div style="position: relative; display: inline-flex; align-items: center; justify-content: center;">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <span class="tab-live-dot" id="musicTabDot"></span>
+        </div>
         Spotify Sync
       </button>
       <button class="mode-tab" id="tabLiving" onclick="switchMode('living')">
@@ -1246,12 +1537,24 @@
               <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
               <span id="spotifyBtnText">Connect</span>
             </button>
-            <button class="spotify-btn secondary" onclick="enterSpotifyTokenManually()" title="Paste Access Token Directly">
-              Paste Token
+            <button class="spotify-btn secondary" id="spotifyTokenDrawerBtn" onclick="toggleTokenDrawer()" title="Enter Token Directly">
+              Token
             </button>
             <button class="spotify-btn secondary" id="spotifyDisconnectBtn" onclick="disconnectSpotify()" style="display: none;" title="Disconnect Spotify">
               Disconnect
             </button>
+          </div>
+        </div>
+
+        <!-- Inline Token Input Drawer (Zero Popup / Prompt Modals) -->
+        <div class="spotify-token-drawer" id="spotifyTokenDrawer" style="display: none;">
+          <div class="slider-title-row">
+            <span>Direct Access Token</span>
+            <span style="font-size: 10px; color: var(--text-soft);">Paste from Spotify Dashboard</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <input type="password" id="manualTokenInput" class="glass-input" placeholder="Paste Spotify OAuth Token (Bearer ...)">
+            <button class="secondary-btn" style="flex: unset; padding: 8px 14px; background: var(--spotify-green); color: #000; font-weight: 700;" onclick="saveManualSpotifyToken()">Save</button>
           </div>
         </div>
 
@@ -1483,6 +1786,37 @@
           { opacity: 0, y: 12, filter: "blur(10px)" }, 
           { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.35, ease: "power2.out", overwrite: "auto" }
         );
+      }
+    }
+
+    function showToast(title, sub, iconType = 'music', color = '#1db954') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = 'toast-pill';
+      toast.innerHTML = `
+        <div class="toast-icon-wrap" style="background: ${color}22; color: ${color};">
+          ${iconType === 'music' ? '<svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>' : '<svg class="svg-icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'}
+        </div>
+        <div class="toast-content">
+          <span class="toast-title">${title}</span>
+          <span class="toast-sub">${sub}</span>
+        </div>
+      `;
+      container.appendChild(toast);
+      if (window.gsap) {
+        gsap.fromTo(toast, 
+          { y: -20, opacity: 0, scale: 0.92 }, 
+          { y: 0, opacity: 1, scale: 1, duration: 0.42, ease: "back.out(1.6)" }
+        );
+        setTimeout(() => {
+          gsap.to(toast, {
+            y: -14, opacity: 0, scale: 0.92, duration: 0.32, ease: "power2.in",
+            onComplete: () => toast.remove()
+          });
+        }, 3200);
+      } else {
+        setTimeout(() => toast.remove(), 3500);
       }
     }
 
@@ -1731,8 +2065,13 @@
     function onDimmerSlide(val) {
       stopLivingScene();
       currentDimmer = parseInt(val);
-      document.getElementById('brightnessReadout').textContent = `${currentDimmer}%`;
-      document.getElementById('whiteBriReadout').textContent = `${currentDimmer}%`;
+      const briEl = document.getElementById('brightnessReadout');
+      const wBriEl = document.getElementById('whiteBriReadout');
+      if (briEl) briEl.textContent = `${currentDimmer}%`;
+      if (wBriEl) wBriEl.textContent = `${currentDimmer}%`;
+      if (window.gsap && (briEl || wBriEl)) {
+        gsap.fromTo([briEl, wBriEl].filter(Boolean), { scale: 1.12 }, { scale: 1, duration: 0.22, overwrite: "auto" });
+      }
       document.getElementById('dimmerSlider').value = currentDimmer;
       document.getElementById('whiteDimmerSlider').value = currentDimmer;
 
@@ -1813,7 +2152,11 @@
       clearActiveWhitePresets();
       currentCt = parseInt(ctVal);
       const kelvin = Math.round(1000000 / currentCt);
-      document.getElementById('kelvinReadout').textContent = `${kelvin}K`;
+      const kelEl = document.getElementById('kelvinReadout');
+      if (kelEl) {
+        kelEl.textContent = `${kelvin}K`;
+        if (window.gsap) gsap.fromTo(kelEl, { scale: 1.12 }, { scale: 1, duration: 0.22, overwrite: "auto" });
+      }
       document.getElementById('kelvinLabel').textContent = getKelvinDesc(kelvin);
 
       if (!isBulbOn) {
@@ -1907,10 +2250,13 @@
         if (core) {
           core.style.background = '#1e293b';
           core.style.boxShadow = 'none';
+          core.classList.remove('breathing');
         }
         tweenAmbientToRgb(15, 23, 42);
         return;
       }
+
+      if (core) core.classList.add('breathing');
 
       if (activeTab === 'white') {
         const kelvin = Math.round(1000000 / currentCt);
@@ -1992,25 +2338,43 @@
     let isTrackPlaying = false;
 
     function getSpotifyRedirectUri() {
-      return window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
+      const url = new URL(window.location.href);
+      url.search = '';
+      url.hash = '';
+      return url.toString().replace(/\/index\.html$/, '/');
     }
 
     function initiateSpotifyAuth() {
       triggerHaptic('medium');
       const redirectUri = getSpotifyRedirectUri();
       const scope = 'user-read-playback-state user-read-currently-playing';
-      const authUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&show_dialog=true`;
+      // show_dialog=false ensures instant seamless authorization without redundant prompt if previously allowed
+      const authUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&show_dialog=false`;
       window.location.href = authUrl;
     }
 
-    function enterSpotifyTokenManually() {
-      triggerHaptic('medium');
-      const token = prompt('Paste your Spotify Access Token:\n(Copy from Spotify Developer Console / Dashboard):');
-      if (token && token.trim()) {
-        spotifyToken = token.trim().replace(/^Bearer\s+/i, '');
-        localStorage.setItem('spotify_access_token', spotifyToken);
-        validateAndActivateSpotify();
+    function toggleTokenDrawer() {
+      triggerHaptic('light');
+      const drawer = document.getElementById('spotifyTokenDrawer');
+      if (!drawer) return;
+      const isOpen = drawer.style.display === 'flex';
+      drawer.style.display = isOpen ? 'none' : 'flex';
+      if (!isOpen) {
+        if (window.gsap) gsap.from(drawer, { opacity: 0, y: -6, duration: 0.25 });
+        const input = document.getElementById('manualTokenInput');
+        if (input) input.focus();
       }
+    }
+
+    function saveManualSpotifyToken() {
+      triggerHaptic('medium');
+      const input = document.getElementById('manualTokenInput');
+      if (!input || !input.value.trim()) return;
+      spotifyToken = input.value.trim().replace(/^Bearer\s+/i, '');
+      localStorage.setItem('spotify_access_token', spotifyToken);
+      document.getElementById('spotifyTokenDrawer').style.display = 'none';
+      validateAndActivateSpotify();
+      showToast('Token Saved', 'Connecting to Spotify...', 'music', '#1db954');
     }
 
     function disconnectSpotify() {
@@ -2024,14 +2388,21 @@
       document.getElementById('spotifyBtnText').textContent = 'Connect';
       document.getElementById('spotifyDisconnectBtn').style.display = 'none';
       document.getElementById('spotifyTrackCard').style.display = 'none';
+      const island = document.getElementById('dynamicIsland');
+      if (island) island.style.display = 'none';
+      const dot = document.getElementById('musicTabDot');
+      if (dot) dot.classList.remove('active');
       if (spotifyPollInterval) clearInterval(spotifyPollInterval);
+      showToast('Spotify Disconnected', 'Logged out successfully', 'music', '#94a3b8');
     }
 
     function copyRedirectUri() {
       triggerHaptic('light');
       const uri = getSpotifyRedirectUri();
       navigator.clipboard.writeText(uri).then(() => {
-        alert('Copied Redirect URI to clipboard:\n' + uri + '\n\nAdd this in your Spotify App Dashboard under Redirect URIs.');
+        showToast('Redirect URI Copied', 'Add in Spotify Developer Dashboard', 'music', '#1db954');
+      }).catch(() => {
+        prompt('Copy this Redirect URI:', uri);
       });
     }
 
@@ -2042,7 +2413,7 @@
       const searchParams = new URLSearchParams(window.location.search);
       if (searchParams.has('error')) {
         const err = searchParams.get('error');
-        alert('Spotify Login Note: ' + err + '\n\nTip: You can tap "Paste Token" to connect directly!');
+        showToast('Spotify Login Note', err, 'music', '#f59e0b');
         return;
       }
 
@@ -2055,6 +2426,7 @@
           localStorage.setItem('spotify_access_token', token);
           window.location.hash = '';
           validateAndActivateSpotify();
+          showToast('Spotify Connected!', 'Live playback synchronizer ready', 'music', '#1db954');
           return;
         }
       }
@@ -2075,7 +2447,13 @@
           document.getElementById('spotifyBtnText').textContent = `Synced (${user.display_name || 'Spotify'})`;
           document.getElementById('spotifyDisconnectBtn').style.display = 'inline-flex';
           document.getElementById('spotifySyncToggle').checked = true;
-          toggleSpotifySync(true);
+          isSpotifySyncActive = true;
+          document.getElementById('spotifyTrackCard').style.display = 'flex';
+
+          // Start background polling immediately for live phone playback awareness
+          if (spotifyPollInterval) clearInterval(spotifyPollInterval);
+          spotifyPollInterval = setInterval(pollSpotifyPlayback, 2500);
+          pollSpotifyPlayback();
         } else {
           localStorage.removeItem('spotify_access_token');
           spotifyToken = null;
@@ -2092,28 +2470,19 @@
 
       if (enable) {
         if (!spotifyToken) {
-          const choice = confirm('Connect Spotify:\n\nTap OK to log in via Spotify, or Cancel to paste a token.');
-          if (choice) {
-            initiateSpotifyAuth();
-          } else {
-            enterSpotifyTokenManually();
-          }
+          initiateSpotifyAuth();
           return;
         }
         card.style.display = 'flex';
         pollSpotifyPlayback();
-        if (spotifyPollInterval) clearInterval(spotifyPollInterval);
-        spotifyPollInterval = setInterval(pollSpotifyPlayback, 2500);
       } else {
         card.style.display = 'none';
-        isTrackPlaying = false;
         stopSpotifyRhythmEngine();
-        if (spotifyPollInterval) clearInterval(spotifyPollInterval);
       }
     }
 
     async function pollSpotifyPlayback() {
-      if (!isSpotifySyncActive || !spotifyToken) return;
+      if (!spotifyToken) return;
       try {
         const res = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
           headers: { 'Authorization': `Bearer ${spotifyToken}` }
@@ -2121,42 +2490,89 @@
 
         if (res.status === 401) {
           disconnectSpotify();
+          showToast('Session Expired', 'Please reconnect Spotify', 'music', '#f59e0b');
           return;
         }
 
-        if (res.status === 204 || res.status === 200) {
-          if (res.status === 204) {
+        const island = document.getElementById('dynamicIsland');
+        const tabDot = document.getElementById('musicTabDot');
+
+        if (res.status === 204 || !res.ok) {
+          if (isTrackPlaying) {
             isTrackPlaying = false;
             stopSpotifyRhythmEngine();
-            document.getElementById('spotifyTrackTitle').textContent = 'Playback Paused';
-            document.getElementById('spotifyTrackArtist').textContent = 'Start music on your Spotify app';
-            return;
-          }
-
-          const data = await res.json();
-          if (data && data.item) {
-            const track = data.item;
-            isTrackPlaying = (data.is_playing === true);
-            document.getElementById('spotifyTrackTitle').textContent = track.name;
-            document.getElementById('spotifyTrackArtist').textContent = track.artists.map(a => a.name).join(', ');
-
-            if (track.album && track.album.images && track.album.images[0]) {
-              const artUrl = track.album.images[0].url;
-              const img = document.getElementById('spotifyAlbumImg');
-              if (img.src !== artUrl) {
-                img.src = artUrl;
-                extractAlbumPalette(artUrl);
+            if (tabDot) tabDot.classList.remove('active');
+            if (island && island.style.display !== 'none') {
+              if (window.gsap) {
+                gsap.to(island, { y: -10, opacity: 0, duration: 0.35, onComplete: () => island.style.display = 'none' });
+              } else {
+                island.style.display = 'none';
               }
             }
+          }
+          return;
+        }
 
-            if (track.id !== lastTrackId) {
-              lastTrackId = track.id;
-              fetchSpotifyAudioAnalysis(track.id);
-            } else if (isTrackPlaying && !spotifyRhythmTimer) {
-              startSpotifyRhythmEngine(currentBpm);
-            } else if (!isTrackPlaying) {
-              stopSpotifyRhythmEngine();
+        const data = await res.json();
+        if (data && data.item) {
+          const track = data.item;
+          const artistNames = track.artists.map(a => a.name).join(', ');
+          isTrackPlaying = (data.is_playing === true);
+
+          // Update Track Card in Music Panel
+          const cardTitle = document.getElementById('spotifyTrackTitle');
+          const cardArtist = document.getElementById('spotifyTrackArtist');
+          if (cardTitle) cardTitle.textContent = track.name;
+          if (cardArtist) cardArtist.textContent = artistNames;
+
+          // Update Dynamic Island
+          const islandTitle = document.getElementById('islandTrackTitle');
+          const islandArtist = document.getElementById('islandTrackArtist');
+          const islandImg = document.getElementById('islandAlbumImg');
+          if (islandTitle) islandTitle.textContent = track.name;
+          if (islandArtist) islandArtist.textContent = artistNames;
+
+          if (track.album && track.album.images && track.album.images[0]) {
+            const artUrl = track.album.images[0].url;
+            const img = document.getElementById('spotifyAlbumImg');
+            if (img && img.src !== artUrl) {
+              img.src = artUrl;
+              extractAlbumPalette(artUrl);
             }
+            if (islandImg && islandImg.src !== artUrl) {
+              islandImg.src = artUrl;
+            }
+          }
+
+          if (isTrackPlaying) {
+            if (tabDot) tabDot.classList.add('active');
+            if (island && (island.style.display === 'none' || !island.style.display)) {
+              island.style.display = 'flex';
+              if (window.gsap) {
+                gsap.fromTo(island, { y: -16, opacity: 0, scale: 0.95 }, { y: 0, opacity: 1, scale: 1, duration: 0.45, ease: "back.out(1.4)" });
+              }
+            }
+          } else {
+            if (tabDot) tabDot.classList.remove('active');
+            if (island && island.style.display !== 'none') {
+              if (window.gsap) {
+                gsap.to(island, { y: -10, opacity: 0, duration: 0.35, onComplete: () => island.style.display = 'none' });
+              } else {
+                island.style.display = 'none';
+              }
+            }
+          }
+
+          if (track.id !== lastTrackId) {
+            lastTrackId = track.id;
+            fetchSpotifyAudioAnalysis(track.id);
+            if (isTrackPlaying) {
+              showToast('Now Playing on Phone', `${track.name} • ${artistNames}`, 'music', '#1db954');
+            }
+          } else if (isTrackPlaying && isSpotifySyncActive && !spotifyRhythmTimer) {
+            startSpotifyRhythmEngine(currentBpm);
+          } else if (!isTrackPlaying) {
+            stopSpotifyRhythmEngine();
           }
         }
       } catch (e) {}
@@ -2185,9 +2601,18 @@
 
         const hsl = rgbToHsl(r, g, b);
         currentHue = Math.round(hsl.h);
-        document.getElementById('hueSlider').value = currentHue;
+        const slider = document.getElementById('hueSlider');
+        if (slider) slider.value = currentHue;
+        const barSlider = document.getElementById('hueSliderBar');
+        if (barSlider) barSlider.value = currentHue;
         document.getElementById('hueReadout').textContent = `${currentHue}°`;
         document.getElementById('hueColorName').textContent = 'Album Rhythm';
+        if (typeof updateWheelCursor === 'function') {
+          updateWheelCursor(currentHue, currentWheelSat || 100);
+        }
+        if (isBulbOn && isSpotifySyncActive) {
+          sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 50);
+        }
         refreshVisualAura();
       };
       img.src = imageUrl;
@@ -2811,7 +3236,11 @@
       currentHue = result.hue;
       currentWheelSat = result.sat;
       updateWheelCursor(currentHue, currentWheelSat);
-      document.getElementById('hueReadout').textContent = `${currentHue}°`;
+      const hueEl = document.getElementById('hueReadout');
+      if (hueEl) {
+        hueEl.textContent = `${currentHue}°`;
+        if (window.gsap) gsap.fromTo(hueEl, { scale: 1.12 }, { scale: 1, duration: 0.2, overwrite: "auto" });
+      }
       document.getElementById('hueColorName').textContent = getHueName(currentHue);
       document.getElementById('hueSlider').value = currentHue;
       // Also sync bar mode slider
@@ -2831,7 +3260,11 @@
 
     function onHueSlideBar(val) {
       currentHue = parseInt(val);
-      document.getElementById('hueReadout').textContent = `${currentHue}°`;
+      const hueEl = document.getElementById('hueReadout');
+      if (hueEl) {
+        hueEl.textContent = `${currentHue}°`;
+        if (window.gsap) gsap.fromTo(hueEl, { scale: 1.12 }, { scale: 1, duration: 0.2, overwrite: "auto" });
+      }
       document.getElementById('hueColorNameBar').textContent = getHueName(currentHue);
       document.getElementById('hueSlider').value = currentHue;
       stopLivingScene();
