@@ -1529,6 +1529,128 @@
     .spinning {
       animation: spinAnim 0.7s linear infinite;
     }
+
+    /* ── Clap Detector ─────────────────────────────── */
+    .clap-visualizer {
+      position: relative;
+      background: rgba(249, 115, 22, 0.06);
+      border: 1px solid rgba(249, 115, 22, 0.18);
+      border-radius: 14px;
+      height: 32px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      margin: 10px 0 8px;
+    }
+    .clap-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(249,115,22,0.5), rgba(251,191,36,0.8));
+      border-radius: 14px;
+      transition: width 0.05s ease;
+      pointer-events: none;
+    }
+    .clap-count-badge {
+      position: absolute;
+      right: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #f97316;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Sound Reactor Wave Canvas ─────────────────── */
+    .sound-visualizer {
+      background: rgba(236, 72, 153, 0.06);
+      border: 1px solid rgba(236, 72, 153, 0.18);
+      border-radius: 14px;
+      padding: 4px 8px;
+      margin: 10px 0 4px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #soundWaveCanvas {
+      border-radius: 10px;
+      display: block;
+    }
+
+    /* ── Sunrise Alarm UI ──────────────────────────── */
+    .sunrise-alarm-ui {
+      margin: 10px 0 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .glass-input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      color: var(--text-pure);
+      font-family: inherit;
+      font-size: 14px;
+      padding: 9px 14px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .glass-input:focus { border-color: rgba(255,255,255,0.22); }
+    input[type="time"].glass-input::-webkit-calendar-picker-indicator {
+      filter: invert(1) opacity(0.5);
+    }
+
+    /* ── Breath Ring ───────────────────────────────── */
+    .breath-ring-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px auto 8px;
+      width: 130px;
+      height: 130px;
+    }
+    .breath-ring-svg {
+      width: 130px;
+      height: 130px;
+      filter: drop-shadow(0 0 12px rgba(6,182,212,0.35));
+    }
+    .breath-ring-fill {
+      transition: stroke-dashoffset 0.12s ease;
+    }
+
+    /* ── Vortex Touch Spiral ───────────────────────── */
+    .vortex-stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px 0 8px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(139,92,246,0.06);
+      border: 1px solid rgba(139,92,246,0.2);
+      cursor: grab;
+    }
+    .vortex-stage:active { cursor: grabbing; }
+    #vortexCanvas {
+      display: block;
+      border-radius: 14px;
+      touch-action: none;
+    }
+    .vortex-overlay-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.6);
+      pointer-events: none;
+      letter-spacing: 0.5px;
+    }
+  </style>
 </head>
 <body>
 
@@ -2283,6 +2405,158 @@
           <span id="camBtnText">Open Chameleon Camera</span>
         </button>
       </div>
+
+      <!-- Feature 9: Clap Command Controller -->
+      <div class="crazy-card" id="cardClap">
+        <div class="crazy-card-header">
+          <span class="crazy-card-title">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="color: #f97316;"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+            Clap-to-Command (Hands-Free)
+          </span>
+          <span class="crazy-badge" id="clapBadge">OFF</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-soft); margin-top: -6px;">
+          Wave hands or clap near your phone: <strong style="color:#f97316">1× </strong> Toggle On/Off &nbsp;|&nbsp; <strong style="color:#f97316">2× </strong> Max Flash &nbsp;|&nbsp; <strong style="color:#f97316">3× </strong> Random Color
+        </p>
+        <div class="clap-visualizer" id="clapVisualizer">
+          <div class="clap-bar" id="clapBar"></div>
+          <span class="clap-count-badge" id="clapCountBadge">0 claps</span>
+        </div>
+        <button class="secondary-btn" id="clapToggleBtn" onclick="toggleClapDetector()" style="width: 100%;">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          <span id="clapBtnText">Arm Clap Detector</span>
+        </button>
+      </div>
+
+      <!-- Feature 10: Real-Time Sound Reactor -->
+      <div class="crazy-card" id="cardSound">
+        <div class="crazy-card-header">
+          <span class="crazy-card-title">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="color: #ec4899;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            Sound Reactor — Mic Amplitude Drive
+          </span>
+          <span class="crazy-badge" id="soundBadge">OFF</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-soft); margin-top: -6px;">
+          Your room becomes a visualizer. Music, voices, bass — all drive your light's brightness with zero latency.
+        </p>
+        <div class="sound-visualizer" id="soundViz">
+          <canvas id="soundWaveCanvas" width="280" height="44"></canvas>
+        </div>
+        <div class="slider-container" style="margin-top: 6px;">
+          <div class="slider-title-row">
+            <span>Sensitivity</span>
+            <span class="slider-val" id="soundSensText">Medium</span>
+          </div>
+          <input type="range" min="1" max="10" value="5" class="touch-slider" id="soundSensSlider" oninput="onSoundSensChange(this.value)">
+        </div>
+        <button class="secondary-btn" id="soundToggleBtn" onclick="toggleSoundReactor()" style="width: 100%;">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span id="soundBtnText">Start Sound Reactor</span>
+        </button>
+      </div>
+
+      <!-- Feature 11: Sunrise Alarm Clock -->
+      <div class="crazy-card" id="cardSunrise">
+        <div class="crazy-card-header">
+          <span class="crazy-card-title">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="color: #f59e0b;"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/><circle cx="12" cy="12" r="5"/></svg>
+            Sunrise Alarm — Smart Dawn Simulation
+          </span>
+          <span class="crazy-badge" id="sunriseBadge">OFF</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-soft); margin-top: -6px;">
+          Set a wake-up time. 30 minutes before it, your bulb simulates a real sunrise from deep red to blazing daylight — waking your body naturally with light.
+        </p>
+        <div class="sunrise-alarm-ui">
+          <input type="time" id="sunriseTimeInput" class="glass-input" style="font-size: 22px; font-weight: 700; text-align: center; letter-spacing: 2px; padding: 10px; color: #f59e0b; background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.3);">
+          <div style="display: flex; gap: 6px; margin-top: 8px;">
+            <div class="slider-container" style="flex:1;">
+              <div class="slider-title-row"><span>Ramp Duration</span><span class="slider-val" id="sunriseRampText">30 min</span></div>
+              <input type="range" min="5" max="60" value="30" step="5" class="touch-slider" id="sunriseRampSlider" oninput="onSunriseRampChange(this.value)">
+            </div>
+          </div>
+          <div id="sunriseCountdown" style="text-align: center; font-size: 12px; color: #f59e0b; display: none; margin-top: 8px;">⏰ Alarm set — dawn begins soon</div>
+        </div>
+        <button class="secondary-btn" id="sunriseToggleBtn" onclick="toggleSunriseAlarm()" style="width: 100%; border-color: rgba(245,158,11,0.4);">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M12 2v2M12 20v2"/><circle cx="12" cy="12" r="5"/></svg>
+          <span id="sunriseBtnText">Set Sunrise Alarm</span>
+        </button>
+      </div>
+
+      <!-- Feature 12: Breath Hue Painter -->
+      <div class="crazy-card" id="cardBreath">
+        <div class="crazy-card-header">
+          <span class="crazy-card-title">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="color: #06b6d4;"><path d="M12 2a10 10 0 0 1 10 10c0 3-1.5 5.5-4 7"/><path d="M12 22a10 10 0 0 1-10-10c0-3 1.5-5.5 4-7"/><circle cx="12" cy="12" r="3"/></svg>
+            Breath Painter — Exhale to Glow
+          </span>
+          <span class="crazy-badge" id="breathBadge">OFF</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-soft); margin-top: -6px;">
+          Breathe out slowly near your mic: light swells to full brightness. Inhale: it dims into a calm ember. The room breathes with you.
+        </p>
+        <div class="breath-ring-container" id="breathRingWrap">
+          <svg class="breath-ring-svg" viewBox="0 0 120 120">
+            <circle class="breath-ring-track" cx="60" cy="60" r="50" fill="none" stroke="rgba(6,182,212,0.12)" stroke-width="8"/>
+            <circle class="breath-ring-fill" id="breathRingFill" cx="60" cy="60" r="50" fill="none" stroke="rgba(6,182,212,0.7)" stroke-width="8" stroke-dasharray="314" stroke-dashoffset="314" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+          </svg>
+          <div style="position:absolute; text-align:center; top:50%; left:50%; transform:translate(-50%,-50%)">
+            <div id="breathLevelText" style="font-size:18px; font-weight:800; color:#06b6d4;">--</div>
+            <div style="font-size:9px; color:var(--text-dim)">breath level</div>
+          </div>
+        </div>
+        <button class="secondary-btn" id="breathToggleBtn" onclick="toggleBreathPainter()" style="width: 100%; border-color: rgba(6,182,212,0.4);">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span id="breathBtnText">Start Breath Painter</span>
+        </button>
+      </div>
+
+      <!-- Feature 13: Vortex Touch Color Spiral -->
+      <div class="crazy-card" id="cardVortex">
+        <div class="crazy-card-header">
+          <span class="crazy-card-title">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="color: #8b5cf6;"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7a5 5 0 1 0 5 5"/><circle cx="12" cy="12" r="1"/></svg>
+            Vortex Touch Spiral — Drag to Morph
+          </span>
+          <span class="crazy-badge" id="vortexBadge">STANDBY</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-soft); margin-top: -6px;">
+          A precision touch vortex: drag clockwise to scroll the hue spectrum in real-time with silky physics. No sliders. Pure tactile sorcery.
+        </p>
+        <div class="vortex-stage" id="vortexStage">
+          <canvas id="vortexCanvas" width="240" height="120"></canvas>
+          <div class="vortex-overlay-text" id="vortexOverlayText">Touch & Drag</div>
+        </div>
+        <button class="secondary-btn" id="vortexBtn" onclick="toggleVortexMode()" style="width: 100%; border-color: rgba(139,92,246,0.4);">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/></svg>
+          <span id="vortexBtnText">Activate Vortex Spiral</span>
+        </button>
+      </div>
+
+      <!-- Feature 14: Disco Seizure Party Cannon -->
+      <div class="crazy-card" id="cardDisco">
+        <div class="crazy-card-header">
+          <span class="crazy-card-title">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="color: #f43f5e;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Disco Party Cannon
+          </span>
+          <span class="crazy-badge" id="discoBadge">OFF</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-soft); margin-top: -6px;">
+          Full-manic multi-pattern party mode: random hue explosions, BPM-locked chaser strobes, seizure-level color artillery. Warning: not for the faint-hearted.
+        </p>
+        <div style="display: flex; gap: 6px; margin-bottom: 8px;" id="discoModeRow">
+          <button class="picker-view-btn active" id="discoModeGlitter" onclick="setDiscoMode('glitter')" style="flex:1; padding:5px; font-size:10px;">✨ Glitter</button>
+          <button class="picker-view-btn" id="discoModeRave" onclick="setDiscoMode('rave')" style="flex:1; padding:5px; font-size:10px;">🎉 Rave</button>
+          <button class="picker-view-btn" id="discoModeCannon" onclick="setDiscoMode('cannon')" style="flex:1; padding:5px; font-size:10px;">💥 Cannon</button>
+        </div>
+        <button class="secondary-btn" id="discoToggleBtn" onclick="toggleDiscoCannon()" style="width: 100%; border-color: rgba(244,63,94,0.5); background: rgba(244,63,94,0.08);">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span id="discoBtnText">🎉 FIRE DISCO CANNON</span>
+        </button>
+      </div>
+
     </section>
 
   </main>
@@ -4798,6 +5072,585 @@
       if (except !== 'heart' && isHeartActive) toggleHeartbeatEngine();
       if (except !== 'warp' && isWarpActive) toggleWarpEngine();
       if (except !== 'camera' && isCameraActive) stopChameleonCamera();
+      if (except !== 'clap' && isClapActive) toggleClapDetector();
+      if (except !== 'sound' && isSoundActive) toggleSoundReactor();
+      if (except !== 'breath' && isBreathActive) toggleBreathPainter();
+      if (except !== 'disco' && isDiscoActive) toggleDiscoCannon();
+    }
+
+    // ─── QUANTUM FEATURE 9: CLAP-TO-COMMAND ────────────────────────────────────
+    let isClapActive = false;
+    let clapMicStream = null;
+    let clapAudioCtx = null;
+    let clapAnalyser = null;
+    let clapAnimFrame = null;
+    let clapBuffer = [];
+    let clapLastTime = 0;
+    let clapSequenceTimer = null;
+    let clapCount = 0;
+    let clapThreshold = 0.35;
+
+    async function toggleClapDetector() {
+      triggerHaptic('medium');
+      const card = document.getElementById('cardClap');
+      const badge = document.getElementById('clapBadge');
+      const btnText = document.getElementById('clapBtnText');
+
+      if (isClapActive) {
+        stopClapDetector();
+        card.classList.remove('active');
+        badge.textContent = 'OFF';
+        badge.classList.remove('live');
+        btnText.textContent = 'Arm Clap Detector';
+        return;
+      }
+
+      try {
+        clapMicStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        clapAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = clapAudioCtx.createMediaStreamSource(clapMicStream);
+        clapAnalyser = clapAudioCtx.createAnalyser();
+        clapAnalyser.fftSize = 256;
+        source.connect(clapAnalyser);
+        isClapActive = true;
+        card.classList.add('active');
+        badge.textContent = 'LISTENING';
+        badge.classList.add('live');
+        btnText.textContent = 'Disarm Clap Detector';
+        showToast('Clap Detector Armed', '1× Toggle • 2× Flash • 3× Color Change', 'music', '#f97316');
+        runClapLoop();
+      } catch (e) {
+        alert('Microphone access required: ' + e.message);
+      }
+    }
+
+    function stopClapDetector() {
+      isClapActive = false;
+      if (clapAnimFrame) cancelAnimationFrame(clapAnimFrame);
+      if (clapMicStream) clapMicStream.getTracks().forEach(t => t.stop());
+      if (clapAudioCtx) clapAudioCtx.close();
+      clapMicStream = null; clapAudioCtx = null; clapAnalyser = null;
+    }
+
+    let clapWasAbove = false;
+    function runClapLoop() {
+      if (!isClapActive) return;
+      const data = new Uint8Array(clapAnalyser.fftSize);
+      clapAnalyser.getByteTimeDomainData(data);
+      let maxAmp = 0;
+      for (let i = 0; i < data.length; i++) {
+        const v = Math.abs((data[i] - 128) / 128);
+        if (v > maxAmp) maxAmp = v;
+      }
+
+      // Animate bar
+      const bar = document.getElementById('clapBar');
+      if (bar) bar.style.width = (maxAmp * 100).toFixed(1) + '%';
+
+      const isClap = maxAmp > clapThreshold;
+      if (isClap && !clapWasAbove) {
+        clapWasAbove = true;
+        const now = Date.now();
+        if (now - clapLastTime < 900) {
+          clapCount++;
+        } else {
+          clapCount = 1;
+        }
+        clapLastTime = now;
+        const badge2 = document.getElementById('clapCountBadge');
+        if (badge2) badge2.textContent = clapCount + (clapCount === 1 ? ' clap' : ' claps');
+        triggerHaptic('light');
+
+        if (clapSequenceTimer) clearTimeout(clapSequenceTimer);
+        clapSequenceTimer = setTimeout(() => {
+          executeClapCommand(clapCount);
+          clapCount = 0;
+          const b = document.getElementById('clapCountBadge');
+          if (b) b.textContent = '0 claps';
+        }, 650);
+      } else if (!isClap) {
+        clapWasAbove = false;
+      }
+      clapAnimFrame = requestAnimationFrame(runClapLoop);
+    }
+
+    function executeClapCommand(n) {
+      triggerHaptic('success');
+      if (n === 1) {
+        isBulbOn ? turnOff() : turnOn();
+        showToast('👏 1× Clap', isBulbOn ? 'Lights Off' : 'Lights On', 'music', '#f97316');
+      } else if (n === 2) {
+        sendCommand('Dimmer 100', 0);
+        setTimeout(() => sendCommand(`HsbColor ${currentHue},0,100`, 0), 80);
+        showToast('👏👏 2× Clap', 'Maximum Flash!', 'music', '#facc15');
+      } else if (n >= 3) {
+        const randHue = Math.round(Math.random() * 360);
+        currentHue = randHue;
+        sendCommand(`HsbColor ${randHue},100,${currentDimmer}`, 0);
+        refreshVisualAura();
+        showToast('👏👏👏 3× Clap', `Random Color Shift → ${randHue}°`, 'music', '#a855f7');
+      }
+    }
+
+    // ─── QUANTUM FEATURE 10: SOUND REACTOR ─────────────────────────────────────
+    let isSoundActive = false;
+    let soundMicStream = null;
+    let soundAudioCtx = null;
+    let soundAnalyser = null;
+    let soundAnimFrame = null;
+    let soundSensitivity = 5;
+    let soundWaveCtx = null;
+
+    function onSoundSensChange(val) {
+      soundSensitivity = parseInt(val);
+      const labels = ['', 'Whisper', 'Very Low', 'Low', 'Soft', 'Medium', 'High', 'Loud', 'Very Loud', 'Bass Beast', 'Nuclear'];
+      const el = document.getElementById('soundSensText');
+      if (el) el.textContent = labels[soundSensitivity] || 'Medium';
+    }
+
+    async function toggleSoundReactor() {
+      triggerHaptic('medium');
+      const card = document.getElementById('cardSound');
+      const badge = document.getElementById('soundBadge');
+      const btnText = document.getElementById('soundBtnText');
+
+      if (isSoundActive) {
+        stopSoundReactor();
+        card.classList.remove('active');
+        badge.textContent = 'OFF';
+        badge.classList.remove('live');
+        btnText.textContent = 'Start Sound Reactor';
+        return;
+      }
+
+      try {
+        soundMicStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        soundAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = soundAudioCtx.createMediaStreamSource(soundMicStream);
+        soundAnalyser = soundAudioCtx.createAnalyser();
+        soundAnalyser.fftSize = 512;
+        source.connect(soundAnalyser);
+        const canvas = document.getElementById('soundWaveCanvas');
+        soundWaveCtx = canvas ? canvas.getContext('2d') : null;
+        isSoundActive = true;
+        card.classList.add('active');
+        badge.textContent = 'LIVE';
+        badge.classList.add('live');
+        btnText.textContent = 'Stop Sound Reactor';
+        showToast('Sound Reactor Active', 'Room is now your visualizer — play music!', 'music', '#ec4899');
+        runSoundLoop();
+      } catch (e) {
+        alert('Microphone access required: ' + e.message);
+      }
+    }
+
+    function stopSoundReactor() {
+      isSoundActive = false;
+      if (soundAnimFrame) cancelAnimationFrame(soundAnimFrame);
+      if (soundMicStream) soundMicStream.getTracks().forEach(t => t.stop());
+      if (soundAudioCtx) soundAudioCtx.close();
+      soundMicStream = null; soundAudioCtx = null; soundAnalyser = null;
+      if (soundWaveCtx) {
+        soundWaveCtx.clearRect(0, 0, 280, 44);
+      }
+    }
+
+    let soundLastBri = 50;
+    function runSoundLoop() {
+      if (!isSoundActive) return;
+      const data = new Uint8Array(soundAnalyser.frequencyBinCount);
+      soundAnalyser.getByteFrequencyData(data);
+
+      // Draw waveform
+      if (soundWaveCtx) {
+        soundWaveCtx.clearRect(0, 0, 280, 44);
+        const hue = currentHue;
+        soundWaveCtx.strokeStyle = `hsla(${hue}, 100%, 65%, 0.85)`;
+        soundWaveCtx.lineWidth = 2;
+        soundWaveCtx.beginPath();
+        const sliceW = 280 / data.length;
+        for (let i = 0; i < data.length; i++) {
+          const y = 44 - (data[i] / 255) * 44;
+          i === 0 ? soundWaveCtx.moveTo(i * sliceW, y) : soundWaveCtx.lineTo(i * sliceW, y);
+        }
+        soundWaveCtx.stroke();
+      }
+
+      // Average amplitude → brightness
+      let sum = 0;
+      for (let i = 0; i < data.length; i++) sum += data[i];
+      const avg = sum / data.length;
+      const mapped = Math.min(100, Math.round((avg / 255) * 100 * (soundSensitivity / 3)));
+      const targetBri = Math.max(2, mapped);
+      soundLastBri = Math.round(soundLastBri * 0.7 + targetBri * 0.3); // smooth
+
+      sendCommand(`HsbColor ${currentHue},100,${soundLastBri}`, 0);
+      soundAnimFrame = requestAnimationFrame(runSoundLoop);
+    }
+
+    // ─── QUANTUM FEATURE 11: SUNRISE ALARM CLOCK ──────────────────────────────
+    let isSunriseActive = false;
+    let sunriseAlarmTimer = null;
+    let sunriseDawnTimer = null;
+    let sunriseRampMin = 30;
+    let sunriseDawnStep = 0;
+
+    function onSunriseRampChange(val) {
+      sunriseRampMin = parseInt(val);
+      const el = document.getElementById('sunriseRampText');
+      if (el) el.textContent = val + ' min';
+    }
+
+    function toggleSunriseAlarm() {
+      triggerHaptic('medium');
+      const card = document.getElementById('cardSunrise');
+      const badge = document.getElementById('sunriseBadge');
+      const btnText = document.getElementById('sunriseBtnText');
+      const countdown = document.getElementById('sunriseCountdown');
+
+      if (isSunriseActive) {
+        clearTimeout(sunriseAlarmTimer);
+        clearInterval(sunriseDawnTimer);
+        isSunriseActive = false;
+        card.classList.remove('active');
+        badge.textContent = 'OFF';
+        badge.classList.remove('live');
+        btnText.textContent = 'Set Sunrise Alarm';
+        if (countdown) countdown.style.display = 'none';
+        showToast('Sunrise Alarm Cancelled', 'Sweet dreams...', 'music', '#94a3b8');
+        return;
+      }
+
+      const timeInput = document.getElementById('sunriseTimeInput').value;
+      if (!timeInput) {
+        showToast('Set a time first!', 'Tap the time field above to pick your alarm time', 'music', '#f59e0b');
+        return;
+      }
+
+      const [h, m] = timeInput.split(':').map(Number);
+      const now = new Date();
+      const alarm = new Date(now);
+      alarm.setHours(h, m, 0, 0);
+      if (alarm <= now) alarm.setDate(alarm.getDate() + 1);
+
+      const dawnStartMs = alarm.getTime() - (sunriseRampMin * 60 * 1000);
+      const msUntilDawn = dawnStartMs - Date.now();
+
+      isSunriseActive = true;
+      card.classList.add('active');
+      badge.textContent = '⏰ SET';
+      badge.classList.add('live');
+      btnText.textContent = 'Cancel Alarm';
+      if (countdown) {
+        countdown.style.display = 'block';
+        countdown.textContent = `⏰ Sunrise begins ${sunriseRampMin}min before ${timeInput}`;
+      }
+      showToast('Sunrise Alarm Set! 🌅', `Dawn simulation starts ${sunriseRampMin} min before ${timeInput}`, 'music', '#f59e0b');
+
+      if (msUntilDawn <= 0) {
+        startSunriseDawn();
+      } else {
+        sunriseAlarmTimer = setTimeout(startSunriseDawn, msUntilDawn);
+      }
+    }
+
+    function startSunriseDawn() {
+      if (!isSunriseActive) return;
+      showToast('🌅 Sunrise Starting...', 'Dawn light simulation beginning', 'music', '#f59e0b');
+      sunriseDawnStep = 0;
+      stopAllActiveLabFeatures('sunrise');
+      const totalSteps = sunriseRampMin * 6; // every 10s
+
+      sunriseDawnTimer = setInterval(() => {
+        if (!isSunriseActive) { clearInterval(sunriseDawnTimer); return; }
+        const progress = sunriseDawnStep / totalSteps;
+        // Hue goes 0° (red) → 30° (orange) → 50° (amber) → 55° (yellow) = dawn
+        const hue = Math.round(progress * 55);
+        // Brightness ramps 2% → 100%
+        const bri = Math.max(2, Math.round(progress * 100));
+        // Saturation: starts at 100% (deep red), drops to 30% (warm white) at end
+        const sat = Math.round(100 - progress * 70);
+        sendCommand(`HsbColor ${hue},${sat},${bri}`, 0);
+        currentHue = hue; currentDimmer = bri;
+        refreshVisualAura();
+        sunriseDawnStep++;
+        if (sunriseDawnStep >= totalSteps) {
+          clearInterval(sunriseDawnTimer);
+          triggerHaptic('success');
+          showToast('☀️ Good Morning!', 'Rise and shine — your sunrise is complete', 'music', '#facc15');
+        }
+      }, 10000);
+    }
+
+    // ─── QUANTUM FEATURE 12: BREATH HUE PAINTER ───────────────────────────────
+    let isBreathActive = false;
+    let breathMicStream = null;
+    let breathAudioCtx = null;
+    let breathAnalyser = null;
+    let breathAnimFrame = null;
+    let breathSmoothed = 0;
+    let breathLastCmd = 0;
+
+    async function toggleBreathPainter() {
+      triggerHaptic('medium');
+      const card = document.getElementById('cardBreath');
+      const badge = document.getElementById('breathBadge');
+      const btnText = document.getElementById('breathBtnText');
+
+      if (isBreathActive) {
+        stopBreathPainter();
+        card.classList.remove('active');
+        badge.textContent = 'OFF';
+        badge.classList.remove('live');
+        btnText.textContent = 'Start Breath Painter';
+        return;
+      }
+
+      try {
+        breathMicStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        breathAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = breathAudioCtx.createMediaStreamSource(breathMicStream);
+        breathAnalyser = breathAudioCtx.createAnalyser();
+        breathAnalyser.fftSize = 256;
+        breathAnalyser.smoothingTimeConstant = 0.9;
+        source.connect(breathAnalyser);
+        isBreathActive = true;
+        card.classList.add('active');
+        badge.textContent = 'LISTENING';
+        badge.classList.add('live');
+        btnText.textContent = 'Stop Breath Painter';
+        showToast('Breath Painter Active', 'Exhale slowly near your phone mic...', 'music', '#06b6d4');
+        runBreathLoop();
+      } catch (e) {
+        alert('Microphone access required: ' + e.message);
+      }
+    }
+
+    function stopBreathPainter() {
+      isBreathActive = false;
+      if (breathAnimFrame) cancelAnimationFrame(breathAnimFrame);
+      if (breathMicStream) breathMicStream.getTracks().forEach(t => t.stop());
+      if (breathAudioCtx) breathAudioCtx.close();
+      breathMicStream = null; breathAudioCtx = null; breathAnalyser = null;
+      const ring = document.getElementById('breathRingFill');
+      if (ring) ring.setAttribute('stroke-dashoffset', '314');
+      const txt = document.getElementById('breathLevelText');
+      if (txt) txt.textContent = '--';
+    }
+
+    function runBreathLoop() {
+      if (!isBreathActive) return;
+      const data = new Uint8Array(breathAnalyser.fftSize);
+      breathAnalyser.getByteTimeDomainData(data);
+      let maxAmp = 0;
+      for (let i = 0; i < data.length; i++) {
+        const v = Math.abs((data[i] - 128) / 128);
+        if (v > maxAmp) maxAmp = v;
+      }
+
+      breathSmoothed = breathSmoothed * 0.88 + maxAmp * 0.12;
+      const level = Math.min(1, breathSmoothed * 6);
+      const bri = Math.max(3, Math.round(level * 100));
+
+      // Animate ring
+      const ring = document.getElementById('breathRingFill');
+      if (ring) ring.setAttribute('stroke-dashoffset', (314 * (1 - level)).toFixed(1));
+      const txt = document.getElementById('breathLevelText');
+      if (txt) txt.textContent = Math.round(level * 100) + '%';
+
+      // Send to bulb at ~10fps
+      const now = Date.now();
+      if (now - breathLastCmd > 100) {
+        breathLastCmd = now;
+        sendCommand(`HsbColor ${currentHue},100,${bri}`, 0);
+      }
+      breathAnimFrame = requestAnimationFrame(runBreathLoop);
+    }
+
+    // ─── QUANTUM FEATURE 13: VORTEX TOUCH SPIRAL ──────────────────────────────
+    let isVortexActive = false;
+    let vortexCtx = null;
+    let vortexAnimFrame = null;
+    let vortexAngle = 0;
+    let vortexTouchStart = null;
+    let vortexDragAccum = 0;
+    let vortexLastSendTime = 0;
+
+    function toggleVortexMode() {
+      triggerHaptic('medium');
+      const card = document.getElementById('cardVortex');
+      const badge = document.getElementById('vortexBadge');
+      const btnText = document.getElementById('vortexBtnText');
+
+      if (isVortexActive) {
+        isVortexActive = false;
+        if (vortexAnimFrame) cancelAnimationFrame(vortexAnimFrame);
+        card.classList.remove('active');
+        badge.textContent = 'STANDBY';
+        badge.classList.remove('live');
+        btnText.textContent = 'Activate Vortex Spiral';
+        return;
+      }
+
+      isVortexActive = true;
+      card.classList.add('active');
+      badge.textContent = 'ACTIVE';
+      badge.classList.add('live');
+      btnText.textContent = 'Deactivate Vortex';
+      showToast('Vortex Spiral Active', 'Drag the spiral to morph hue in real-time', 'music', '#8b5cf6');
+
+      const canvas = document.getElementById('vortexCanvas');
+      vortexCtx = canvas ? canvas.getContext('2d') : null;
+
+      // Touch / mouse events
+      canvas.ontouchstart = e => { e.preventDefault(); vortexTouchStart = e.touches[0].clientX; };
+      canvas.ontouchmove = e => {
+        e.preventDefault();
+        if (vortexTouchStart === null) return;
+        const dx = e.touches[0].clientX - vortexTouchStart;
+        vortexTouchStart = e.touches[0].clientX;
+        vortexAngle = (vortexAngle + dx * 1.2) % 360;
+        if (vortexAngle < 0) vortexAngle += 360;
+        currentHue = Math.round(vortexAngle);
+        const now = Date.now();
+        if (now - vortexLastSendTime > 80) {
+          vortexLastSendTime = now;
+          sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 0);
+          refreshVisualAura();
+          triggerHaptic('selection');
+        }
+      };
+      canvas.onmousemove = e => {
+        if (e.buttons !== 1) return;
+        vortexAngle = (vortexAngle + e.movementX * 0.8) % 360;
+        if (vortexAngle < 0) vortexAngle += 360;
+        currentHue = Math.round(vortexAngle);
+        const now = Date.now();
+        if (now - vortexLastSendTime > 80) {
+          vortexLastSendTime = now;
+          sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 0);
+          refreshVisualAura();
+        }
+      };
+
+      drawVortexSpiral();
+    }
+
+    function drawVortexSpiral() {
+      if (!isVortexActive || !vortexCtx) return;
+      const w = 240, h = 120;
+      vortexCtx.clearRect(0, 0, w, h);
+
+      // Draw spectrum strip
+      const grad = vortexCtx.createLinearGradient(0, 0, w, 0);
+      for (let i = 0; i <= 12; i++) {
+        const h2 = Math.round((vortexAngle + (i / 12) * 360) % 360);
+        grad.addColorStop(i / 12, `hsl(${h2}, 100%, 60%)`);
+      }
+      const r = 18;
+      vortexCtx.fillStyle = grad;
+      vortexCtx.beginPath();
+      vortexCtx.roundRect(0, (h - 44) / 2, w, 44, r);
+      vortexCtx.fill();
+
+      // Cursor
+      const cx = w / 2;
+      const cy = h / 2;
+      vortexCtx.strokeStyle = '#fff';
+      vortexCtx.lineWidth = 3;
+      vortexCtx.shadowColor = '#fff';
+      vortexCtx.shadowBlur = 12;
+      vortexCtx.beginPath();
+      vortexCtx.arc(cx, cy, 14, 0, Math.PI * 2);
+      vortexCtx.stroke();
+      vortexCtx.shadowBlur = 0;
+
+      const overlay = document.getElementById('vortexOverlayText');
+      if (overlay) overlay.textContent = `${currentHue}°`;
+
+      vortexAnimFrame = requestAnimationFrame(drawVortexSpiral);
+    }
+
+    // ─── QUANTUM FEATURE 14: DISCO PARTY CANNON ────────────────────────────────
+    let isDiscoActive = false;
+    let discoTimer = null;
+    let discoMode = 'glitter';
+    let discoStep = 0;
+
+    function setDiscoMode(mode) {
+      triggerHaptic('light');
+      discoMode = mode;
+      ['Glitter', 'Rave', 'Cannon'].forEach(m => {
+        const btn = document.getElementById('discoMode' + m);
+        if (btn) btn.classList.toggle('active', m.toLowerCase() === mode);
+      });
+      if (isDiscoActive) restartDiscoCannon();
+    }
+
+    function toggleDiscoCannon() {
+      triggerHaptic('success');
+      const card = document.getElementById('cardDisco');
+      const badge = document.getElementById('discoBadge');
+      const btnText = document.getElementById('discoBtnText');
+
+      if (isDiscoActive) {
+        clearInterval(discoTimer);
+        discoTimer = null;
+        isDiscoActive = false;
+        card.classList.remove('active');
+        badge.textContent = 'OFF';
+        badge.classList.remove('live');
+        btnText.textContent = '🎉 FIRE DISCO CANNON';
+        sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 0);
+        refreshVisualAura();
+        return;
+      }
+
+      stopAllActiveLabFeatures('disco');
+      isDiscoActive = true;
+      card.classList.add('active');
+      badge.textContent = 'FIRING!';
+      badge.classList.add('live');
+      btnText.textContent = '⛔ Cease Fire';
+      showToast('🎉 DISCO CANNON FIRED!', 'Lock the doors. The party has started.', 'music', '#f43f5e');
+      restartDiscoCannon();
+    }
+
+    function restartDiscoCannon() {
+      if (discoTimer) clearInterval(discoTimer);
+      let interval;
+
+      if (discoMode === 'glitter') {
+        interval = 180;
+      } else if (discoMode === 'rave') {
+        interval = 80;
+      } else {
+        interval = 35; // cannon: brutal
+      }
+
+      discoTimer = setInterval(() => {
+        if (!isDiscoActive) { clearInterval(discoTimer); return; }
+        discoStep++;
+        const hue = Math.round(Math.random() * 360);
+        let bri, sat;
+
+        if (discoMode === 'glitter') {
+          bri = 60 + Math.round(Math.random() * 40);
+          sat = 80 + Math.round(Math.random() * 20);
+        } else if (discoMode === 'rave') {
+          bri = discoStep % 2 === 0 ? 100 : 5;
+          sat = 100;
+        } else {
+          // cannon: random burst between max-bright and off
+          bri = Math.round(Math.random() * 100);
+          sat = 100;
+        }
+
+        currentHue = hue;
+        sendCommand(`HsbColor ${hue},${sat},${bri}`, 0);
+        if (discoMode === 'cannon') triggerHaptic('light');
+        refreshVisualAura();
+      }, interval);
     }
   </script>
 </body>
