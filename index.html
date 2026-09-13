@@ -905,7 +905,10 @@
       if (proxyBase && proxyBase.startsWith('https://')) {
         try {
           const url = `${proxyBase}/api/cmd?c=${encodeURIComponent(cmd)}`;
-          const res = await fetch(url, { cache: 'no-store' });
+          const res = await fetch(url, { 
+            cache: 'no-store',
+            headers: { 'ngrok-skip-browser-warning': 'true' }
+          });
           if (res.ok) { updateLiveStatus(true); return; }
         } catch (e) {}
         updateLiveStatus(false);
