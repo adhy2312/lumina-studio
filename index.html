@@ -17,7 +17,7 @@
       --bg-card: rgba(18, 20, 29, 0.72);
       --bg-card-elevated: rgba(28, 32, 48, 0.85);
       --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-accent: rgba(255, 255, 255, 0.16);
+      --border-accent: rgba(255, 255, 255, 0.18);
       --text-pure: #ffffff;
       --text-muted: #8e95a5;
       --accent-glow: rgba(139, 92, 246, 0.5);
@@ -48,7 +48,6 @@
       position: relative;
     }
 
-    /* Ambient Dynamic Reactive Atmosphere */
     .ambient-atmosphere {
       position: fixed;
       top: -25vw;
@@ -73,7 +72,6 @@
       background-size: 8px 8px;
     }
 
-    /* Main Container */
     .studio-shell {
       position: relative;
       z-index: 2;
@@ -85,7 +83,6 @@
       gap: 18px;
     }
 
-    /* SVG Icon base */
     .svg-icon {
       width: 18px;
       height: 18px;
@@ -102,7 +99,6 @@
     .svg-icon-sm { width: 14px; height: 14px; stroke-width: 2; }
     .svg-icon-lg { width: 22px; height: 22px; stroke-width: 1.8; }
 
-    /* Header */
     .studio-header {
       display: flex;
       align-items: center;
@@ -163,7 +159,6 @@
       50% { transform: scale(1.3); opacity: 0.6; }
     }
 
-    /* Master Power Button */
     .master-power-btn {
       width: 52px;
       height: 52px;
@@ -192,12 +187,8 @@
       box-shadow: 0 0 25px rgba(139, 92, 246, 0.5), inset 0 0 15px rgba(139, 92, 246, 0.3);
     }
 
-    .master-power-btn svg {
-      width: 22px;
-      height: 22px;
-    }
+    .master-power-btn svg { width: 22px; height: 22px; }
 
-    /* Centerpiece Aura Orb */
     .orb-stage {
       display: flex;
       flex-direction: column;
@@ -225,9 +216,7 @@
       animation: rotateRing 30s linear infinite;
     }
 
-    @keyframes rotateRing {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes rotateRing { to { transform: rotate(360deg); } }
 
     .aura-orb-core {
       width: 130px;
@@ -239,13 +228,8 @@
       position: relative;
     }
 
-    .aura-orb-container:hover .aura-orb-core {
-      transform: scale(1.05);
-    }
-
-    .aura-orb-container:active .aura-orb-core {
-      transform: scale(0.96);
-    }
+    .aura-orb-container:hover .aura-orb-core { transform: scale(1.05); }
+    .aura-orb-container:active .aura-orb-core { transform: scale(0.96); }
 
     .aura-status-label {
       margin-top: 14px;
@@ -264,7 +248,6 @@
       gap: 5px;
     }
 
-    /* Mode Tab Bar Navigation */
     .mode-tab-bar {
       display: flex;
       background: rgba(255, 255, 255, 0.04);
@@ -310,7 +293,6 @@
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
     }
 
-    /* Studio Card Panel */
     .studio-panel {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
@@ -349,7 +331,6 @@
       border: 1px solid var(--border-subtle);
     }
 
-    /* Sliders */
     .slider-container {
       display: flex;
       flex-direction: column;
@@ -394,13 +375,8 @@
       transition: transform 0.15s ease;
     }
 
-    .touch-slider::-webkit-slider-thumb:hover {
-      transform: scale(1.12);
-    }
-
-    .touch-slider::-webkit-slider-thumb:active {
-      transform: scale(1.22);
-    }
+    .touch-slider::-webkit-slider-thumb:hover { transform: scale(1.12); }
+    .touch-slider::-webkit-slider-thumb:active { transform: scale(1.22); }
 
     .hue-spectrum-slider {
       background: linear-gradient(to right,
@@ -419,7 +395,6 @@
       border-radius: 8px;
     }
 
-    /* Grids & Cards */
     .mood-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -448,7 +423,9 @@
 
     .mood-btn.active {
       border-color: #8b5cf6;
-      background: rgba(139, 92, 246, 0.18);
+      background: rgba(139, 92, 246, 0.25);
+      box-shadow: 0 0 16px rgba(139, 92, 246, 0.4);
+      transform: translateY(-2px);
     }
 
     .mood-color-disc {
@@ -465,7 +442,6 @@
       color: #cbd5e1;
     }
 
-    /* Circadian Pilot Banner */
     .circadian-card {
       background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(245, 158, 11, 0.03));
       border: 1px solid rgba(251, 191, 36, 0.2);
@@ -496,7 +472,6 @@
       color: #cbd5e1;
     }
 
-    /* Toggle Switch */
     .switch {
       position: relative;
       display: inline-block;
@@ -528,25 +503,13 @@
       border-radius: 50%;
     }
 
-    input:checked + .switch-slider {
-      background-color: #f59e0b;
-    }
-
-    input:checked + .switch-slider.green {
-      background-color: var(--spotify-green);
-    }
-
-    input:checked + .switch-slider.purple {
-      background-color: #8b5cf6;
-    }
-
-    input:checked + .switch-slider:before {
-      transform: translateX(20px);
-    }
+    input:checked + .switch-slider { background-color: #f59e0b; }
+    input:checked + .switch-slider.green { background-color: var(--spotify-green); }
+    input:checked + .switch-slider:before { transform: translateX(20px); }
 
     /* Spotify Live Sync Box */
     .spotify-box {
-      background: rgba(29, 185, 84, 0.05);
+      background: rgba(29, 185, 84, 0.06);
       border: 1px solid rgba(29, 185, 84, 0.25);
       border-radius: 20px;
       padding: 16px;
@@ -559,6 +522,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
     .spotify-logo-tag {
@@ -570,6 +535,12 @@
       font-size: 13px;
     }
 
+    .spotify-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .spotify-btn {
       background: var(--spotify-green);
       color: #000000;
@@ -577,25 +548,35 @@
       font-family: inherit;
       font-weight: 700;
       font-size: 11px;
-      padding: 6px 14px;
+      padding: 6px 12px;
       border-radius: 20px;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       transition: all 0.2s ease;
     }
 
     .spotify-btn:hover {
       background: #1ed760;
-      transform: scale(1.04);
+      transform: scale(1.03);
+    }
+
+    .spotify-btn.secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .spotify-btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
     }
 
     .spotify-player-track {
       display: flex;
       align-items: center;
       gap: 12px;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.35);
       padding: 10px;
       border-radius: 14px;
       border: 1px solid rgba(255, 255, 255, 0.06);
@@ -652,6 +633,19 @@
       background: rgba(29, 185, 84, 0.15);
       padding: 3px 8px;
       border-radius: 10px;
+      transition: transform 0.15s ease;
+    }
+
+    .spotify-info-pill {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 6px 10px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     /* Living FX Cards */
@@ -681,7 +675,9 @@
 
     .fx-card.active {
       border-color: #8b5cf6;
-      background: rgba(139, 92, 246, 0.15);
+      background: rgba(139, 92, 246, 0.2);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.35);
+      transform: translateY(-2px);
     }
 
     .fx-top-row {
@@ -700,16 +696,19 @@
       color: #fff;
     }
 
-    .fx-title {
-      font-size: 13px;
+    .fx-active-tag {
+      font-size: 10px;
       font-weight: 700;
+      color: #a78bfa;
+      display: none;
     }
 
-    .fx-desc {
-      font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.4;
+    .fx-card.active .fx-active-tag {
+      display: inline-block;
     }
+
+    .fx-title { font-size: 13px; font-weight: 700; }
+    .fx-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
 
     /* Flow & Timers */
     .timer-grid {
@@ -728,13 +727,12 @@
       transition: all 0.2s ease;
     }
 
-    .timer-card:hover {
-      background: rgba(255, 255, 255, 0.07);
-    }
+    .timer-card:hover { background: rgba(255, 255, 255, 0.07); }
 
     .timer-card.active {
       border-color: #38bdf8;
-      background: rgba(56, 189, 248, 0.15);
+      background: rgba(56, 189, 248, 0.2);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
     }
 
     .timer-number {
@@ -751,7 +749,6 @@
       font-weight: 600;
     }
 
-    /* Custom Scene Bar */
     .custom-scene-scroll {
       display: flex;
       gap: 8px;
@@ -811,17 +808,20 @@
       border-color: rgba(255, 255, 255, 0.25);
     }
 
-    /* Offscreen canvas for album color extraction */
+    .secondary-btn.active {
+      border-color: #8b5cf6;
+      background: rgba(139, 92, 246, 0.2);
+      color: #d8b4fe;
+    }
+
     #paletteCanvas { display: none; }
   </style>
 </head>
 <body>
 
-  <!-- Dynamic Reactive Atmosphere Backdrop -->
   <div class="ambient-atmosphere" id="ambientBg"></div>
   <div class="noise-grain"></div>
 
-  <!-- Studio Shell -->
   <main class="studio-shell">
 
     <!-- Header -->
@@ -870,10 +870,8 @@
       </div>
     </div>
 
-    <!-- Quick Custom Scenes -->
-    <div class="custom-scene-scroll" id="customSceneContainer">
-      <!-- Injected dynamically -->
-    </div>
+    <!-- Quick Custom Scenes Bar -->
+    <div class="custom-scene-scroll" id="customSceneContainer"></div>
 
     <!-- Mode Navigation Tabs -->
     <nav class="mode-tab-bar">
@@ -918,7 +916,7 @@
         <input type="range" min="0" max="360" value="260" class="touch-slider hue-spectrum-slider" id="hueSlider" oninput="onHueSlide(this.value)">
       </div>
 
-      <!-- Master Dimmer Slider with Full Lumen Overdrive -->
+      <!-- Master Dimmer Slider -->
       <div class="slider-container">
         <div class="slider-title-row">
           <span>Max Lumen Intensity</span>
@@ -929,52 +927,52 @@
 
       <!-- Curated Moods Grid -->
       <div class="slider-title-row" style="margin-top: 2px;">
-        <span>Curated Mood Palettes</span>
+        <span>Curated Mood Palettes (Tap to Toggle)</span>
       </div>
-      <div class="mood-grid">
-        <button class="mood-btn" onclick="applyMood(310, 100, 'Cyberpunk')">
+      <div class="mood-grid" id="moodBtnContainer">
+        <button class="mood-btn" data-mood="Cyberpunk" onclick="applyMood(310, 100, 'Cyberpunk', this)">
           <div class="mood-color-disc" style="background: #f43f5e;"></div>
           <span class="mood-label">Cyberpunk</span>
         </button>
-        <button class="mood-btn" onclick="applyMood(25, 100, 'Sunset')">
+        <button class="mood-btn" data-mood="Sunset" onclick="applyMood(25, 100, 'Sunset', this)">
           <div class="mood-color-disc" style="background: #fb923c;"></div>
           <span class="mood-label">Sunset</span>
         </button>
-        <button class="mood-btn" onclick="applyMood(160, 100, 'Aurora')">
+        <button class="mood-btn" data-mood="Aurora" onclick="applyMood(160, 100, 'Aurora', this)">
           <div class="mood-color-disc" style="background: #2dd4bf;"></div>
           <span class="mood-label">Aurora</span>
         </button>
-        <button class="mood-btn" onclick="applyMood(215, 100, 'Ocean')">
+        <button class="mood-btn" data-mood="Ocean" onclick="applyMood(215, 100, 'Ocean', this)">
           <div class="mood-color-disc" style="background: #38bdf8;"></div>
           <span class="mood-label">Ocean</span>
         </button>
-        <button class="mood-btn" onclick="applyMood(90, 100, 'Matcha')">
+        <button class="mood-btn" data-mood="Matcha" onclick="applyMood(90, 100, 'Matcha', this)">
           <div class="mood-color-disc" style="background: #84cc16;"></div>
           <span class="mood-label">Matcha</span>
         </button>
-        <button class="mood-btn" onclick="applyMood(350, 100, 'Crimson')">
+        <button class="mood-btn" data-mood="Crimson" onclick="applyMood(350, 100, 'Crimson', this)">
           <div class="mood-color-disc" style="background: #ef4444;"></div>
           <span class="mood-label">Crimson</span>
         </button>
-        <button class="mood-btn" onclick="applyMood(42, 100, 'Golden')">
+        <button class="mood-btn" data-mood="Golden" onclick="applyMood(42, 100, 'Golden', this)">
           <div class="mood-color-disc" style="background: #facc15;"></div>
           <span class="mood-label">Golden</span>
         </button>
-        <button class="mood-btn" onclick="applyMood(270, 100, 'Tokyo')">
+        <button class="mood-btn" data-mood="Tokyo" onclick="applyMood(270, 100, 'Tokyo', this)">
           <div class="mood-color-disc" style="background: #a855f7;"></div>
           <span class="mood-label">Tokyo</span>
         </button>
       </div>
 
-      <!-- Action Row: Save Scene -->
+      <!-- Action Row: Save Scene & Turbo -->
       <div class="action-btn-row">
         <button class="secondary-btn" onclick="saveCurrentScene()">
           <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Save Current Scene
+          Save Look
         </button>
-        <button class="secondary-btn" onclick="turboMaxLumen()">
+        <button class="secondary-btn" id="turboBtn" onclick="toggleTurboLumen()">
           <svg class="svg-icon-sm" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          Turbo Lumen Boost
+          Turbo Boost (100%)
         </button>
       </div>
     </section>
@@ -1022,24 +1020,24 @@
         <input type="range" min="1" max="100" value="100" class="touch-slider" id="whiteDimmerSlider" oninput="onDimmerSlide(this.value)">
       </div>
 
-      <!-- Kelvin Presets -->
+      <!-- Kelvin Presets Grid -->
       <div class="slider-title-row" style="margin-top: 2px;">
         <span>Architectural Kelvin Presets</span>
       </div>
-      <div class="mood-grid">
-        <button class="mood-btn" onclick="applyWhitePreset(500, 2000, 'Candlelight')">
+      <div class="mood-grid" id="whitePresetContainer">
+        <button class="mood-btn" data-ct="500" onclick="applyWhitePreset(500, 2000, 'Candlelight', this)">
           <div class="mood-color-disc" style="background: #ff7700;"></div>
           <span class="mood-label">2000K</span>
         </button>
-        <button class="mood-btn" onclick="applyWhitePreset(370, 2700, 'Soft Warm')">
+        <button class="mood-btn" data-ct="370" onclick="applyWhitePreset(370, 2700, 'Soft Warm', this)">
           <div class="mood-color-disc" style="background: #ffa84d;"></div>
           <span class="mood-label">2700K</span>
         </button>
-        <button class="mood-btn" onclick="applyWhitePreset(250, 4000, 'Neutral')">
+        <button class="mood-btn" data-ct="250" onclick="applyWhitePreset(250, 4000, 'Neutral', this)">
           <div class="mood-color-disc" style="background: #ffe3c2;"></div>
           <span class="mood-label">4000K</span>
         </button>
-        <button class="mood-btn" onclick="applyWhitePreset(153, 6500, 'Daylight')">
+        <button class="mood-btn" data-ct="153" onclick="applyWhitePreset(153, 6500, 'Daylight', this)">
           <div class="mood-color-disc" style="background: #d6e8ff;"></div>
           <span class="mood-label">6500K</span>
         </button>
@@ -1065,10 +1063,24 @@
             </svg>
             Spotify Web Playback
           </div>
-          <button class="spotify-btn" id="spotifyAuthBtn" onclick="initiateSpotifyAuth()">
-            <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-            <span id="spotifyBtnText">Connect Spotify</span>
-          </button>
+          <div class="spotify-actions">
+            <button class="spotify-btn" id="spotifyAuthBtn" onclick="initiateSpotifyAuth()">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+              <span id="spotifyBtnText">Connect</span>
+            </button>
+            <button class="spotify-btn secondary" onclick="enterSpotifyTokenManually()" title="Paste Access Token Directly">
+              Paste Token
+            </button>
+            <button class="spotify-btn secondary" id="spotifyDisconnectBtn" onclick="disconnectSpotify()" style="display: none;" title="Disconnect Spotify">
+              Disconnect
+            </button>
+          </div>
+        </div>
+
+        <!-- Connection Helper / Error Banner -->
+        <div class="spotify-info-pill" id="spotifyRedirectHelper">
+          <span>Redirect URI: <code id="spotifyRedirectUriText" style="color: #6ee7b7; user-select: all;"></code></span>
+          <button class="secondary-btn" style="flex: unset; padding: 2px 8px; font-size: 10px;" onclick="copyRedirectUri()">Copy</button>
         </div>
 
         <!-- Currently Playing Card -->
@@ -1077,17 +1089,17 @@
             <img id="spotifyAlbumImg" class="album-art-img" src="" alt="Album Artwork">
           </div>
           <div class="track-meta">
-            <span class="track-title" id="spotifyTrackTitle">Song Title</span>
-            <span class="track-artist" id="spotifyTrackArtist">Artist Name</span>
+            <span class="track-title" id="spotifyTrackTitle">Waiting for Spotify playback...</span>
+            <span class="track-artist" id="spotifyTrackArtist">Play any song on phone or PC</span>
           </div>
           <span class="beat-pulse-badge" id="beatPulseIndicator">
             <svg class="svg-icon-sm" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            Beat Synced
+            Beat Pulse
           </span>
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-          <span style="font-size: 11px; color: var(--text-muted);">Sync room lighting to currently playing song & album palette</span>
+          <span style="font-size: 11px; color: var(--text-muted);">Sync lighting to live Spotify playback & album colors</span>
           <label class="switch">
             <input type="checkbox" id="spotifySyncToggle" class="green" onchange="toggleSpotifySync(this.checked)">
             <span class="switch-slider green"></span>
@@ -1116,7 +1128,7 @@
           <svg class="svg-icon" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg>
           Living Dynamic Scenes
         </span>
-        <span class="panel-badge" id="livingBadge">Static</span>
+        <span class="panel-badge" id="livingBadge">Tap Card to Toggle</span>
       </div>
 
       <div class="fx-grid">
@@ -1125,6 +1137,7 @@
             <div class="fx-icon-pill" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">
               <svg class="svg-icon" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
             </div>
+            <span class="fx-active-tag">ACTIVE</span>
           </div>
           <span class="fx-title">Cozy Fireplace</span>
           <span class="fx-desc">Warm flickering ember fluctuations</span>
@@ -1135,6 +1148,7 @@
             <div class="fx-icon-pill" style="background: rgba(45, 212, 191, 0.2); color: #2dd4bf;">
               <svg class="svg-icon" viewBox="0 0 24 24"><path d="M2 12c5-4 9 4 14 0s4-4 6-2"/><path d="M2 17c5-4 9 4 14 0s4-4 6-2"/></svg>
             </div>
+            <span class="fx-active-tag">ACTIVE</span>
           </div>
           <span class="fx-title">Aurora Borealis</span>
           <span class="fx-desc">Gentle emerald to indigo waves</span>
@@ -1145,6 +1159,7 @@
             <div class="fx-icon-pill" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">
               <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
             </div>
+            <span class="fx-active-tag">ACTIVE</span>
           </div>
           <span class="fx-title">4-7-8 Breathwork</span>
           <span class="fx-desc">Calming rhythmic breath guidance</span>
@@ -1155,6 +1170,7 @@
             <div class="fx-icon-pill" style="background: rgba(99, 102, 241, 0.2); color: #818cf8;">
               <svg class="svg-icon" viewBox="0 0 24 24"><path d="M2 18c3-2 6-2 9 0s6 2 9 0"/><path d="M2 12c3-2 6-2 9 0s6 2 9 0"/></svg>
             </div>
+            <span class="fx-active-tag">ACTIVE</span>
           </div>
           <span class="fx-title">Ocean Biome</span>
           <span class="fx-desc">Deep marine blue swell</span>
@@ -1176,11 +1192,11 @@
         <span>Smart Pomodoro Focus Cycle</span>
       </div>
       <div class="timer-grid">
-        <div class="timer-card" onclick="startPomodoro(25)">
+        <div class="timer-card" id="timerPomo25" onclick="togglePomodoro(25)">
           <div class="timer-number">25m</div>
           <div class="timer-label">Focus Sprint</div>
         </div>
-        <div class="timer-card" onclick="startPomodoro(50)">
+        <div class="timer-card" id="timerPomo50" onclick="togglePomodoro(50)">
           <div class="timer-number">50m</div>
           <div class="timer-label">Deep Work</div>
         </div>
@@ -1194,15 +1210,15 @@
         <span>Sleep Drift (Fade-out to Power Off)</span>
       </div>
       <div class="timer-grid">
-        <div class="timer-card" onclick="startSleepDrift(15)">
+        <div class="timer-card" id="timerDrift15" onclick="toggleSleepDrift(15)">
           <div class="timer-number">15m</div>
           <div class="timer-label">Quick Nap</div>
         </div>
-        <div class="timer-card" onclick="startSleepDrift(30)">
+        <div class="timer-card" id="timerDrift30" onclick="toggleSleepDrift(30)">
           <div class="timer-number">30m</div>
           <div class="timer-label">Night Sleep</div>
         </div>
-        <div class="timer-card" onclick="startSleepDrift(45)">
+        <div class="timer-card" id="timerDrift45" onclick="toggleSleepDrift(45)">
           <div class="timer-number">45m</div>
           <div class="timer-label">Deep Drift</div>
         </div>
@@ -1224,7 +1240,11 @@
     let commandDebounce = null;
     let activeLivingScene = null;
     let livingInterval = null;
+    let activeTimerType = null;
     let flowTimer = null;
+    let activeMoodName = null;
+    let activeCtValue = null;
+    let isTurboActive = false;
 
     // Spotify Integration State
     const SPOTIFY_CLIENT_ID = 'b0506883c7c945f489b0239e7bf2e161';
@@ -1269,10 +1289,11 @@
       }
     }
 
-    // ─── CONCURRENCY & CONNECTION PIPELINE ────────────────────────────────────
+    // ─── CONCURRENCY & CONNECTION PIPELINE (WITH DEADLOCK WATCHDOG) ───────────
     let isSending = false;
     let pendingCommand = null;
     let consecutiveFailures = 0;
+    let watchdogTimer = null;
 
     function reportSuccess() {
       consecutiveFailures = 0;
@@ -1305,12 +1326,24 @@
 
     async function _dispatch(cmd) {
       isSending = true;
+
+      // Watchdog: If anything hangs for 3.5s, unlock queue automatically
+      clearTimeout(watchdogTimer);
+      watchdogTimer = setTimeout(() => {
+        isSending = false;
+        if (pendingCommand) {
+          const next = pendingCommand;
+          pendingCommand = null;
+          _dispatch(next);
+        }
+      }, 3500);
+
       const proxyBase = getProxyBase();
 
       try {
         if (proxyBase && proxyBase.startsWith('https://')) {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 4000);
+          const timeoutId = setTimeout(() => controller.abort(), 3200);
           const url = `${proxyBase}/api/cmd?c=${encodeURIComponent(cmd)}`;
           const res = await fetch(url, { 
             cache: 'no-store',
@@ -1330,6 +1363,7 @@
       } catch (e) {
         reportFailure();
       } finally {
+        clearTimeout(watchdogTimer);
         isSending = false;
         if (pendingCommand) {
           const nextCmd = pendingCommand;
@@ -1362,7 +1396,11 @@
       triggerHaptic('medium');
       const current = getProxyBase() || BULB_IP;
       const input = prompt(
-        'Lumina Connection Settings:\n• Cloud: Enter ngrok HTTPS URL\n• Local: Enter Bulb IP (192.168.1.11)\n\nCurrent Endpoint:',
+        'Lumina Connection Settings:
+• Cloud: Enter ngrok HTTPS URL
+• Local: Enter Bulb IP (192.168.1.11)
+
+Current Endpoint:',
         current
       );
       if (input && input.trim()) {
@@ -1379,7 +1417,7 @@
       }
     }
 
-    // ─── MASTER CONTROLS & OVERDRIVE BRIGHTNESS ──────────────────────────────
+    // ─── MASTER CONTROLS & UNSELECTABLE STATE MANAGERS ────────────────────────
     function toggleBulbPower() {
       triggerHaptic('medium');
       isBulbOn = !isBulbOn;
@@ -1403,19 +1441,33 @@
       refreshVisualAura();
     }
 
-    function turboMaxLumen() {
+    function toggleTurboLumen() {
       triggerHaptic('success');
-      currentDimmer = 100;
-      document.getElementById('dimmerSlider').value = 100;
-      document.getElementById('whiteDimmerSlider').value = 100;
-      document.getElementById('brightnessReadout').textContent = '100% (Turbo)';
-      document.getElementById('whiteBriReadout').textContent = '100% (Turbo)';
-      // Overdrive: Uncaps LedTable and pushes full 100% PWM
-      sendCommand('Backlog LedTable 0; SetOption17 1; Dimmer 100', 0);
+      const btn = document.getElementById('turboBtn');
+      isTurboActive = !isTurboActive;
+
+      if (isTurboActive) {
+        btn.classList.add('active');
+        currentDimmer = 100;
+        document.getElementById('dimmerSlider').value = 100;
+        document.getElementById('whiteDimmerSlider').value = 100;
+        document.getElementById('brightnessReadout').textContent = '100% (Turbo)';
+        document.getElementById('whiteBriReadout').textContent = '100% (Turbo)';
+        sendCommand('Backlog LedTable 0; SetOption17 1; Dimmer 100', 0);
+      } else {
+        btn.classList.remove('active');
+        currentDimmer = 80;
+        document.getElementById('dimmerSlider').value = 80;
+        document.getElementById('whiteDimmerSlider').value = 80;
+        document.getElementById('brightnessReadout').textContent = '80%';
+        document.getElementById('whiteBriReadout').textContent = '80%';
+        sendCommand('Dimmer 80', 0);
+      }
       refreshVisualAura();
     }
 
     function onDimmerSlide(val) {
+      stopLivingScene();
       currentDimmer = parseInt(val);
       document.getElementById('brightnessReadout').textContent = `${currentDimmer}%`;
       document.getElementById('whiteBriReadout').textContent = `${currentDimmer}%`;
@@ -1425,28 +1477,49 @@
       if (!isBulbOn) {
         isBulbOn = true;
         document.getElementById('masterPowerBtn').classList.add('active');
+        document.getElementById('auraCore').style.opacity = '1';
       }
 
       if (activeTab === 'white') {
         sendCommand(`Dimmer ${currentDimmer}`, 50);
       } else {
-        // In spectrum mode, push full saturation with calibrated brightness
         sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 50);
       }
       refreshVisualAura();
     }
 
     function onHueSlide(hue) {
+      stopLivingScene();
+      clearActiveMoods();
       currentHue = parseInt(hue);
       document.getElementById('hueReadout').textContent = `${currentHue}°`;
       document.getElementById('hueColorName').textContent = getHueName(currentHue);
+
+      if (!isBulbOn) {
+        isBulbOn = true;
+        document.getElementById('masterPowerBtn').classList.add('active');
+        document.getElementById('auraCore').style.opacity = '1';
+      }
+
       sendCommand(`HsbColor ${currentHue},100,${currentDimmer}`, 50);
       refreshVisualAura();
     }
 
-    function applyMood(hue, bri, name) {
+    function applyMood(hue, bri, name, btnElement) {
       triggerHaptic('light');
       stopLivingScene();
+
+      // UNSELECT BUTTON IF ALREADY ACTIVE
+      if (activeMoodName === name) {
+        activeMoodName = null;
+        clearActiveMoods();
+        return;
+      }
+
+      activeMoodName = name;
+      clearActiveMoods();
+      if (btnElement) btnElement.classList.add('active');
+
       currentHue = hue;
       currentDimmer = bri;
       document.getElementById('hueSlider').value = hue;
@@ -1454,28 +1527,73 @@
       document.getElementById('hueReadout').textContent = `${hue}°`;
       document.getElementById('hueColorName').textContent = name;
       document.getElementById('brightnessReadout').textContent = `${bri}%`;
+
+      if (!isBulbOn) {
+        isBulbOn = true;
+        document.getElementById('masterPowerBtn').classList.add('active');
+        document.getElementById('auraCore').style.opacity = '1';
+      }
+
       sendCommand(`HsbColor ${hue},100,${bri}`, 0);
       refreshVisualAura();
     }
 
+    function clearActiveMoods() {
+      activeMoodName = null;
+      document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+    }
+
     function onCtSlide(ctVal) {
+      stopLivingScene();
+      clearActiveWhitePresets();
       currentCt = parseInt(ctVal);
       const kelvin = Math.round(1000000 / currentCt);
       document.getElementById('kelvinReadout').textContent = `${kelvin}K`;
       document.getElementById('kelvinLabel').textContent = getKelvinDesc(kelvin);
+
+      if (!isBulbOn) {
+        isBulbOn = true;
+        document.getElementById('masterPowerBtn').classList.add('active');
+        document.getElementById('auraCore').style.opacity = '1';
+      }
+
       sendCommand(`CT ${currentCt}`, 60);
       refreshVisualAura();
     }
 
-    function applyWhitePreset(ct, kelvin, label) {
+    function applyWhitePreset(ct, kelvin, label, btnElement) {
       triggerHaptic('light');
       stopLivingScene();
+
+      // UNSELECT IF ALREADY ACTIVE
+      if (activeCtValue === ct) {
+        activeCtValue = null;
+        clearActiveWhitePresets();
+        return;
+      }
+
+      activeCtValue = ct;
+      clearActiveWhitePresets();
+      if (btnElement) btnElement.classList.add('active');
+
       currentCt = ct;
       document.getElementById('ctSlider').value = ct;
       document.getElementById('kelvinReadout').textContent = `${kelvin}K`;
       document.getElementById('kelvinLabel').textContent = label;
+
+      if (!isBulbOn) {
+        isBulbOn = true;
+        document.getElementById('masterPowerBtn').classList.add('active');
+        document.getElementById('auraCore').style.opacity = '1';
+      }
+
       sendCommand(`CT ${ct}`, 0);
       refreshVisualAura();
+    }
+
+    function clearActiveWhitePresets() {
+      activeCtValue = null;
+      document.querySelectorAll('#whitePresetContainer .mood-btn').forEach(b => b.classList.remove('active'));
     }
 
     function switchMode(tab) {
@@ -1529,6 +1647,8 @@
 
     function cycleNextColor() {
       triggerHaptic('light');
+      stopLivingScene();
+      clearActiveMoods();
       currentHue = (currentHue + 45) % 360;
       document.getElementById('hueSlider').value = currentHue;
       onHueSlide(currentHue);
@@ -1560,19 +1680,14 @@
       let phaseName = '';
 
       if (hour >= 6 && hour < 9) {
-        // Dawn: 2700K Warm Sunrise
         targetCt = 370; targetBri = 75; phaseName = 'Sunrise Glow';
       } else if (hour >= 9 && hour < 17) {
-        // Midday Focus: 5500K Crisp Daylight
         targetCt = 181; targetBri = 100; phaseName = 'Daylight Focus';
       } else if (hour >= 17 && hour < 20) {
-        // Golden Hour Sunset: 3200K
         targetCt = 312; targetBri = 85; phaseName = 'Golden Hour';
       } else if (hour >= 20 && hour < 22) {
-        // Evening Relax: 2700K
         targetCt = 370; targetBri = 60; phaseName = 'Evening Sanctuary';
       } else {
-        // Night Melatonin: 2000K Warm Candle
         targetCt = 500; targetBri = 25; phaseName = 'Melatonin Rest';
       }
 
@@ -1581,16 +1696,62 @@
       onDimmerSlide(targetBri);
     }
 
-    // ─── SPOTIFY WEB API BEAT & PALETTE ENGINE ────────────────────────────────
+    // ─── SPOTIFY WEB API: ROBUST AUTH & BEAT/PALETTE SYNC ─────────────────────
+    function getSpotifyRedirectUri() {
+      return window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
+    }
+
     function initiateSpotifyAuth() {
       triggerHaptic('medium');
-      const redirectUri = window.location.origin + window.location.pathname;
+      const redirectUri = getSpotifyRedirectUri();
       const scope = 'user-read-playback-state user-read-currently-playing';
-      const authUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}`;
+      const authUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&show_dialog=true`;
       window.location.href = authUrl;
     }
 
+    function enterSpotifyTokenManually() {
+      triggerHaptic('medium');
+      const token = prompt('Paste your Spotify Access Token:\n(You can copy from Spotify Developer Console / Dashboard):');
+      if (token && token.trim()) {
+        spotifyToken = token.trim().replace(/^Bearer\s+/i, '');
+        localStorage.setItem('spotify_access_token', spotifyToken);
+        validateAndActivateSpotify();
+      }
+    }
+
+    function disconnectSpotify() {
+      triggerHaptic('medium');
+      localStorage.removeItem('spotify_access_token');
+      spotifyToken = null;
+      isSpotifySyncActive = false;
+      document.getElementById('spotifySyncToggle').checked = false;
+      document.getElementById('spotifyBtnText').textContent = 'Connect';
+      document.getElementById('spotifyDisconnectBtn').style.display = 'none';
+      document.getElementById('spotifyTrackCard').style.display = 'none';
+      if (spotifyPollInterval) clearInterval(spotifyPollInterval);
+    }
+
+    function copyRedirectUri() {
+      triggerHaptic('light');
+      const uri = getSpotifyRedirectUri();
+      navigator.clipboard.writeText(uri).then(() => {
+        alert('Copied Redirect URI to clipboard:\n' + uri + '\n\nAdd this exact URL in your Spotify Developer App Dashboard under Redirect URIs.');
+      });
+    }
+
     function checkSpotifyOAuthReturn() {
+      const redirectText = document.getElementById('spotifyRedirectUriText');
+      if (redirectText) redirectText.textContent = getSpotifyRedirectUri();
+
+      // Check query params for errors
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.has('error')) {
+        const err = searchParams.get('error');
+        alert('Spotify Login Note: ' + err + '\n\nTip: You can also tap "Paste Token" to connect directly!');
+        return;
+      }
+
+      // Check hash for access_token
       const hash = window.location.hash;
       if (hash.includes('access_token=')) {
         const params = new URLSearchParams(hash.substring(1));
@@ -1599,13 +1760,36 @@
           spotifyToken = token;
           localStorage.setItem('spotify_access_token', token);
           window.location.hash = '';
-          document.getElementById('spotifyBtnText').textContent = 'Spotify Connected';
+          validateAndActivateSpotify();
+          return;
+        }
+      }
+
+      if (spotifyToken) {
+        validateAndActivateSpotify();
+      }
+    }
+
+    async function validateAndActivateSpotify() {
+      if (!spotifyToken) return;
+      try {
+        const res = await fetch('https://api.spotify.com/v1/me', {
+          headers: { 'Authorization': `Bearer ${spotifyToken}` }
+        });
+        if (res.ok) {
+          const user = await res.json();
+          document.getElementById('spotifyBtnText').textContent = `Synced (${user.display_name || 'Spotify'})`;
+          document.getElementById('spotifyDisconnectBtn').style.display = 'inline-flex';
           document.getElementById('spotifySyncToggle').checked = true;
           toggleSpotifySync(true);
+        } else {
+          // Token expired
+          localStorage.removeItem('spotify_access_token');
+          spotifyToken = null;
+          document.getElementById('spotifyBtnText').textContent = 'Connect';
+          document.getElementById('spotifyDisconnectBtn').style.display = 'none';
         }
-      } else if (spotifyToken) {
-        document.getElementById('spotifyBtnText').textContent = 'Spotify Connected';
-      }
+      } catch (e) {}
     }
 
     function toggleSpotifySync(enable) {
@@ -1636,20 +1820,23 @@
         });
 
         if (res.status === 401) {
-          // Token expired
-          localStorage.removeItem('spotify_access_token');
-          spotifyToken = null;
-          document.getElementById('spotifyBtnText').textContent = 'Reconnect Spotify';
+          disconnectSpotify();
           return;
         }
 
-        if (res.status === 200) {
+        if (res.status === 204 || res.status === 200) {
+          if (res.status === 204) {
+            document.getElementById('spotifyTrackTitle').textContent = 'Playback Paused';
+            document.getElementById('spotifyTrackArtist').textContent = 'Start music on your Spotify app';
+            return;
+          }
+
           const data = await res.json();
           if (data && data.item) {
             const track = data.item;
             document.getElementById('spotifyTrackTitle').textContent = track.name;
             document.getElementById('spotifyTrackArtist').textContent = track.artists.map(a => a.name).join(', ');
-            
+
             if (track.album && track.album.images && track.album.images[0]) {
               const artUrl = track.album.images[0].url;
               const img = document.getElementById('spotifyAlbumImg');
@@ -1659,12 +1846,11 @@
               }
             }
 
-            // Beat pulse animation
+            // Pulse badge
             const indicator = document.getElementById('beatPulseIndicator');
-            indicator.style.transform = 'scale(1.15)';
-            setTimeout(() => indicator.style.transform = 'scale(1)', 200);
+            indicator.style.transform = 'scale(1.18)';
+            setTimeout(() => indicator.style.transform = 'scale(1)', 220);
 
-            // If new track, fetch audio analysis for rhythm matching
             if (track.id !== lastTrackId) {
               lastTrackId = track.id;
               fetchSpotifyAudioAnalysis(track.id);
@@ -1721,21 +1907,34 @@
       } catch (e) {}
     }
 
-    // ─── LIVING DYNAMIC SCENES ────────────────────────────────────────────────
+    // ─── LIVING DYNAMIC SCENES (WITH TOGGLE-OFF UNSELECT) ──────────────────────
     function activateLivingScene(scene) {
       triggerHaptic('medium');
+
+      // UNSELECT IF ALREADY ACTIVE
+      if (activeLivingScene === scene) {
+        stopLivingScene();
+        return;
+      }
+
       stopLivingScene();
       activeLivingScene = scene;
       document.querySelectorAll('.fx-card').forEach(c => c.classList.remove('active'));
       const activeCard = document.getElementById(`fx${scene.charAt(0).toUpperCase() + scene.slice(1)}`);
       if (activeCard) activeCard.classList.add('active');
-      document.getElementById('livingBadge').textContent = 'Live Playing';
+      document.getElementById('livingBadge').textContent = 'Playing (Tap to Stop)';
+
+      if (!isBulbOn) {
+        isBulbOn = true;
+        document.getElementById('masterPowerBtn').classList.add('active');
+        document.getElementById('auraCore').style.opacity = '1';
+      }
 
       if (scene === 'fireplace') {
         livingInterval = setInterval(() => {
-          if (!isBulbOn) return;
-          const hue = Math.floor(Math.random() * 15) + 18; // 18-33 (warm ember)
-          const bri = Math.floor(Math.random() * 25) + 75; // 75-100%
+          if (!isBulbOn || activeLivingScene !== 'fireplace') return;
+          const hue = Math.floor(Math.random() * 15) + 18;
+          const bri = Math.floor(Math.random() * 25) + 75;
           sendCommand(`HsbColor ${hue},100,${bri}`, 0);
           currentHue = hue;
           refreshVisualAura();
@@ -1744,31 +1943,27 @@
         let step = 0;
         const auroraHues = [150, 165, 185, 270, 190, 155];
         livingInterval = setInterval(() => {
-          if (!isBulbOn) return;
+          if (!isBulbOn || activeLivingScene !== 'aurora') return;
           step = (step + 1) % auroraHues.length;
           currentHue = auroraHues[step];
           sendCommand(`HsbColor ${currentHue},100,90`, 0);
           refreshVisualAura();
         }, 2200);
       } else if (scene === 'breathing') {
-        // 4-7-8 Breathwork
         let phase = 0;
         livingInterval = setInterval(() => {
-          if (!isBulbOn) return;
+          if (!isBulbOn || activeLivingScene !== 'breathing') return;
           if (phase === 0) {
-            // Inhale (4s, Brighten Cyan)
             currentHue = 180;
             sendCommand('HsbColor 180,100,100', 0);
             document.getElementById('auraLabel').textContent = 'Inhale deeply...';
             phase = 1;
           } else if (phase === 1) {
-            // Hold (7s, Deep Sapphire)
             currentHue = 220;
             sendCommand('HsbColor 220,100,70', 0);
             document.getElementById('auraLabel').textContent = 'Hold breath...';
             phase = 2;
           } else {
-            // Exhale (8s, Gentle Indigo)
             currentHue = 260;
             sendCommand('HsbColor 260,100,40', 0);
             document.getElementById('auraLabel').textContent = 'Exhale gently...';
@@ -1779,7 +1974,7 @@
       } else if (scene === 'ocean') {
         let toggle = false;
         livingInterval = setInterval(() => {
-          if (!isBulbOn) return;
+          if (!isBulbOn || activeLivingScene !== 'ocean') return;
           toggle = !toggle;
           currentHue = toggle ? 195 : 225;
           sendCommand(`HsbColor ${currentHue},100,${toggle ? 85 : 55}`, 0);
@@ -1795,15 +1990,24 @@
       }
       activeLivingScene = null;
       document.querySelectorAll('.fx-card').forEach(c => c.classList.remove('active'));
-      document.getElementById('livingBadge').textContent = 'Static';
+      document.getElementById('livingBadge').textContent = 'Tap Card to Toggle';
     }
 
-    // ─── FLOW & PRODUCTIVITY TIMERS ───────────────────────────────────────────
-    function startPomodoro(minutes) {
+    // ─── FLOW & PRODUCTIVITY TIMERS (WITH UNSELECT TOGGLE) ────────────────────
+    function togglePomodoro(minutes) {
       triggerHaptic('success');
+      const timerKey = `pomo-${minutes}`;
+
+      if (activeTimerType === timerKey) {
+        stopTimers();
+        return;
+      }
+
       stopTimers();
-      // Set to 5000K Focus Daylight White at 100%
-      applyWhitePreset(200, 5000, 'Focus Daylight');
+      activeTimerType = timerKey;
+      document.getElementById(`timerPomo${minutes}`).classList.add('active');
+
+      applyWhitePreset(200, 5000, 'Focus Daylight', null);
       onDimmerSlide(100);
 
       let timeLeft = minutes * 60;
@@ -1813,18 +2017,26 @@
         timeLeft--;
         if (timeLeft <= 0) {
           clearInterval(flowTimer);
-          // Break time: morph to relaxing soft emerald green
-          applyMood(145, 70, 'Break Time');
+          applyMood(145, 70, 'Break Time', null);
           document.getElementById('flowStatusBadge').textContent = 'Break (5m)';
         }
       }, 1000);
     }
 
-    function startSleepDrift(minutes) {
+    function toggleSleepDrift(minutes) {
       triggerHaptic('success');
+      const timerKey = `drift-${minutes}`;
+
+      if (activeTimerType === timerKey) {
+        stopTimers();
+        return;
+      }
+
       stopTimers();
-      // Set to cozy warm white at current dimmer
-      applyWhitePreset(450, 2200, 'Night Drift');
+      activeTimerType = timerKey;
+      document.getElementById(`timerDrift${minutes}`).classList.add('active');
+
+      applyWhitePreset(450, 2200, 'Night Drift', null);
       let steps = minutes;
       const stepDec = currentDimmer / steps;
       document.getElementById('flowStatusBadge').textContent = `Drift ${minutes}m`;
@@ -1836,7 +2048,7 @@
 
         if (steps <= 0 || currentDimmer <= 0) {
           clearInterval(flowTimer);
-          toggleBulbPower(); // Power off
+          toggleBulbPower();
           document.getElementById('flowStatusBadge').textContent = 'Powered Off';
         }
       }, 60000);
@@ -1848,6 +2060,8 @@
         clearInterval(flowTimer);
         flowTimer = null;
       }
+      activeTimerType = null;
+      document.querySelectorAll('.timer-card').forEach(c => c.classList.remove('active'));
       document.getElementById('flowStatusBadge').textContent = 'Idle';
     }
 
@@ -1898,16 +2112,17 @@
 
     function loadCustomScene(id) {
       triggerHaptic('light');
+      stopLivingScene();
       const scenes = JSON.parse(localStorage.getItem('lumina_saved_scenes') || '[]');
       const scene = scenes.find(s => s.id === id);
       if (!scene) return;
 
       if (scene.tab === 'white') {
         switchMode('white');
-        applyWhitePreset(scene.ct, Math.round(1000000 / scene.ct), scene.name);
+        applyWhitePreset(scene.ct, Math.round(1000000 / scene.ct), scene.name, null);
       } else {
         switchMode('spectrum');
-        applyMood(scene.hue, scene.dimmer, scene.name);
+        applyMood(scene.hue, scene.dimmer, scene.name, null);
       }
     }
 
@@ -2048,7 +2263,6 @@
         toggleCircadian(true);
       }
 
-      // Initial ping & sync
       const proxy = getProxyBase();
       const statusUrl = (proxy && proxy.startsWith('https://')) ? `${proxy}/api/status` : '/api/status';
       const headers = (proxy && proxy.startsWith('https://')) ? { 'ngrok-skip-browser-warning': 'true' } : {};
@@ -2072,7 +2286,6 @@
       refreshVisualAura();
     });
 
-    // Auto-ping every 8s
     setInterval(() => {
       if (!isSending) {
         const proxy = getProxyBase();
@@ -2085,7 +2298,6 @@
       }
     }, 8000);
 
-    // Instant Wake Reconnect
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         const proxy = getProxyBase();
