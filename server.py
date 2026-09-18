@@ -8,9 +8,15 @@ import sys
 import socket
 import concurrent.futures
 
+import threading
+import time
+
 PORT = 7070
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(DIRECTORY, "bulb_config.json")
+
+BULB_IS_ONLINE = False
+WATCHDOG_LAST_CHECK = 0
 
 def load_bulb_ip():
     if os.path.exists(CONFIG_FILE):
@@ -33,34 +39,56 @@ def save_bulb_ip(ip):
 
 CURRENT_BULB_IP = load_bulb_ip()
 
-def execute_tasmota(cmd, ip=None):
+def execute_tasmota(cmd, ip=None, timeout=3.5):
     target = ip if ip else CURRENT_BULB_IP
     url = f"http://{target}/cm?cmnd={urllib.parse.quote(cmd)}"
     req = urllib.request.Request(url, headers={
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Lumina/3.1',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Lumina/3.2',
         'Referer': f'http://{target}/'
     })
     try:
-        with urllib.request.urlopen(req, timeout=3.5) as r:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
             return r.status, r.read()
     except Exception as e:
         return 500, json.dumps({"error": str(e), "target_ip": target}).encode()
 
+def check_bulb_alive(ip):
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(0.3)
+        res = s.connect_ex((ip, 80))
+        s.close()
+        if res == 0:
+            status, _ = execute_tasmota("Status", ip=ip, timeout=1.0)
+            return status == 200
+    except Exception:
+        pass
+    return False
+
 def scan_single_ip(ip):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(0.35)
+        s.settimeout(0.3)
         if s.connect_ex((ip, 80)) == 0:
             s.close()
             try:
                 url = f"http://{ip}/cm?cmnd=Status"
-                req = urllib.request.Request(url, headers={'User-Agent': 'Lumina/3.1'})
+                req = urllib.request.Request(url, headers={'User-Agent': 'Lumina/3.2'})
                 with urllib.request.urlopen(req, timeout=1.0) as resp:
                     raw = resp.read().decode('utf-8', errors='ignore')
-                    if "Status" in raw or "Module" in raw or "FriendlyName" in raw:
+                    if "Status" in raw or "Module" in raw or "FriendlyName" in raw or "Command" in raw:
                         return (ip, True, raw)
             except Exception:
-                pass
+                # Also check root for Tasmota minimal or standard index
+                try:
+                    url = f"http://{ip}/"
+                    req = urllib.request.Request(url, headers={'User-Agent': 'Lumina/3.2'})
+                    with urllib.request.urlopen(req, timeout=1.0) as resp:
+                        raw = resp.read().decode('utf-8', errors='ignore')
+                        if "Tasmota" in raw or "Smitch" in raw:
+                            return (ip, True, raw)
+                except Exception:
+                    pass
         else:
             s.close()
     except Exception:
@@ -68,26 +96,82 @@ def scan_single_ip(ip):
     return None
 
 def auto_discover_bulb(subnet="192.168.1."):
-    # First check 192.168.4.1 (standard Tasmota / ESP AP mode)
+    global BULB_IS_ONLINE
+    # 1. Check current configured IP first
+    if check_bulb_alive(CURRENT_BULB_IP):
+        BULB_IS_ONLINE = True
+        return {"found": True, "ip": CURRENT_BULB_IP, "is_ap": False, "details": "Active Bulb Confirmed"}
+
+    # 2. Check 192.168.4.1 (Tasmota / Smitch Direct AP Mode)
     ap_res = scan_single_ip("192.168.4.1")
     if ap_res:
+        save_bulb_ip("192.168.4.1")
+        BULB_IS_ONLINE = True
         return {"found": True, "ip": "192.168.4.1", "is_ap": True, "details": "Smitch / Tasmota Pairing Hotspot"}
 
-    # Next check current configured IP
-    current_res = scan_single_ip(CURRENT_BULB_IP)
-    if current_res:
-        return {"found": True, "ip": CURRENT_BULB_IP, "is_ap": False, "details": "Configured Bulb Active"}
-
-    # Parallel scan across subnet 1-254
-    ips = [f"{subnet}{i}" for i in range(1, 255)]
-    with concurrent.futures.ThreadPoolExecutor(max_workers=60) as executor:
-        results = executor.map(scan_single_ip, ips)
+    # 3. High-priority scan: common bulb DHCP IPs (192.168.1.2 - 192.168.1.30, 192.168.1.100 - 192.168.1.130)
+    priority_ips = [f"{subnet}{i}" for i in list(range(2, 31)) + list(range(100, 131))]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
+        results = executor.map(scan_single_ip, priority_ips)
         for r in results:
             if r and r[1]:
                 save_bulb_ip(r[0])
-                return {"found": True, "ip": r[0], "is_ap": False, "details": "Discovered on Subnet"}
+                BULB_IS_ONLINE = True
+                _apply_long_run_stability_settings(r[0])
+                return {"found": True, "ip": r[0], "is_ap": False, "details": "Discovered on Subnet (Fast Sweep)"}
 
-    return {"found": False, "ip": None, "details": "No bulb found on subnet or AP"}
+    # 4. Full subnet sweep (1-254)
+    all_ips = [f"{subnet}{i}" for i in range(1, 255) if f"{subnet}{i}" not in priority_ips]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=60) as executor:
+        results = executor.map(scan_single_ip, all_ips)
+        for r in results:
+            if r and r[1]:
+                save_bulb_ip(r[0])
+                BULB_IS_ONLINE = True
+                _apply_long_run_stability_settings(r[0])
+                return {"found": True, "ip": r[0], "is_ap": False, "details": "Discovered on Subnet (Full Sweep)"}
+
+    BULB_IS_ONLINE = False
+    return {"found": False, "ip": None, "details": "No bulb found"}
+
+def _apply_long_run_stability_settings(ip):
+    """Applies optimal Tasmota settings for rock-solid 24/7 run without dropping off Wi-Fi."""
+    try:
+        # Sleep 0: Zero sleep (lowest latency, eliminates dropped packets during idle)
+        # SetOption60 1: Sleep dynamic (keeps WiFi radio awake)
+        # WifiConfig 2: Never reset credentials on router drops; auto-retry indefinitely
+        # WifiPower 17: Maximum stable transmission strength (17 dBm)
+        # TelePeriod 30: 30s heartbeat telemetry
+        execute_tasmota("Backlog SetOption60 1; Sleep 0; WifiConfig 2; WifiPower 17; TelePeriod 30", ip=ip, timeout=2.0)
+    except Exception:
+        pass
+
+def background_watchdog_loop():
+    """Continuous background worker ensuring bulletproof 24/7 connectivity and auto-recovery."""
+    global BULB_IS_ONLINE, WATCHDOG_LAST_CHECK
+    time.sleep(3)
+    while True:
+        try:
+            WATCHDOG_LAST_CHECK = time.time()
+            if check_bulb_alive(CURRENT_BULB_IP):
+                if not BULB_IS_ONLINE:
+                    print(f"[Watchdog] Bulb is ONLINE at {CURRENT_BULB_IP}")
+                    _apply_long_run_stability_settings(CURRENT_BULB_IP)
+                BULB_IS_ONLINE = True
+            else:
+                if BULB_IS_ONLINE:
+                    print(f"[Watchdog] Bulb lost at {CURRENT_BULB_IP}! Initiating background auto-discovery...")
+                BULB_IS_ONLINE = False
+                res = auto_discover_bulb()
+                if res.get("found") and res.get("ip"):
+                    print(f"[Watchdog] Bulb recovered automatically at {res['ip']}")
+        except Exception:
+            pass
+        time.sleep(10)
+
+# Start watchdog daemon thread
+watchdog_thread = threading.Thread(target=background_watchdog_loop, daemon=True)
+watchdog_thread.start()
 
 class LuminaHandler(http.server.SimpleHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
@@ -137,8 +221,30 @@ class LuminaHandler(http.server.SimpleHTTPRequestHandler):
             self._send_json(200, {
                 "status": "ok",
                 "bulb": CURRENT_BULB_IP,
-                "version": "3.1",
+                "bulb_online": BULB_IS_ONLINE,
+                "version": "3.2",
                 "pairing_ip": "192.168.4.1"
+            })
+            return
+
+        elif parsed.path == '/api/auto-connect':
+            # Instant on-load handshake for web app
+            if BULB_IS_ONLINE and check_bulb_alive(CURRENT_BULB_IP):
+                self._send_json(200, {
+                    "status": "connected",
+                    "ip": CURRENT_BULB_IP,
+                    "bulb_online": True,
+                    "is_ap": (CURRENT_BULB_IP == "192.168.4.1")
+                })
+                return
+            # If offline, run instant discovery
+            res = auto_discover_bulb()
+            self._send_json(200, {
+                "status": "connected" if res.get("found") else "offline",
+                "ip": res.get("ip", CURRENT_BULB_IP),
+                "bulb_online": res.get("found", False),
+                "is_ap": res.get("is_ap", False),
+                "details": res.get("details")
             })
             return
 

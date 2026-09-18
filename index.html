@@ -3518,6 +3518,7 @@
           reportSuccess(apiBase);
         } else {
           reportFailure();
+          autoRecoverBulb(cmd);
         }
       } catch (e) {
         clearTimeout(timeoutId);
@@ -3543,18 +3544,8 @@
           } catch (fbErr) {}
         }
         if (!retried) {
-          // Direct browser image beacon fallback for direct LAN HTTP
-          if (window.location.protocol === 'http:' && !apiBase.includes(BULB_IP)) {
-            try {
-              const img = new Image();
-              img.src = `http://${BULB_IP}/cm?cmnd=${encodeURIComponent(cmd)}&_t=${Date.now()}`;
-              reportSuccess();
-            } catch (err) {
-              reportFailure();
-            }
-          } else {
-            reportFailure();
-          }
+          reportFailure();
+          autoRecoverBulb(cmd);
         }
       } finally {
         clearTimeout(watchdogTimer);
@@ -3567,7 +3558,34 @@
       }
     }
 
-    function updateLiveStatus(isOnline) {
+    let isRecovering = false;
+    async function autoRecoverBulb(failedCmd = null) {
+      if (isRecovering) return;
+      isRecovering = true;
+      try {
+        const apiBase = getApiBase();
+        const res = await fetch(`${apiBase}/api/auto-connect`, {
+          headers: { 'ngrok-skip-browser-warning': 'true' },
+          cache: 'no-store',
+          signal: AbortSignal.timeout(6000)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.bulb_online && data.ip) {
+            BULB_IP = data.ip;
+            localStorage.setItem('lumina_bulb_ip', data.ip);
+            updateLiveStatus(true, true);
+            if (failedCmd) {
+              setTimeout(() => _dispatch(failedCmd), 300);
+            }
+          }
+        }
+      } catch (e) {} finally {
+        isRecovering = false;
+      }
+    }
+
+    function updateLiveStatus(isOnline, isBulbReachable = true) {
       const dot = document.getElementById('liveIndicator');
       const text = document.getElementById('connStatus');
       const banner = document.getElementById('bulbOfflineBanner');
@@ -3575,17 +3593,16 @@
       const apiBase = getApiBase();
       if (bannerIp) bannerIp.textContent = BULB_IP;
 
-      if (isOnline) {
+      if (isOnline && isBulbReachable) {
         dot.style.background = '#10b981';
-        dot.style.boxShadow = '0 0 10px #10b981';
+        dot.style.boxShadow = '0 0 12px #10b981';
         if (banner) banner.style.display = 'none';
-        if (apiBase.includes('ngrok')) {
-          text.textContent = 'Adhy Bulb • Cloud Tunnel';
-        } else if (apiBase.includes('192.168.') || apiBase.includes('localhost') || apiBase.includes('127.0.0.1')) {
-          text.textContent = `Adhy Bulb • Local Bridge`;
-        } else {
-          text.textContent = `Adhy Bulb • Connected`;
-        }
+        text.textContent = `Adhy Bulb • Live (${BULB_IP})`;
+      } else if (isOnline && !isBulbReachable) {
+        dot.style.background = '#f59e0b';
+        dot.style.boxShadow = '0 0 10px #f59e0b';
+        text.textContent = 'Bridge Online • Finding Bulb...';
+        if (banner) banner.style.display = 'flex';
       } else {
         dot.style.background = '#ef4444';
         dot.style.boxShadow = '0 0 10px #ef4444';
@@ -3601,6 +3618,7 @@
       const text = document.getElementById('connStatus');
       if (text) text.textContent = 'Adhy Bulb • Testing...';
       consecutiveFailures = 0;
+      await autoRecoverBulb();
       await doPing(true);
       if (icon) setTimeout(() => icon.classList.remove('spinning'), 600);
     }
@@ -5169,29 +5187,67 @@
         });
       }
 
-      // Fast startup bridge sync
-      doPing(false).then(() => {
+      // Instant Automatic Connection Handshake on Startup
+      initInstantAutoConnect();
+      scheduleHeartbeat(4500);
+      refreshVisualAura();
+    });
+
+    async function initInstantAutoConnect() {
+      const text = document.getElementById('connStatus');
+      if (text) text.textContent = 'Adhy Bulb • Auto-Connecting...';
+      try {
         const apiBase = getApiBase();
-        return fetch(`${apiBase}/api/status`, {
+        const res = await fetch(`${apiBase}/api/auto-connect`, {
+          headers: { 'ngrok-skip-browser-warning': 'true' },
+          cache: 'no-store',
+          signal: AbortSignal.timeout(7000)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.bulb_online && data.ip) {
+            BULB_IP = data.ip;
+            localStorage.setItem('lumina_bulb_ip', data.ip);
+            updateLiveStatus(true, true);
+            showToast('⚡ Auto-Connected', `Bulb linked at ${data.ip}`, 'music', '#10b981');
+            syncBulbInitialState();
+            return;
+          }
+        }
+      } catch (e) {}
+      doPing(false);
+    }
+
+    async function syncBulbInitialState() {
+      try {
+        const apiBase = getApiBase();
+        const res = await fetch(`${apiBase}/api/status`, {
           headers: { 'ngrok-skip-browser-warning': 'true' },
           cache: 'no-store'
         });
-      }).then(r => r && r.json()).then(data => {
-        if (data && data.StatusSTS && data.StatusSTS.Dimmer) {
-          currentDimmer = data.StatusSTS.Dimmer;
-          document.getElementById('dimmerSlider').value = currentDimmer;
-          const wSlider = document.getElementById('whiteDimmerSlider');
-          if (wSlider) wSlider.value = currentDimmer;
-          const bReadout = document.getElementById('brightnessReadout');
-          if (bReadout) bReadout.textContent = `${currentDimmer}%`;
-          const wbReadout = document.getElementById('whiteBriReadout');
-          if (wbReadout) wbReadout.textContent = `${currentDimmer}%`;
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.StatusSTS) {
+            if (data.StatusSTS.POWER) {
+              isBulbOn = (data.StatusSTS.POWER === 'ON');
+              const btn = document.getElementById('masterPowerBtn');
+              if (btn) btn.classList.toggle('off', !isBulbOn);
+            }
+            if (data.StatusSTS.Dimmer) {
+              currentDimmer = data.StatusSTS.Dimmer;
+              document.getElementById('dimmerSlider').value = currentDimmer;
+              const wSlider = document.getElementById('whiteDimmerSlider');
+              if (wSlider) wSlider.value = currentDimmer;
+              const bReadout = document.getElementById('brightnessReadout');
+              if (bReadout) bReadout.textContent = `${currentDimmer}%`;
+              const wbReadout = document.getElementById('whiteBriReadout');
+              if (wbReadout) wbReadout.textContent = `${currentDimmer}%`;
+            }
+            refreshVisualAura();
+          }
         }
-      }).catch(() => {});
-
-      scheduleHeartbeat(12000);
-      refreshVisualAura();
-    });
+      } catch (e) {}
+    }
 
     // ─── SELF-HEALING PING HEARTBEAT (RAPID & CONTINUOUS) ────────────────────
     async function doPing(isManual = false) {
@@ -5207,15 +5263,27 @@
         });
         clearTimeout(tId);
         if (res.ok) {
+          const data = await res.json().catch(() => ({}));
+          if (data && data.bulb && data.bulb !== BULB_IP) {
+            BULB_IP = data.bulb;
+            localStorage.setItem('lumina_bulb_ip', data.bulb);
+          }
+          const bulbReachable = !!(data && data.bulb_online);
+          updateLiveStatus(true, bulbReachable);
           reportSuccess(apiBase);
-          if (isManual) showToast('Bridge Connected', 'Bulb bridge online & responsive', 'music', '#10b981');
+          if (isManual) {
+            if (bulbReachable) {
+              showToast('Bulb Connected', `Active at ${data.bulb}`, 'music', '#10b981');
+            } else {
+              showToast('Bridge Connected', 'Searching for bulb on subnet...', 'music', '#f59e0b');
+            }
+          }
         } else {
           reportFailure();
         }
       } catch (e) {
         clearTimeout(tId);
         reportFailure();
-        // If manual or struggling, trigger multi-endpoint race immediately
         if (isManual || consecutiveFailures >= 2) {
           probeAndSwitchEndpoint();
         }
