@@ -271,8 +271,15 @@ class LuminaHandler(http.server.SimpleHTTPRequestHandler):
 
             backlog_str = "; ".join(cmds)
 
-            # Try Tasmota HTTP API first
+            # Try Tasmota Backlog first
             status, body = execute_tasmota(f"Backlog {backlog_str}", ip=target_ip)
+            
+            # Also dispatch individual commands in case Backlog is disabled in minimal builds
+            for c in [f"SSId1 {ssid}", f"Password1 {password}", f"SSId {ssid}", f"Password {password}", f"WifiConfig {ap_policy}"]:
+                try:
+                    execute_tasmota(c, ip=target_ip)
+                except Exception:
+                    pass
 
             # Also attempt direct Tasmota /wi web form post (used by pairing captive portal)
             try:
@@ -295,6 +302,12 @@ class LuminaHandler(http.server.SimpleHTTPRequestHandler):
             except Exception:
                 pass
 
+            # Finally trigger restart after credentials are saved
+            try:
+                execute_tasmota("Restart 1", ip=target_ip)
+            except Exception:
+                pass
+
             if target_ip == '192.168.4.1':
                 # Bulb was in pairing mode and is now rebooting to join home network!
                 self._send_json(200, {
@@ -313,6 +326,42 @@ class LuminaHandler(http.server.SimpleHTTPRequestHandler):
                     "rebooting": True
                 })
             return
+
+        elif parsed.path == '/api/ota-upgrade':
+            target_ip = payload.get('ip', CURRENT_BULB_IP)
+            bin_path = os.path.join(os.path.dirname(__file__), "tasmota.bin.gz")
+            if not os.path.exists(bin_path):
+                self._send_json(404, {"status": "error", "message": "tasmota.bin.gz not found on server"})
+                return
+
+            try:
+                import uuid
+                boundary = '----WebKitFormBoundary' + uuid.uuid4().hex
+                with open(bin_path, 'rb') as f:
+                    file_bytes = f.read()
+
+                body = (
+                    f'--{boundary}\r\n'
+                    f'Content-Disposition: form-data; name="u1"; filename="tasmota.bin.gz"\r\n'
+                    f'Content-Type: application/octet-stream\r\n\r\n'
+                ).encode('utf-8') + file_bytes + f'\r\n--{boundary}--\r\n'.encode('utf-8')
+
+                url = f"http://{target_ip}/u1"
+                req = urllib.request.Request(url, data=body, headers={
+                    'Content-Type': f'multipart/form-data; boundary={boundary}',
+                    'Content-Length': str(len(body)),
+                    'User-Agent': 'Lumina/3.1'
+                })
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    resp_body = resp.read().decode('utf-8', errors='ignore')
+                    self._send_json(200, {
+                        "status": "ok",
+                        "message": "Full Tasmota firmware flashed successfully! Bulb is rebooting with complete light drivers."
+                    })
+                    return
+            except Exception as e:
+                self._send_json(500, {"status": "error", "message": f"OTA Flash failed: {str(e)}"})
+                return
 
         elif parsed.path == '/api/cmd':
             cmd = payload.get('c', '')

@@ -3078,6 +3078,30 @@
             🚀 Open WiFi Credential Sender →
           </button>
         </div>
+
+        <!-- Troubleshooting Tasmota Minimal -->
+        <div class="pairing-step-card" style="border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.05); margin-top: 10px;">
+          <div class="pairing-step-header">
+            <span class="pairing-step-num" style="background:#ef4444;">!</span>
+            <span class="pairing-step-title" style="color:#f87171;">Bulb Won't Control Color / Shows "release-minimal"?</span>
+          </div>
+          <p class="pairing-step-desc">
+            If your bulb has <strong>Tasmota Minimal</strong> installed, the light drivers and color commands are temporarily stripped out. You must flash the full Tasmota build to restore RGB/warmth control.
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+            <button class="banner-btn primary" id="btnFlashTasmotaFull" onclick="flashFullTasmota()" style="justify-content:center; padding:10px; background:linear-gradient(135deg, #ef4444, #dc2626);">
+              ⚡ 1-Click Flash Full Tasmota (Restore Drivers)
+            </button>
+            <div style="display: flex; gap: 6px;">
+              <a href="/tasmota.bin.gz" download="tasmota.bin.gz" class="banner-btn" style="flex:1; justify-content:center; padding:8px; text-decoration:none; font-size:11px;">
+                📥 Download tasmota.bin.gz
+              </a>
+              <a href="http://192.168.4.1/u1" target="_blank" class="banner-btn" style="flex:1; justify-content:center; padding:8px; text-decoration:none; font-size:11px;">
+                🌐 Open 192.168.4.1/u1
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Tab 3: Change WiFi Credentials Form -->
@@ -3912,6 +3936,38 @@
       }
 
       showToast('Bulb Still Offline', 'Ensure bulb is powered or check pairing hotspot', 'music', '#ef4444');
+    }
+
+    async function flashFullTasmota() {
+      const target = (document.getElementById('targetPillAp')?.classList.contains('active') || activeWifiTab === 'pairing') ? '192.168.4.1' : BULB_IP;
+      const btn = document.getElementById('btnFlashTasmotaFull');
+      if (btn) btn.textContent = '⏳ Flashing Full Firmware (~20s)...';
+      triggerHaptic('medium');
+      showToast('Flashing Full Tasmota', 'Uploading firmware with complete light drivers...', 'music', '#38bdf8');
+
+      try {
+        const apiBase = getApiBase();
+        const res = await fetch(`${apiBase}/api/ota-upgrade`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+          body: JSON.stringify({ ip: target }),
+          signal: AbortSignal.timeout(35000)
+        });
+        const data = await res.json();
+        if (res.ok && data.status === 'ok') {
+          showToast('Firmware Flashed!', 'Bulb is rebooting with complete light drivers.', 'music', '#10b981');
+          if (btn) btn.textContent = '✅ Upgrade Completed!';
+          setTimeout(() => {
+            if (btn) btn.textContent = '⚡ 1-Click Flash Full Tasmota (Restore Drivers)';
+          }, 6000);
+        } else {
+          showToast('OTA Notice', data.message || 'Could not connect directly. Use http://192.168.4.1/u1', 'music', '#ef4444');
+          if (btn) btn.textContent = '⚡ 1-Click Flash Full Tasmota (Restore Drivers)';
+        }
+      } catch (err) {
+        showToast('OTA Notice', 'If in pairing mode, upload manually at http://192.168.4.1/u1', 'music', '#f59e0b');
+        if (btn) btn.textContent = '⚡ 1-Click Flash Full Tasmota (Restore Drivers)';
+      }
     }
 
     // ─── MASTER CONTROLS & UNSELECTABLE STATE MANAGERS ────────────────────────
