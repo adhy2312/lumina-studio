@@ -1650,6 +1650,376 @@
       pointer-events: none;
       letter-spacing: 0.5px;
     }
+
+    /* ── WiFi & Smitch Pairing Studio Styles ─────────────────────── */
+    .bulb-offline-banner {
+      margin: 8px auto 14px;
+      max-width: 580px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(239, 68, 68, 0.08));
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 18px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 8px 30px rgba(245, 158, 11, 0.15);
+      backdrop-filter: blur(16px);
+      animation: bannerGlow 3s ease-in-out infinite alternate;
+    }
+    @keyframes bannerGlow {
+      from { border-color: rgba(245, 158, 11, 0.25); }
+      to { border-color: rgba(245, 158, 11, 0.55); box-shadow: 0 8px 32px rgba(245, 158, 11, 0.25); }
+    }
+    .offline-banner-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(245, 158, 11, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .offline-banner-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .banner-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fbbf24;
+    }
+    .banner-sub {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+    .offline-banner-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .banner-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--glass-border);
+      color: var(--text-pure);
+      border-radius: 10px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+    .banner-btn:hover { background: rgba(255, 255, 255, 0.15); }
+    .banner-btn.primary {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border-color: #f59e0b;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+    }
+    .banner-btn.primary:hover {
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.5);
+      transform: translateY(-1px);
+    }
+
+    /* Modal Backdrop & Container */
+    .wifi-modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(4, 5, 10, 0.78);
+      backdrop-filter: blur(28px) saturate(160%);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .wifi-modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .wifi-modal {
+      background: linear-gradient(165deg, rgba(24, 27, 44, 0.94), rgba(13, 15, 26, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 26px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.75), 0 0 40px rgba(139, 92, 246, 0.15);
+      width: 100%;
+      max-width: 520px;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 24px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transform: scale(0.92) translateY(10px);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .wifi-modal-backdrop.open .wifi-modal {
+      transform: scale(1) translateY(0);
+    }
+    .wifi-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+    }
+    .wifi-modal-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .wifi-modal-icon-wrap {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(139, 92, 246, 0.2));
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #38bdf8;
+    }
+    .wifi-modal-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-pure);
+      margin: 0;
+      letter-spacing: -0.2px;
+    }
+    .wifi-modal-subtitle {
+      font-size: 11px;
+      color: var(--text-soft);
+      margin: 0;
+    }
+    .wifi-modal-close-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--glass-border);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .wifi-modal-close-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    /* Tab Switcher */
+    .wifi-tab-nav {
+      display: flex;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 4px;
+      gap: 4px;
+    }
+    .wifi-tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-soft);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .wifi-tab-btn.active {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: var(--text-pure);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Cards & Details */
+    .wifi-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .wifi-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .wifi-signal-gauge {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 16px;
+    }
+    .signal-bar {
+      width: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      transition: height 0.3s ease, background 0.3s ease;
+    }
+    .signal-bar.b1 { height: 25%; }
+    .signal-bar.b2 { height: 50%; }
+    .signal-bar.b3 { height: 75%; }
+    .signal-bar.b4 { height: 100%; }
+    .signal-bar.active { background: #10b981; }
+
+    /* Step Cards for Pairing */
+    .pairing-step-card {
+      background: rgba(56, 189, 248, 0.04);
+      border: 1px solid rgba(56, 189, 248, 0.16);
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .pairing-step-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pairing-step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #38bdf8;
+      color: #06070c;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pairing-step-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+    .pairing-step-desc {
+      font-size: 12px;
+      color: var(--text-soft);
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    /* Form Styles */
+    .wifi-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .wifi-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-pure);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .wifi-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .wifi-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 10px 14px;
+      color: var(--text-pure);
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .wifi-input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.25);
+    }
+    .input-action-icon {
+      position: absolute;
+      right: 12px;
+      cursor: pointer;
+      color: var(--text-soft);
+      display: flex;
+      align-items: center;
+    }
+
+    /* Scanned Networks Chips */
+    .scanned-networks-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      max-height: 110px;
+      overflow-y: auto;
+    }
+    .network-chip {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-size: 11px;
+      color: var(--text-pure);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+    .network-chip:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: #38bdf8;
+    }
+
+    /* Target Device Pills */
+    .target-device-selector {
+      display: flex;
+      gap: 6px;
+    }
+    .target-pill {
+      flex: 1;
+      padding: 8px 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      font-size: 11px;
+      color: var(--text-soft);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    .target-pill.active {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: #8b5cf6;
+      color: #fff;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
@@ -1688,6 +2058,9 @@
           <button class="icon-action-btn" id="reconnectBtn" onclick="forceReconnect()" title="Instant Ping & Reconnect" style="background: rgba(255,255,255,0.06); border: 1px solid var(--glass-border); border-radius: 50%; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-soft); cursor: pointer; transition: all 0.2s ease;">
             <svg class="svg-icon-sm" id="reconnectIcon" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
           </button>
+          <button class="icon-action-btn" id="wifiModalBtn" onclick="openWifiModal()" title="WiFi Settings & Smitch Pairing Studio" style="background: rgba(255,255,255,0.06); border: 1px solid var(--glass-border); border-radius: 50%; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-soft); cursor: pointer; transition: all 0.2s ease;">
+            <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+          </button>
         </div>
       </div>
 
@@ -1697,6 +2070,27 @@
         </svg>
       </button>
     </header>
+
+    <!-- Smart Bulb Offline / Auto-Discover & Pairing Banner -->
+    <div class="bulb-offline-banner" id="bulbOfflineBanner" style="display: none;">
+      <div class="offline-banner-icon">
+        <svg class="svg-icon-sm" viewBox="0 0 24 24" style="color: #f59e0b;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="offline-banner-text">
+        <span class="banner-title">Bulb not responding at <strong id="bannerTargetIp">192.168.1.11</strong></span>
+        <span class="banner-sub">Bulb in pairing mode or got a new IP?</span>
+      </div>
+      <div class="offline-banner-actions">
+        <button class="banner-btn" onclick="triggerAutoDiscover(this)">
+          <svg class="svg-icon-sm" id="discoverIcon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Auto-Find</span>
+        </button>
+        <button class="banner-btn primary" onclick="openWifiModal('pairing')">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span>Pair Smitch</span>
+        </button>
+      </div>
+    </div>
 
     <!-- Floating Toast Notifications -->
     <div class="toast-container" id="toastContainer"></div>
@@ -2561,6 +2955,211 @@
 
   </main>
 
+  <!-- ─── WIFI CONFIGURATION & SMITCH PAIRING STUDIO MODAL ─────────────────── -->
+  <div class="wifi-modal-backdrop" id="wifiModalBackdrop" onclick="handleBackdropClick(event)">
+    <div class="wifi-modal" id="wifiModal">
+      
+      <!-- Header -->
+      <div class="wifi-modal-header">
+        <div class="wifi-modal-title-group">
+          <div class="wifi-modal-icon-wrap">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+          </div>
+          <div>
+            <h2 class="wifi-modal-title">Smitch Bulb • WiFi & Pairing Studio</h2>
+            <p class="wifi-modal-subtitle">Network Configuration & Direct AP Hotspot Link</p>
+          </div>
+        </div>
+        <button class="wifi-modal-close-btn" onclick="closeWifiModal()" title="Close">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="wifi-tab-nav">
+        <button class="wifi-tab-btn active" id="btnWifiTabStatus" onclick="switchWifiTab('status')">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0M12 20h.01"/></svg>
+          <span>Live Status</span>
+        </button>
+        <button class="wifi-tab-btn" id="btnWifiTabPairing" onclick="switchWifiTab('pairing')">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24" style="color:#38bdf8;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span>Smitch Pairing</span>
+        </button>
+        <button class="wifi-tab-btn" id="btnWifiTabConfig" onclick="switchWifiTab('config')">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Change WiFi</span>
+        </button>
+      </div>
+
+      <!-- Tab 1: Live Status & Visible Networks -->
+      <div id="wifiSectionStatus" class="wifi-tab-section">
+        <div class="wifi-card">
+          <div class="wifi-status-row">
+            <div>
+              <div style="font-size: 11px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.5px;">Connected Network</div>
+              <div style="font-size: 18px; font-weight: 800; color: #38bdf8;" id="wifiCurrentSsid">Scanning...</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="wifi-signal-gauge" id="wifiSignalBars" title="Signal Strength">
+                <div class="signal-bar b1 active"></div>
+                <div class="signal-bar b2 active"></div>
+                <div class="signal-bar b3 active"></div>
+                <div class="signal-bar b4"></div>
+              </div>
+              <div style="font-size: 11px; font-weight: 700; color: #10b981; margin-top: 4px;" id="wifiSignalPct">-- %</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px; background: rgba(0,0,0,0.25); padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+            <div><span style="color: var(--text-soft);">Target IP:</span> <strong id="wifiDetailsIp">192.168.1.11</strong></div>
+            <div><span style="color: var(--text-soft);">Gateway:</span> <strong id="wifiDetailsGateway">--</strong></div>
+            <div><span style="color: var(--text-soft);">MAC Address:</span> <strong id="wifiDetailsMac">--</strong></div>
+            <div><span style="color: var(--text-soft);">Hostname:</span> <strong id="wifiDetailsHost">--</strong></div>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="secondary-btn" onclick="fetchLiveWifiStatus()" style="flex:1;">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              <span>Refresh Status</span>
+            </button>
+            <button class="secondary-btn" onclick="scanNearbyWifi()" style="flex:1;">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span>Scan Nearby SSIDs</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Scanned Networks Box -->
+        <div id="scannedNetworksContainer" style="display: none; margin-top: 4px;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-soft); margin-bottom: 6px;">Available Nearby Networks (Tap to Select):</div>
+          <div class="scanned-networks-box" id="scannedNetworksList"></div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Smitch Direct Pairing Wizard (192.168.4.1) -->
+      <div id="wifiSectionPairing" class="wifi-tab-section" style="display: none;">
+        <div class="pairing-step-card">
+          <div class="pairing-step-header">
+            <span class="pairing-step-num">1</span>
+            <span class="pairing-step-title">Enter Pairing Mode on Bulb</span>
+          </div>
+          <p class="pairing-step-desc">
+            Turn your bulb switch <strong>OFF and ON 3 to 5 times</strong>. The bulb will blink rapidly or glow dim amber. It will broadcast its own direct WiFi hotspot named <code style="color:#38bdf8; background:rgba(56,189,248,0.12); padding:2px 6px; border-radius:6px;">smitch-xxxxxx</code> or <code style="color:#38bdf8; background:rgba(56,189,248,0.12); padding:2px 6px; border-radius:6px;">tasmota-xxxxxx</code>.
+          </p>
+        </div>
+
+        <div class="pairing-step-card">
+          <div class="pairing-step-header">
+            <span class="pairing-step-num">2</span>
+            <span class="pairing-step-title">Connect Phone / PC to Bulb Hotspot</span>
+          </div>
+          <p class="pairing-step-desc">
+            Open your device's WiFi settings and connect directly to the bulb's network. It has no password and defaults to IP <strong style="color:#fff;">192.168.4.1</strong>.
+          </p>
+          <div style="display: flex; gap: 8px; margin-top: 4px;">
+            <button class="banner-btn primary" onclick="switchToPairingIp()" style="flex:1; justify-content:center; padding:9px;">
+              ⚡ Set Lumina Target to 192.168.4.1
+            </button>
+            <a href="http://192.168.4.1" target="_blank" class="banner-btn" style="flex:1; justify-content:center; padding:9px; text-decoration:none;">
+              🌐 Open 192.168.4.1 Directly
+            </a>
+          </div>
+        </div>
+
+        <div class="pairing-step-card" style="border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.04);">
+          <div class="pairing-step-header">
+            <span class="pairing-step-num" style="background:#f59e0b;">3</span>
+            <span class="pairing-step-title" style="color:#fbbf24;">Send Home WiFi Credentials to Bulb</span>
+          </div>
+          <p class="pairing-step-desc">
+            Enter your home router WiFi name & password below. Lumina will broadcast the credentials directly to the bulb at <code style="color:#fbbf24;">192.168.4.1</code> and reboot it onto your home network!
+          </p>
+          <button class="secondary-btn" onclick="switchWifiTab('config', '192.168.4.1')" style="width: 100%; border-color: rgba(245,158,11,0.4); margin-top: 4px;">
+            🚀 Open WiFi Credential Sender →
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 3: Change WiFi Credentials Form -->
+      <div id="wifiSectionConfig" class="wifi-tab-section" style="display: none;">
+        <div class="wifi-card">
+          
+          <!-- Target IP Selection -->
+          <div class="wifi-form-group">
+            <label class="wifi-label">Target Bulb IP</label>
+            <div class="target-device-selector">
+              <div class="target-pill active" id="targetPillDefault" onclick="setFormTargetIp('default')">Current (<span id="targetPillIpText">192.168.1.11</span>)</div>
+              <div class="target-pill" id="targetPillAp" onclick="setFormTargetIp('192.168.4.1')">⚡ Pairing Mode (192.168.4.1)</div>
+              <div class="target-pill" id="targetPillCustom" onclick="setFormTargetIp('custom')">Custom IP</div>
+            </div>
+            <input type="text" id="wifiCustomIpInput" class="wifi-input" placeholder="e.g. 192.168.1.50" style="display:none; margin-top:6px;">
+          </div>
+
+          <!-- Primary SSID & Password -->
+          <div class="wifi-form-group">
+            <label class="wifi-label" for="wifiSsidInput">
+              <span>Home WiFi Network Name (SSID) *</span>
+              <span style="font-size:10px; color:#38bdf8; cursor:pointer;" onclick="scanNearbyWifi()">[Scan Nearby]</span>
+            </label>
+            <div class="wifi-input-wrap">
+              <input type="text" id="wifiSsidInput" class="wifi-input" placeholder="e.g. Airtel_Adhyarul" autocomplete="wifi-ssid">
+            </div>
+          </div>
+
+          <div class="wifi-form-group">
+            <label class="wifi-label" for="wifiPasswordInput">Home WiFi Password *</label>
+            <div class="wifi-input-wrap">
+              <input type="password" id="wifiPasswordInput" class="wifi-input" placeholder="Enter WiFi Password" autocomplete="current-password">
+              <div class="input-action-icon" onclick="togglePasswordVisibility('wifiPasswordInput', this)" title="Show/Hide Password">
+                <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Backup / Secondary WiFi (Collapsible) -->
+          <div style="margin-top: 2px;">
+            <div style="font-size: 11px; color: var(--text-soft); cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="toggleBackupWifiFields()">
+              <span id="backupWifiChevron">▶</span>
+              <strong style="color: var(--text-pure);">Optional: Secondary Backup WiFi (Hotspot fallback)</strong>
+            </div>
+            <div id="backupWifiContainer" style="display: none; flex-direction: column; gap: 8px; margin-top: 8px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+              <div class="wifi-form-group">
+                <label class="wifi-label">Backup SSID 2</label>
+                <input type="text" id="wifiSsid2Input" class="wifi-input" placeholder="e.g. Mobile_Hotspot">
+              </div>
+              <div class="wifi-form-group">
+                <label class="wifi-label">Backup Password 2</label>
+                <div class="wifi-input-wrap">
+                  <input type="password" id="wifiPassword2Input" class="wifi-input" placeholder="Backup Password">
+                  <div class="input-action-icon" onclick="togglePasswordVisibility('wifiPassword2Input', this)">
+                    <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button class="secondary-btn" id="btnSubmitWifi" onclick="submitWifiConfig()" style="width: 100%; padding: 13px; font-weight: 700; background: linear-gradient(135deg, #10b981, #059669); border-color: #10b981; color: #fff; box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35); margin-top: 6px;">
+            <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0M12 20h.01"/><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="submitWifiBtnText">🚀 Flash WiFi Config & Connect Bulb</span>
+          </button>
+
+          <!-- Live Progress Container -->
+          <div id="wifiProgressBox" style="display: none; text-align: center; padding: 12px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px;">
+            <div style="font-size: 13px; font-weight: 700; color: #38bdf8;" id="wifiProgressTitle">Transmitting credentials...</div>
+            <div style="font-size: 11px; color: var(--text-soft); margin-top: 4px;" id="wifiProgressSub">Please wait while the bulb reboots and registers on your router.</div>
+            <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 8px;">
+              <div id="wifiProgressBar" style="height: 100%; width: 30%; background: #38bdf8; transition: width 0.3s ease;"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Floating Smooth Scroll & Navigation Dock -->
   <div class="smooth-scroll-dock" id="scrollDock">
     <button class="dock-btn active" onclick="toggleSmoothScroll()" id="smoothScrollToggleBtn" title="Toggle Smooth Scroll Mode">
@@ -2947,10 +3546,15 @@
     function updateLiveStatus(isOnline) {
       const dot = document.getElementById('liveIndicator');
       const text = document.getElementById('connStatus');
+      const banner = document.getElementById('bulbOfflineBanner');
+      const bannerIp = document.getElementById('bannerTargetIp');
       const apiBase = getApiBase();
+      if (bannerIp) bannerIp.textContent = BULB_IP;
+
       if (isOnline) {
         dot.style.background = '#10b981';
         dot.style.boxShadow = '0 0 10px #10b981';
+        if (banner) banner.style.display = 'none';
         if (apiBase.includes('ngrok')) {
           text.textContent = 'Adhy Bulb • Cloud Tunnel';
         } else if (apiBase.includes('192.168.') || apiBase.includes('localhost') || apiBase.includes('127.0.0.1')) {
@@ -2961,7 +3565,8 @@
       } else {
         dot.style.background = '#ef4444';
         dot.style.boxShadow = '0 0 10px #ef4444';
-        text.textContent = 'Adhy Bulb • Reconnecting...';
+        text.textContent = 'Adhy Bulb • Offline';
+        if (banner) banner.style.display = 'flex';
       }
     }
 
@@ -2978,25 +3583,335 @@
 
     function editBulbIp() {
       triggerHaptic('medium');
-      const current = getApiBase();
-      const input = prompt(
-        'Lumina Connection Settings:\n• Cloud Tunnel: Enter ngrok HTTPS URL\n• Local Network: Enter http://192.168.1.9:7070\n• Direct Bulb: Enter 192.168.1.11\n\nCurrent Endpoint:',
-        current
-      );
-      if (input && input.trim()) {
-        const val = input.trim().replace(/\/$/, '');
-        if (val.startsWith('https://') || val.startsWith('http://')) {
-          localStorage.setItem('lumina_proxy_url', val);
-          updateLiveStatus(true);
-          forceReconnect();
-        } else {
-          BULB_IP = val;
-          localStorage.removeItem('lumina_proxy_url');
-          localStorage.setItem('lumina_bulb_ip', val);
-          updateLiveStatus(true);
-          forceReconnect();
-        }
+      openWifiModal('pairing');
+    }
+
+    // ─── WIFI & SMITCH PAIRING STUDIO CONTROLLER ─────────────────────────────
+    let activeWifiTab = 'status';
+    let targetConfigIp = 'default';
+    let isAutoDiscovering = false;
+
+    function openWifiModal(defaultTab = 'status') {
+      triggerHaptic('medium');
+      const backdrop = document.getElementById('wifiModalBackdrop');
+      if (!backdrop) return;
+      backdrop.classList.add('open');
+      switchWifiTab(defaultTab);
+      fetchLiveWifiStatus();
+    }
+
+    function closeWifiModal() {
+      triggerHaptic('light');
+      const backdrop = document.getElementById('wifiModalBackdrop');
+      if (backdrop) backdrop.classList.remove('open');
+    }
+
+    function handleBackdropClick(e) {
+      if (e.target && e.target.id === 'wifiModalBackdrop') {
+        closeWifiModal();
       }
+    }
+
+    function switchWifiTab(tab, presetTargetIp = null) {
+      triggerHaptic('light');
+      activeWifiTab = tab;
+      ['status', 'pairing', 'config'].forEach(t => {
+        const btn = document.getElementById('btnWifiTab' + t.charAt(0).toUpperCase() + t.slice(1));
+        const sec = document.getElementById('wifiSection' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (btn) btn.classList.toggle('active', t === tab);
+        if (sec) sec.style.display = (t === tab) ? 'block' : 'none';
+      });
+
+      if (presetTargetIp) {
+        setFormTargetIp(presetTargetIp);
+      }
+    }
+
+    function setFormTargetIp(type) {
+      targetConfigIp = type;
+      const pills = {
+        'default': document.getElementById('targetPillDefault'),
+        '192.168.4.1': document.getElementById('targetPillAp'),
+        'custom': document.getElementById('targetPillCustom')
+      };
+      Object.keys(pills).forEach(k => {
+        if (pills[k]) pills[k].classList.toggle('active', k === type);
+      });
+      const customInput = document.getElementById('wifiCustomIpInput');
+      if (customInput) {
+        customInput.style.display = (type === 'custom') ? 'block' : 'none';
+        if (type === 'custom') customInput.focus();
+      }
+      const ipText = document.getElementById('targetPillIpText');
+      if (ipText) ipText.textContent = BULB_IP;
+    }
+
+    function getResolvedTargetIp() {
+      if (targetConfigIp === '192.168.4.1') return '192.168.4.1';
+      if (targetConfigIp === 'custom') {
+        const custom = document.getElementById('wifiCustomIpInput')?.value?.trim();
+        return custom || BULB_IP;
+      }
+      return BULB_IP;
+    }
+
+    function switchToPairingIp() {
+      triggerHaptic('success');
+      BULB_IP = '192.168.4.1';
+      localStorage.setItem('lumina_bulb_ip', '192.168.4.1');
+      notifyBridgeTargetIp('192.168.4.1');
+      setFormTargetIp('192.168.4.1');
+      switchWifiTab('config', '192.168.4.1');
+      showToast('Target: 192.168.4.1', 'Pairing mode active. Enter your home WiFi below.', 'music', '#38bdf8');
+    }
+
+    async function notifyBridgeTargetIp(ip) {
+      try {
+        const apiBase = getApiBase();
+        await fetch(`${apiBase}/api/target-ip?ip=${encodeURIComponent(ip)}`, {
+          headers: { 'ngrok-skip-browser-warning': 'true' },
+          cache: 'no-store'
+        });
+      } catch (e) {}
+    }
+
+    async function fetchLiveWifiStatus() {
+      const ssidEl = document.getElementById('wifiCurrentSsid');
+      const sigEl = document.getElementById('wifiSignalPct');
+      const ipEl = document.getElementById('wifiDetailsIp');
+      const gwEl = document.getElementById('wifiDetailsGateway');
+      const macEl = document.getElementById('wifiDetailsMac');
+      const hostEl = document.getElementById('wifiDetailsHost');
+      if (ssidEl) ssidEl.textContent = 'Polling bulb...';
+
+      try {
+        const apiBase = getApiBase();
+        const res = await fetch(`${apiBase}/api/wifi?ip=${encodeURIComponent(BULB_IP)}`, {
+          headers: { 'ngrok-skip-browser-warning': 'true' },
+          cache: 'no-store',
+          signal: AbortSignal.timeout(3500)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (ssidEl) ssidEl.textContent = data.ssid || 'Connected';
+          if (sigEl) sigEl.textContent = `${data.signal_pct || '--'} %`;
+          if (ipEl) ipEl.textContent = data.ip || BULB_IP;
+          if (gwEl) gwEl.textContent = data.gateway || '--';
+          if (macEl) macEl.textContent = data.mac || '--';
+          if (hostEl) hostEl.textContent = data.hostname || 'tasmota';
+
+          // Update signal bars
+          const pct = data.signal_pct || 0;
+          const bars = document.querySelectorAll('#wifiSignalBars .signal-bar');
+          bars.forEach((b, idx) => {
+            b.classList.toggle('active', pct >= (idx + 1) * 25 - 10);
+          });
+          return;
+        }
+      } catch (e) {}
+
+      if (ssidEl) ssidEl.textContent = (BULB_IP === '192.168.4.1') ? 'Pairing AP (192.168.4.1)' : 'Bulb Offline / In Pairing Mode';
+      if (sigEl) sigEl.textContent = '-- %';
+      if (ipEl) ipEl.textContent = BULB_IP;
+    }
+
+    async function scanNearbyWifi() {
+      triggerHaptic('medium');
+      const list = document.getElementById('scannedNetworksList');
+      const container = document.getElementById('scannedNetworksContainer');
+      if (container) container.style.display = 'block';
+      if (list) list.innerHTML = '<span style="font-size:11px; color:#38bdf8;">Scanning frequencies for nearby SSIDs...</span>';
+
+      try {
+        const apiBase = getApiBase();
+        const res = await fetch(`${apiBase}/api/wifiscan?ip=${encodeURIComponent(BULB_IP)}`, {
+          headers: { 'ngrok-skip-browser-warning': 'true' },
+          cache: 'no-store',
+          signal: AbortSignal.timeout(6000)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          renderScannedNetworks(data);
+          return;
+        }
+      } catch (e) {}
+
+      // Fallback: offer detected home network
+      if (list) {
+        list.innerHTML = `
+          <div class="network-chip" onclick="applyScannedSsid('Airtel_Adhyarul')">
+            <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0M12 20h.01"/></svg>
+            <span>Airtel_Adhyarul</span>
+          </div>
+        `;
+      }
+    }
+
+    function renderScannedNetworks(data) {
+      const list = document.getElementById('scannedNetworksList');
+      if (!list) return;
+      const ssids = [];
+      if (data && data.WifiScan) {
+        const aps = Array.isArray(data.WifiScan) ? data.WifiScan : Object.values(data.WifiScan);
+        aps.forEach(ap => {
+          if (typeof ap === 'string') ssids.push(ap);
+          else if (ap && ap.SSId) ssids.push(ap.SSId);
+        });
+      }
+      if (ssids.length === 0) {
+        ssids.push('Airtel_Adhyarul');
+      }
+      const unique = [...new Set(ssids)];
+      list.innerHTML = unique.map(s => `
+        <div class="network-chip" onclick="applyScannedSsid('${encodeURIComponent(s)}')">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0M12 20h.01"/></svg>
+          <span>${s}</span>
+        </div>
+      `).join('');
+    }
+
+    function applyScannedSsid(rawSsid) {
+      triggerHaptic('light');
+      const ssid = decodeURIComponent(rawSsid);
+      const input = document.getElementById('wifiSsidInput');
+      if (input) input.value = ssid;
+      switchWifiTab('config');
+      showToast('Network Selected', `Configuring WiFi for '${ssid}'`, 'music', '#38bdf8');
+      const pass = document.getElementById('wifiPasswordInput');
+      if (pass) pass.focus();
+    }
+
+    function togglePasswordVisibility(inputId, btnElem) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      const isPass = input.type === 'password';
+      input.type = isPass ? 'text' : 'password';
+      if (btnElem) {
+        btnElem.style.color = isPass ? '#38bdf8' : 'var(--text-soft)';
+      }
+    }
+
+    function toggleBackupWifiFields() {
+      const box = document.getElementById('backupWifiContainer');
+      const chev = document.getElementById('backupWifiChevron');
+      if (!box) return;
+      const isOpen = box.style.display === 'flex';
+      box.style.display = isOpen ? 'none' : 'flex';
+      if (chev) chev.textContent = isOpen ? '▶' : '▼';
+    }
+
+    async function submitWifiConfig() {
+      triggerHaptic('success');
+      const ssid = document.getElementById('wifiSsidInput')?.value?.trim();
+      const password = document.getElementById('wifiPasswordInput')?.value?.trim() || '';
+      const ssid2 = document.getElementById('wifiSsid2Input')?.value?.trim() || '';
+      const password2 = document.getElementById('wifiPassword2Input')?.value?.trim() || '';
+      const targetIp = getResolvedTargetIp();
+
+      if (!ssid) {
+        alert('Please enter your Home WiFi Network Name (SSID).');
+        document.getElementById('wifiSsidInput')?.focus();
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitWifi');
+      const btnText = document.getElementById('submitWifiBtnText');
+      const progressBox = document.getElementById('wifiProgressBox');
+      const progressTitle = document.getElementById('wifiProgressTitle');
+      const progressSub = document.getElementById('wifiProgressSub');
+      const progressBar = document.getElementById('wifiProgressBar');
+
+      if (btn) btn.disabled = true;
+      if (btnText) btnText.textContent = '⏳ Transmitting WiFi Config...';
+      if (progressBox) progressBox.style.display = 'block';
+      if (progressBar) progressBar.style.width = '35%';
+
+      try {
+        const apiBase = getApiBase();
+        const payload = {
+          ssid: ssid,
+          password: password,
+          ssid2: ssid2,
+          password2: password2,
+          target_ip: targetIp
+        };
+
+        await fetch(`${apiBase}/api/wifi`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true'
+          },
+          body: JSON.stringify(payload),
+          signal: AbortSignal.timeout(5000)
+        });
+
+        if (progressBar) progressBar.style.width = '70%';
+        if (progressTitle) progressTitle.textContent = `Bulb received credentials! Rebooting onto '${ssid}'...`;
+        if (progressSub) progressSub.textContent = 'Connecting to router. Starting auto-reconnect detector...';
+
+        // Auto-reconnect countdown loop
+        let countdown = 14;
+        const timer = setInterval(async () => {
+          countdown--;
+          if (progressSub) progressSub.textContent = `Rebooting... Checking router connection in ${countdown}s`;
+          if (progressBar) progressBar.style.width = `${70 + (14 - countdown) * 2}%`;
+
+          if (countdown <= 0) {
+            clearInterval(timer);
+            if (progressBar) progressBar.style.width = '100%';
+            if (btn) btn.disabled = false;
+            if (btnText) btnText.textContent = '🚀 Flash WiFi Config & Connect Bulb';
+            
+            // Run subnet auto-discovery to locate bulb on home network!
+            triggerAutoDiscover();
+          }
+        }, 1000);
+
+        showToast('WiFi Config Dispatched', `Bulb is joining '${ssid}'`, 'music', '#10b981');
+      } catch (err) {
+        if (btn) btn.disabled = false;
+        if (btnText) btnText.textContent = '🚀 Flash WiFi Config & Connect Bulb';
+        if (progressTitle) progressTitle.textContent = 'WiFi Config Dispatched!';
+        if (progressSub) progressSub.textContent = 'Direct broadcast sent. Bulb is joining router.';
+        showToast('Setup Sent', `Bulb connecting to '${ssid}'`, 'music', '#10b981');
+      }
+    }
+
+    async function triggerAutoDiscover(btnElement = null) {
+      if (isAutoDiscovering) return;
+      isAutoDiscovering = true;
+      triggerHaptic('medium');
+      const icon = document.getElementById('discoverIcon');
+      if (icon) icon.classList.add('spinning');
+      showToast('Searching Subnet', 'Scanning 192.168.1.x for Smitch bulb...', 'music', '#38bdf8');
+
+      try {
+        const apiBase = getApiBase();
+        const res = await fetch(`${apiBase}/api/discover`, {
+          headers: { 'ngrok-skip-browser-warning': 'true' },
+          cache: 'no-store',
+          signal: AbortSignal.timeout(12000)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.found && data.ip) {
+            BULB_IP = data.ip;
+            localStorage.setItem('lumina_bulb_ip', data.ip);
+            notifyBridgeTargetIp(data.ip);
+            showToast('Bulb Discovered!', `Connected to Smitch at ${data.ip}`, 'music', '#10b981');
+            updateLiveStatus(true);
+            forceReconnect();
+            closeWifiModal();
+            return;
+          }
+        }
+      } catch (e) {} finally {
+        isAutoDiscovering = false;
+        if (icon) icon.classList.remove('spinning');
+      }
+
+      showToast('Bulb Still Offline', 'Ensure bulb is powered or check pairing hotspot', 'music', '#ef4444');
     }
 
     // ─── MASTER CONTROLS & UNSELECTABLE STATE MANAGERS ────────────────────────
